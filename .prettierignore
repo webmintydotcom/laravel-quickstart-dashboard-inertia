@@ -1,0 +1,6 @@
+# Ignore artifacts:
+build
+coverage
+
+/resources/views/original/*.blade.php
+/resources/vendor/*.blade.php
