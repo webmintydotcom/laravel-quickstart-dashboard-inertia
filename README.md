@@ -51,7 +51,7 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
 
 ### Laravel
 
-Version **12** of Laravel is used in this starter kit.
+Version **13** of Laravel is used in this starter kit.
 
 #### Inertia.js
 
