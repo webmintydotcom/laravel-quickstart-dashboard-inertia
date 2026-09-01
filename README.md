@@ -1,26 +1,27 @@
-# Laravel + React + Inertia.js Starter Kit
+# Laravel + React + Inertia.js + Dashboard Starter Kit
 
 ## Introduction
 
-A starter kit for Laravel applications with React, Inertia.js, Shadcn UI, and Tailwind CSS v4. Designed to help you quickly set up a new full-stack Laravel project with a modern development environment.
+A starter kit for Laravel applications with React, Inertia.js, Shadcn UI, and Tailwind CSS v4. 
+Designed to help you quickly set up a new full-stack Laravel project with a modern development environment.
 
 ## Installation
 
 ```bash
-laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-inertia
+laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashboard-inertia
 ```
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Laravel 12, PHP 8.4 |
+| Layer | Technology           |
+|-------|----------------------|
+| Backend | Laravel 13, PHP 8.4  |
 | Frontend | React 19, TypeScript |
-| Routing | Inertia.js |
-| UI Components | Shadcn UI |
-| Styling | Tailwind CSS v4 |
-| Build | Vite 7 |
-| Testing | Pest, Larastan |
+| Routing | Inertia.js           |
+| UI Components | Shadcn UI            |
+| Styling | Tailwind CSS v4      |
+| Build | Vite 8               |
+| Testing | Pest, Larastan       |
 
 ## Included Packages
 
