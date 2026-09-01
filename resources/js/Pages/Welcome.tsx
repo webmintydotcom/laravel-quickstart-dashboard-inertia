@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import {
     Blocks,
     Check,
@@ -16,7 +16,6 @@ import {
     Settings,
     Sparkles,
     Sun,
-    Terminal,
     Type,
     User,
     Zap,
@@ -51,46 +50,45 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 const techStack = [
     {
         icon: Layers,
-        title: 'Laravel 12',
-        description: 'The PHP framework for artisans. Elegant syntax, powerful ORM, and seamless API integration.',
+        label: 'Backend',
+        title: 'Laravel 13',
+        description: 'Eloquent, queues, and a Pest suite that is already green on a fresh clone.',
         href: 'https://laravel.com/docs',
-        color: 'text-red-500',
     },
     {
         icon: Zap,
+        label: 'Bridge',
         title: 'Inertia.js',
-        description: 'Build SPAs without an API. Connects your Laravel backend directly to your React frontend.',
+        description: 'Controllers return pages, React renders them. No API layer left to maintain.',
         href: 'https://inertiajs.com',
-        color: 'text-purple-500',
     },
     {
         icon: Blocks,
+        label: 'Frontend',
         title: 'React 19',
-        description:
-            'The library for building user interfaces with components, hooks, and the latest concurrent features.',
+        description: 'Strict TypeScript, Vite hot reload, and an SSR build wired up out of the box.',
         href: 'https://react.dev',
-        color: 'text-blue-500',
     },
     {
         icon: Paintbrush,
+        label: 'Styling',
         title: 'Tailwind CSS v4',
-        description: 'Utility-first CSS with a brand new engine. Faster builds, modern CSS features, and zero config.',
+        description: 'The mint palette lives in one file, so every project you clone inherits the brand.',
         href: 'https://tailwindcss.com',
-        color: 'text-cyan-500',
     },
     {
         icon: Layout,
-        title: 'Shadcn UI',
-        description: 'Beautifully designed, accessible components you own. Built on Radix primitives and Tailwind.',
+        label: 'Interface',
+        title: 'shadcn/ui',
+        description: 'Seventeen primitives you own outright, themed for light and dark before you start.',
         href: 'https://ui.shadcn.com',
-        color: 'text-emerald-500',
     },
     {
         icon: Type,
+        label: 'Safety',
         title: 'TypeScript',
-        description: 'Type-safe development with full IDE support. Catch bugs before they reach production.',
+        description: 'Full editor support across the stack, so mistakes surface before the browser does.',
         href: 'https://www.typescriptlang.org',
-        color: 'text-blue-600',
     },
 ];
 
@@ -108,10 +106,37 @@ const faqItems = [
         answer: 'Yes! This template is SSR-ready. Run npm run build:ssr to build with server-side rendering support for improved SEO and performance.',
     },
     {
-        question: 'How do I customize the theme?',
-        answer: 'Edit the CSS variables in resources/css/app.css. The theme uses OKLch color space with semantic tokens for light and dark mode. All shadcn/ui components respect these tokens.',
+        question: 'How do I rebrand this for a new project?',
+        answer: 'Everything visual routes through resources/css/app.css. Swap the mint scale for the client palette and every component, chart and sidebar token follows automatically — in both light and dark mode.',
     },
 ];
+
+/* The install command the hero types out. `--type-width` below must
+   match its length in characters, and so must the steps() count in
+   the .animate-type rule in app.css. */
+const SERVE_COMMAND = 'php artisan serve';
+
+function WebmintyMark({
+    className,
+    cutClassName = 'stroke-background',
+}: {
+    className?: string;
+    cutClassName?: string;
+}) {
+    return (
+        <svg viewBox="0 0 100 100" aria-hidden="true" className={className}>
+            <circle cx="50" cy="50" r="50" fill="currentColor" />
+            <polyline
+                points="16,32 34,70 50,44 66,70 84,32"
+                fill="none"
+                strokeWidth="11"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={cutClassName}
+            />
+        </svg>
+    );
+}
 
 function GithubIcon({ className }: { className?: string }) {
     return (
@@ -134,112 +159,176 @@ export default function Welcome() {
     const [switchChecked, setSwitchChecked] = useState(true);
 
     function toggleDarkMode() {
-        setDarkMode(!darkMode);
-        document.documentElement.classList.toggle('dark');
+        const next = !darkMode;
+        setDarkMode(next);
+        document.documentElement.classList.toggle('dark', next);
     }
 
     return (
         <TooltipProvider>
             <Head title="Welcome" />
             <div className="bg-background min-h-screen">
-                {/* ── Navigation ── */}
-                <header className="bg-background/80 sticky top-0 z-50 border-b backdrop-blur-lg">
-                    <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-foreground text-background flex h-9 w-9 items-center justify-center rounded-lg">
-                                <Terminal className="h-4 w-4" />
-                            </div>
-                            <span className="text-foreground text-lg font-semibold tracking-tight">
-                                Laravel Quickstart
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" asChild>
-                                        <a
-                                            href="https://github.com/webminty/laravel-quickstart-inertia"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            aria-label="View on GitHub"
-                                        >
-                                            <GithubIcon className="h-4 w-4" />
-                                        </a>
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>View on GitHub</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={toggleDarkMode}
-                                        aria-label="Toggle dark mode"
-                                    >
-                                        {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                                </TooltipContent>
-                            </Tooltip>
-                        </div>
-                    </div>
-                </header>
+                {/* ── Console Hero ────────────────────────────────────────
+                    Fixed dark band in both themes. The page reads
+                    dark-then-light, the way a docs site does. */}
+                <section className="relative overflow-hidden bg-stone-950 text-stone-100">
+                    <div className="bg-mint-500/20 pointer-events-none absolute -top-56 -left-40 h-[620px] w-[820px] rounded-full blur-3xl" />
 
-                {/* ── Hero Section ── */}
-                <section className="relative overflow-hidden">
-                    <div className="absolute inset-0 -z-10">
-                        <div className="absolute top-0 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-cyan-500/10 blur-3xl" />
-                    </div>
-                    <div className="mx-auto max-w-6xl px-6 pt-20 pb-16 text-center sm:pt-28">
-                        <div className="mx-auto max-w-3xl">
-                            <Badge variant="secondary" className="mb-6 gap-1.5 px-3 py-1">
-                                <Sparkles className="h-3.5 w-3.5" />
-                                React + Inertia.js + Shadcn UI + Tailwind v4
-                            </Badge>
-                            <h1 className="text-foreground text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                                Build modern apps{' '}
-                                <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-purple-400 dark:via-blue-400 dark:to-cyan-400">
-                                    beautifully fast
-                                </span>
-                            </h1>
-                            <p className="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg leading-relaxed">
-                                A quickstart template with everything pre-configured. Laravel backend, React frontend,
-                                beautiful UI components, and a world-class developer experience.
+                    {/* ── Navigation ── */}
+                    <header className="relative border-b border-stone-800/70">
+                        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+                            <a href="/" className="flex items-center gap-2.5">
+                                <WebmintyMark className="text-mint-500 h-6 w-6" cutClassName="stroke-stone-950" />
+                                <span className="text-[15px] font-bold tracking-tight text-stone-50">Quickstart</span>
+                            </a>
+
+                            <nav className="hidden items-center gap-1 sm:flex" aria-label="Primary">
+                                {[
+                                    { label: 'Docs', href: 'https://laravel.com/docs' },
+                                    { label: 'Components', href: '#components' },
+                                    { label: 'FAQ', href: '#faq' },
+                                ].map((link) => (
+                                    <a
+                                        key={link.label}
+                                        href={link.href}
+                                        className="focus-visible:ring-mint-500 rounded-md px-3 py-2 text-[13px] text-stone-400 transition-colors hover:bg-stone-900 hover:text-stone-100 focus-visible:ring-2 focus-visible:outline-none"
+                                    >
+                                        {link.label}
+                                    </a>
+                                ))}
+                            </nav>
+
+                            <div className="flex items-center gap-1">
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-stone-400 hover:bg-stone-900 hover:text-stone-100"
+                                            asChild
+                                        >
+                                            <a
+                                                href="https://github.com/webminty/laravel-quickstart-inertia"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label="View on GitHub"
+                                            >
+                                                <GithubIcon className="h-4 w-4" />
+                                            </a>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>View on GitHub</TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-stone-400 hover:bg-stone-900 hover:text-stone-100"
+                                            onClick={toggleDarkMode}
+                                            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                                        >
+                                            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* ── Hero ── */}
+                    <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pt-16 pb-20 lg:grid-cols-2 lg:gap-16 lg:pt-20 lg:pb-24">
+                        <div>
+                            <p className="text-mint-300 font-mono text-xs sm:text-[13px]">
+                                webminty/laravel-quickstart-inertia
                             </p>
-                            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+                            <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-balance text-stone-50 sm:text-5xl lg:text-[3.35rem] lg:leading-[1.05]">
+                                Skip the first two days. <span className="text-mint-400">Start on day three.</span>
+                            </h1>
+                            <p className="mt-5 max-w-md text-base leading-relaxed text-stone-400">
+                                Laravel 13, Inertia, React 19, Tailwind v4 and a full shadcn/ui kit — wired together,
+                                themed in Webminty mint, and already passing tests.
+                            </p>
+
+                            <div className="mt-8 flex flex-wrap items-center gap-3">
                                 <Button size="lg" asChild>
                                     <a href="https://laravel.com/docs">
-                                        Get Started
+                                        Read the docs
                                         <ChevronRight className="ml-1 h-4 w-4" />
                                     </a>
                                 </Button>
-                                <Button size="lg" variant="outline" asChild>
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="border-stone-700 bg-transparent text-stone-200 hover:bg-stone-900 hover:text-stone-50 dark:border-stone-700 dark:bg-transparent dark:hover:bg-stone-900"
+                                    asChild
+                                >
                                     <a
                                         href="https://github.com/webminty/laravel-quickstart-inertia"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
                                         <GithubIcon className="mr-2 h-4 w-4" />
-                                        View Source
+                                        View source
                                     </a>
                                 </Button>
+                            </div>
+
+                            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] text-stone-500">
+                                {['PHP 8.4', 'Node 22', 'SSR ready', 'MIT'].map((fact) => (
+                                    <li key={fact} className="flex items-center gap-2">
+                                        <span className="bg-mint-500 h-1.5 w-1.5 rounded-full" />
+                                        {fact}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* ── Terminal ── */}
+                        <div className="overflow-hidden rounded-xl border border-stone-800 bg-stone-900 shadow-2xl shadow-black/60">
+                            <div className="flex items-center gap-2 border-b border-stone-800 bg-stone-950/70 px-4 py-3">
+                                <span className="h-2.5 w-2.5 rounded-full bg-stone-800" />
+                                <span className="h-2.5 w-2.5 rounded-full bg-stone-800" />
+                                <span className="h-2.5 w-2.5 rounded-full bg-stone-800" />
+                                <span className="ml-2 font-mono text-[11px] text-stone-500">zsh — ~/Development</span>
+                            </div>
+                            <div className="overflow-x-auto px-4 py-5 font-mono text-xs leading-[1.95] sm:text-[13px]">
+                                <div className="whitespace-nowrap">
+                                    <span className="text-mint-500">❯</span>{' '}
+                                    <span className="text-stone-100">
+                                        composer create-project webminty/laravel-quickstart
+                                    </span>
+                                </div>
+                                <div className="whitespace-nowrap text-stone-500">
+                                    &nbsp;&nbsp;Installing dependencies…
+                                </div>
+                                <div className="text-mint-300 whitespace-nowrap">&nbsp;&nbsp;✓ Application key set</div>
+                                <div className="text-mint-300 whitespace-nowrap">&nbsp;&nbsp;✓ Vite manifest built</div>
+                                <div className="whitespace-nowrap">
+                                    <span className="text-mint-500">❯</span>{' '}
+                                    <span
+                                        className="animate-type text-stone-100"
+                                        style={{ '--type-width': `${SERVE_COMMAND.length}ch` } as CSSProperties}
+                                    >
+                                        {SERVE_COMMAND}
+                                    </span>
+                                    <span className="animate-caret bg-mint-500 ml-1 inline-block h-3.5 w-[7px] translate-y-px" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* ── Tech Stack Cards ── */}
-                <section className="mx-auto max-w-6xl px-6 pb-20">
-                    <div className="mb-10 text-center">
+                {/* ── What's wired up ── */}
+                <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+                    <div className="mb-8 flex flex-wrap items-baseline justify-between gap-2">
                         <h2 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
-                            Everything you need
+                            What's already wired up
                         </h2>
-                        <p className="text-muted-foreground mt-2">
-                            A curated set of best-in-class technologies, ready to go.
-                        </p>
+                        <span className="text-muted-foreground font-mono text-xs">17 components</span>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {techStack.map((item) => (
@@ -248,18 +337,23 @@ export default function Welcome() {
                                 href={item.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group"
+                                className="group focus-visible:ring-ring rounded-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                             >
-                                <Card className="hover:bg-accent/50 h-full transition-colors">
-                                    <CardHeader className="pb-3">
+                                <Card className="hover:border-mint-300 dark:hover:border-mint-800 h-full gap-3 transition-colors">
+                                    <CardHeader>
                                         <div className="flex items-center gap-3">
-                                            <div className="bg-background flex h-10 w-10 items-center justify-center rounded-lg border">
-                                                <item.icon className={`h-5 w-5 ${item.color}`} />
+                                            <div className="bg-accent text-accent-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+                                                <item.icon className="h-5 w-5" />
                                             </div>
-                                            <CardTitle className="flex items-center gap-2 text-base">
-                                                {item.title}
-                                                <ExternalLink className="text-muted-foreground h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
-                                            </CardTitle>
+                                            <div className="min-w-0">
+                                                <p className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                                                    {item.label}
+                                                </p>
+                                                <CardTitle className="flex items-center gap-1.5 text-base">
+                                                    {item.title}
+                                                    <ExternalLink className="text-muted-foreground h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                                                </CardTitle>
+                                            </div>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
@@ -276,7 +370,7 @@ export default function Welcome() {
                 <Separator className="mx-auto max-w-6xl" />
 
                 {/* ── Component Showcase ── */}
-                <section className="mx-auto max-w-6xl px-6 py-20">
+                <section id="components" className="mx-auto max-w-6xl scroll-mt-6 px-6 py-20">
                     <div className="mb-10 text-center">
                         <Badge variant="outline" className="mb-4">
                             <Code2 className="mr-1.5 h-3 w-3" />
@@ -782,7 +876,7 @@ export default function Welcome() {
                 <Separator className="mx-auto max-w-6xl" />
 
                 {/* ── FAQ / Accordion ── */}
-                <section className="mx-auto max-w-6xl px-6 py-20">
+                <section id="faq" className="mx-auto max-w-6xl scroll-mt-6 px-6 py-20">
                     <div className="grid gap-10 lg:grid-cols-[1fr_1.5fr]">
                         <div>
                             <Badge variant="outline" className="mb-4">
@@ -809,9 +903,11 @@ export default function Welcome() {
                 {/* ── Footer ── */}
                 <footer className="border-t">
                     <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
-                        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                            <Terminal className="h-4 w-4" />
-                            <span>Laravel v12 + React 19 + Inertia.js + Shadcn UI + Tailwind v4</span>
+                        <div className="text-muted-foreground flex items-center gap-2.5 text-sm">
+                            <WebmintyMark className="text-mint-600 dark:text-mint-400 h-5 w-5" />
+                            <span>
+                                Built by Webminty · Laravel 13 · Inertia.js · React 19 · Tailwind v4 · shadcn/ui
+                            </span>
                         </div>
                         <div className="flex gap-2">
                             <Button size="sm" variant="ghost" asChild>

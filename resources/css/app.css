@@ -8,83 +8,168 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-    --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* ──────────────────────────────────────────────────────────────
+   Brand palette and typefaces.
 
-    --color-background: oklch(1 0 0);
-    --color-foreground: oklch(0.145 0 0);
-    --color-card: oklch(1 0 0);
-    --color-card-foreground: oklch(0.145 0 0);
-    --color-popover: oklch(1 0 0);
-    --color-popover-foreground: oklch(0.145 0 0);
-    --color-primary: oklch(0.205 0 0);
-    --color-primary-foreground: oklch(0.985 0 0);
-    --color-secondary: oklch(0.97 0 0);
-    --color-secondary-foreground: oklch(0.205 0 0);
-    --color-muted: oklch(0.97 0 0);
-    --color-muted-foreground: oklch(0.556 0 0);
-    --color-accent: oklch(0.97 0 0);
-    --color-accent-foreground: oklch(0.205 0 0);
-    --color-destructive: oklch(0.577 0.245 27.325);
-    --color-destructive-foreground: oklch(0.577 0.245 27.325);
-    --color-border: oklch(0.922 0 0);
-    --color-input: oklch(0.922 0 0);
-    --color-ring: oklch(0.708 0 0);
-    --color-chart-1: oklch(0.646 0.222 41.116);
-    --color-chart-2: oklch(0.6 0.118 184.714);
-    --color-chart-3: oklch(0.398 0.07 227.392);
-    --color-chart-4: oklch(0.828 0.189 84.429);
-    --color-chart-5: oklch(0.769 0.188 70.067);
-    --color-sidebar: oklch(0.985 0 0);
-    --color-sidebar-foreground: oklch(0.145 0 0);
-    --color-sidebar-primary: oklch(0.205 0 0);
-    --color-sidebar-primary-foreground: oklch(0.985 0 0);
-    --color-sidebar-accent: oklch(0.97 0 0);
-    --color-sidebar-accent-foreground: oklch(0.205 0 0);
-    --color-sidebar-border: oklch(0.922 0 0);
-    --color-sidebar-ring: oklch(0.708 0 0);
-    --radius: 0.625rem;
+   Mirrors the mint scale and font pairing from the Webminty
+   marketing site so this starter and webminty.com stay in sync.
+   Neutrals come from Tailwind's stone ramp, not slate or gray.
+   ────────────────────────────────────────────────────────────── */
+@theme {
+    --color-mint-25: #f3faf6;
+    --color-mint-50: #e8f5ee;
+    --color-mint-100: #c8e9d6;
+    --color-mint-200: #94dbc0;
+    --color-mint-300: #6dd4a5;
+    --color-mint-400: #47c48e;
+    --color-mint-500: #36b07d;
+    --color-mint-600: #2e9e6e;
+    --color-mint-700: #257d58;
+    --color-mint-800: #1a5c40;
+    --color-mint-900: #134430;
+    --color-mint-950: #0b2d1f;
+
+    --font-sans:
+        'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+/* ──────────────────────────────────────────────────────────────
+   Semantic tokens.
+
+   Declared as plain custom properties here and mapped into
+   Tailwind's namespace via `@theme inline` below. The indirection
+   matters: `@theme inline` bakes whatever it is given straight
+   into each utility, so mapping to `var(--token)` is what lets
+   the `.dark` block below actually re-colour the page.
+   ────────────────────────────────────────────────────────────── */
 :root {
-    --radius: 0.625rem;
+    --radius: 0.875rem;
+
+    --background: #ffffff;
+    --foreground: #292524;
+
+    --card: #ffffff;
+    --card-foreground: #292524;
+    --popover: #ffffff;
+    --popover-foreground: #292524;
+
+    /* mint-700 rather than the marketing site's mint-600: it is
+       visually near-identical but clears 4.5:1 against white. */
+    --primary: #257d58;
+    --primary-foreground: #ffffff;
+
+    --secondary: #f5f5f4;
+    --secondary-foreground: #44403c;
+    --muted: #f5f5f4;
+    --muted-foreground: #78716c;
+    --accent: #e8f5ee;
+    --accent-foreground: #1a5c40;
+
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+
+    --border: #e7e5e4;
+    --input: #e7e5e4;
+    --ring: #36b07d;
+
+    --chart-1: #2e9e6e;
+    --chart-2: #3b82a6;
+    --chart-3: #c98b2e;
+    --chart-4: #7e6bc4;
+    --chart-5: #c4614f;
+
+    --sidebar: #fafaf9;
+    --sidebar-foreground: #292524;
+    --sidebar-primary: #257d58;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e8f5ee;
+    --sidebar-accent-foreground: #1a5c40;
+    --sidebar-border: #e7e5e4;
+    --sidebar-ring: #36b07d;
 }
 
 .dark {
-    --color-background: oklch(0.145 0 0);
-    --color-foreground: oklch(0.985 0 0);
-    --color-card: oklch(0.145 0 0);
-    --color-card-foreground: oklch(0.985 0 0);
-    --color-popover: oklch(0.145 0 0);
-    --color-popover-foreground: oklch(0.985 0 0);
-    --color-primary: oklch(0.985 0 0);
-    --color-primary-foreground: oklch(0.205 0 0);
-    --color-secondary: oklch(0.269 0 0);
-    --color-secondary-foreground: oklch(0.985 0 0);
-    --color-muted: oklch(0.269 0 0);
-    --color-muted-foreground: oklch(0.708 0 0);
-    --color-accent: oklch(0.269 0 0);
-    --color-accent-foreground: oklch(0.985 0 0);
-    --color-destructive: oklch(0.396 0.141 25.723);
-    --color-destructive-foreground: oklch(0.637 0.237 25.331);
-    --color-border: oklch(0.269 0 0);
-    --color-input: oklch(0.269 0 0);
-    --color-ring: oklch(0.439 0 0);
-    --color-chart-1: oklch(0.488 0.243 264.376);
-    --color-chart-2: oklch(0.696 0.17 162.48);
-    --color-chart-3: oklch(0.769 0.188 70.067);
-    --color-chart-4: oklch(0.627 0.265 303.9);
-    --color-chart-5: oklch(0.645 0.246 16.439);
-    --color-sidebar: oklch(0.205 0 0);
-    --color-sidebar-foreground: oklch(0.985 0 0);
-    --color-sidebar-primary: oklch(0.488 0.243 264.376);
-    --color-sidebar-primary-foreground: oklch(0.985 0 0);
-    --color-sidebar-accent: oklch(0.269 0 0);
-    --color-sidebar-accent-foreground: oklch(0.985 0 0);
-    --color-sidebar-border: oklch(0.269 0 0);
-    --color-sidebar-ring: oklch(0.439 0 0);
+    --background: #0c0a09;
+    --foreground: #f5f5f4;
+
+    --card: #171412;
+    --card-foreground: #f5f5f4;
+    --popover: #171412;
+    --popover-foreground: #f5f5f4;
+
+    --primary: #47c48e;
+    --primary-foreground: #0b2d1f;
+
+    --secondary: #221e1b;
+    --secondary-foreground: #f5f5f4;
+    --muted: #221e1b;
+    --muted-foreground: #a8a29e;
+    --accent: #17322a;
+    --accent-foreground: #94dbc0;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: #2c2724;
+    --input: #2c2724;
+    --ring: #36b07d;
+
+    --chart-1: #47c48e;
+    --chart-2: #5ba9cc;
+    --chart-3: #e0ac57;
+    --chart-4: #a292e0;
+    --chart-5: #e08874;
+
+    --sidebar: #171412;
+    --sidebar-foreground: #f5f5f4;
+    --sidebar-primary: #47c48e;
+    --sidebar-primary-foreground: #0b2d1f;
+    --sidebar-accent: #17322a;
+    --sidebar-accent-foreground: #94dbc0;
+    --sidebar-border: #2c2724;
+    --sidebar-ring: #36b07d;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
@@ -93,5 +178,53 @@
     }
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Console hero: the install command types itself out once on load.
+   `--type-width` is set per call site to the command's length in
+   `ch`, so the steps() reveal lands exactly on the last character.
+   ────────────────────────────────────────────────────────────── */
+@keyframes type-in {
+    from {
+        width: 0;
+    }
+    to {
+        width: var(--type-width);
+    }
+}
+
+@keyframes caret-blink {
+    0%,
+    49% {
+        opacity: 1;
+    }
+    50%,
+    100% {
+        opacity: 0;
+    }
+}
+
+.animate-type {
+    display: inline-block;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    animation: type-in 1.8s steps(17, end) 0.7s forwards;
+}
+
+.animate-caret {
+    animation: caret-blink 1.05s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-type {
+        width: var(--type-width);
+        animation: none;
+    }
+    .animate-caret {
+        animation: none;
     }
 }
