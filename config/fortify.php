@@ -175,6 +175,8 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
+        Features::updateProfileInformation(),
+        Features::updatePasswords(),
     ],
 
 ];

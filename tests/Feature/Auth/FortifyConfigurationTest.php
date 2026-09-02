@@ -13,13 +13,13 @@ test('fortify registers routes for the enabled features', function (): void {
         ->and(Route::has('password.request'))->toBeTrue()
         ->and(Route::has('password.email'))->toBeTrue()
         ->and(Route::has('password.reset'))->toBeTrue()
-        ->and(Route::has('password.update'))->toBeTrue();
+        ->and(Route::has('password.update'))->toBeTrue()
+        ->and(Route::has('user-password.update'))->toBeTrue()
+        ->and(Route::has('user-profile-information.update'))->toBeTrue();
 });
 
 test('fortify does not register routes for the disabled features', function (): void {
     expect(Route::has('verification.notice'))->toBeFalse()
-        ->and(Route::has('user-password.update'))->toBeFalse()
-        ->and(Route::has('user-profile-information.update'))->toBeFalse()
         ->and(Route::has('two-factor.login'))->toBeFalse()
         ->and(Route::has('passkey.login'))->toBeFalse();
 });

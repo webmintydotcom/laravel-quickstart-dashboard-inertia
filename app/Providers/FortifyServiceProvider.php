@@ -6,6 +6,8 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Actions\Fortify\UpdateUserPassword;
+use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
@@ -46,6 +48,8 @@ final class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
 
         // Inert on purpose. config('fortify.limiters.login') is null here, so Fortify keeps
         // its in-pipeline EnsureLoginIsNotThrottled step and never resolves this limiter.
