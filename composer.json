@@ -18,6 +18,7 @@
     "require": {
         "php": "^8.4",
         "inertiajs/inertia-laravel": "^3.0",
+        "intervention/image": "^4.3",
         "laravel/fortify": "^1.39",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0.0",
@@ -71,7 +72,8 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi"
+            "@php artisan migrate --graceful --ansi",
+            "@php artisan storage:link --ansi"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",

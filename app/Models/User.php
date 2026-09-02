@@ -20,6 +20,7 @@ use Illuminate\Notifications\Notifiable;
     'password',
     'appearance',
     'timezone',
+    'avatar_path',
 ])]
 #[Hidden([
     'password',
