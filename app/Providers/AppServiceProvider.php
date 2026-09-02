@@ -23,8 +23,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Inertia embeds resources as plain props; the default "data" wrapper
-        // would break the flat shape our shared props and TypeScript types expect.
+        // Inertia resolves a JsonResource prop through toResponse(), which applies
+        // Laravel's "data" envelope. Every prop in this app is consumed by Inertia,
+        // not a JSON:API client, so the envelope is off by default. A resource that
+        // genuinely wants it can set `public static $wrap = 'data';` on itself.
         JsonResource::withoutWrapping();
 
         //https://planetscale.com/blog/laravels-safety-mechanisms
