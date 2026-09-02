@@ -48,7 +48,10 @@ test('updating appearance also sets the cookie so the next first paint is correc
 
     $this->actingAs($user)
         ->patch(route('settings.update'), ['appearance' => 'dark', 'timezone' => 'UTC'])
-        ->assertCookie('appearance', 'dark');
+        // Third argument is false because this cookie is deliberately exempt from
+        // encryption in bootstrap/app.php - the front end reads it from document.cookie
+        // to avoid a flash of the wrong theme. assertCookie() decrypts by default.
+        ->assertCookie('appearance', 'dark', false);
 });
 
 test('an unknown appearance is rejected', function (): void {
