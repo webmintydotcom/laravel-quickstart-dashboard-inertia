@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Data\UserData;
+use App\Enums\Appearance;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -48,6 +49,8 @@ final class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => $request->session()->get('status'),
             ],
+            'appearance'       => $user?->appearance->value ?? Appearance::System->value,
+            'sidebarCollapsed' => $request->cookie('sidebar_collapsed') === '1',
         ];
     }
 }

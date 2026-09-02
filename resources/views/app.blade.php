@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $appearance }}">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,6 +13,19 @@
         rel="stylesheet"
     />
 
+    <script>
+        // Only 'system' needs resolving. 'light' and 'dark' are already correct
+        // in the server response, so this script does nothing for them.
+        (function () {
+            var root = document.documentElement;
+
+            if (root.className !== 'system') {
+                return;
+            }
+
+            root.className = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        })();
+    </script>
     @inertiaHead
     @routes
     @viteReactRefresh

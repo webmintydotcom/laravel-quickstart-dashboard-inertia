@@ -13,5 +13,7 @@ export interface SharedProps {
     flash: {
         status: string | null;
     };
+    appearance: 'light' | 'dark' | 'system';
+    sidebarCollapsed: boolean;
     [key: string]: unknown;
 }
