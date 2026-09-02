@@ -27,9 +27,17 @@ export function UserMenu() {
                 aria-label={`Account menu for ${auth.user.name}`}
                 className="flex min-h-11 items-center gap-2 rounded-md px-2 hover:bg-white/10"
             >
-                <span className="bg-mint-500 text-mint-950 grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold">
-                    {initials}
-                </span>
+                {auth.user.avatar_url ? (
+                    <img
+                        src={auth.user.avatar_url}
+                        alt=""
+                        className="size-8 shrink-0 rounded-full object-cover"
+                    />
+                ) : (
+                    <span className="bg-mint-500 text-mint-950 grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold">
+                        {initials}
+                    </span>
+                )}
                 <span className="hidden text-sm sm:block">{auth.user.name}</span>
             </DropdownMenuTrigger>
 
