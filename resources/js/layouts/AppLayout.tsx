@@ -4,6 +4,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { MobileDrawer } from '@/components/app-shell/mobile-drawer';
 import { Sidebar } from '@/components/app-shell/sidebar';
 import { TopBar } from '@/components/app-shell/top-bar';
+import { FlashToaster } from '@/components/flash-toaster';
 import type { SharedProps } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -30,6 +31,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
     return (
         <>
             <Head title={title} />
+            <FlashToaster />
 
             <a
                 href="#main-content"
