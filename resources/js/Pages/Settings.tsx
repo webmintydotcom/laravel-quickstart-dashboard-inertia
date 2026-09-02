@@ -74,7 +74,7 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                         <label
                                             key={option.value}
                                             className={cn(
-                                                'flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm peer-focus-visible:ring-ring peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
+                                                'flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2',
                                                 data.appearance === option.value
                                                     ? 'border-primary bg-accent text-accent-foreground font-medium'
                                                     : 'hover:bg-accent/50',
@@ -90,7 +90,7 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                                     setData('appearance', value);
                                                     applyAppearance(value);
                                                 }}
-                                                className="peer sr-only"
+                                                className="sr-only"
                                             />
                                             {option.label}
                                         </label>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\Appearance;
 use App\Models\User;
+use Illuminate\Support\Facades\Schema;
 
 test('a new user defaults to the system appearance and UTC', function (): void {
     $user = User::factory()->create();
@@ -31,6 +32,19 @@ test('the factory can override both preferences', function (): void {
 test('the model defaults match the migration defaults', function (): void {
     // $attributes wins over the column default on insert, so these two
     // declarations must agree or the migration's default becomes dead code.
-    expect((new User)->getAttributes())
-        ->toMatchArray(['appearance' => 'system', 'timezone' => 'UTC']);
+    // Compare against the actual schema defaults (read from the database)
+    // rather than hardcoded literals, so a drift in the migration is caught
+    // even if this test is never updated.
+    $columns = collect(Schema::getColumns('users'))->keyBy('name');
+
+    $modelAttributes = (new User)->getAttributes();
+
+    foreach (['appearance', 'timezone'] as $column) {
+        // Drivers can return the default decorated with quotes (SQLite
+        // commonly reports the string default as 'system', including the
+        // single quotes), so strip any wrapping quotes before comparing.
+        $schemaDefault = mb_trim((string) $columns[$column]['default'], "'\"");
+
+        expect($modelAttributes[$column])->toBe($schemaDefault);
+    }
 });
