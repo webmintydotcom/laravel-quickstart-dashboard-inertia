@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Inertia\Testing\AssertableInertia;
 
 test('the forgot password screen can be rendered', function (): void {
@@ -22,6 +23,36 @@ test('a reset link can be requested', function (): void {
     $this->post(route('password.email'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class);
+});
+
+test('a reset link request for an unknown email is indistinguishable from a known one', function (): void {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    $this->post(route('password.email'), ['email' => $user->email]);
+
+    $knownStatus = session('status');
+
+    expect($knownStatus)->toBe(trans(Password::RESET_LINK_SENT));
+
+    Notification::fake();
+
+    $this->post(route('password.email'), ['email' => 'nobody@example.com'])
+        ->assertSessionHasNoErrors()
+        ->assertSessionHas('status', $knownStatus);
+
+    Notification::assertNothingSent();
+});
+
+test('a throttled reset link request still surfaces an error', function (): void {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    $this->post(route('password.email'), ['email' => $user->email])->assertSessionHasNoErrors();
+
+    $this->post(route('password.email'), ['email' => $user->email])->assertSessionHasErrors('email');
 });
 
 test('the reset password screen can be rendered with its token', function (): void {

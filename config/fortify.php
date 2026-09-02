@@ -101,7 +101,13 @@ return [
     |
     */
 
-    'middleware' => ['web'],
+    // 'throttle:60,1' is on here because Fortify applies these middleware to every route
+    // it registers, and only login is throttled inside Fortify's own pipeline. Without it
+    // POST /register, POST /forgot-password and POST /reset-password carry no rate limit
+    // at all, leaving automated registration and password-reset probing wide open. Sixty
+    // requests per minute per IP is far above ordinary browsing - these routes include the
+    // GET pages - while still closing off scripted abuse.
+    'middleware' => ['web', 'throttle:60,1'],
 
     /*
     |--------------------------------------------------------------------------
@@ -114,10 +120,12 @@ return [
     |
     */
 
-    // 'login' is deliberately null: naming a limiter here removes Fortify's own
-    // EnsureLoginIsNotThrottled step from the login pipeline in favor of Laravel's
-    // generic throttle middleware, which aborts with a raw 429 instead of the
-    // ValidationException-on-email form error the login screen expects.
+    // Note that null is a deliberate deviation from Fortify, not its default: the published
+    // config stub ships 'login' => 'login'. Naming a limiter here removes Fortify's own
+    // EnsureLoginIsNotThrottled step from the login pipeline in favor of Laravel's generic
+    // throttle middleware, which aborts with a raw 429 instead of the
+    // ValidationException-on-email form error the login screen expects. FortifyServiceProvider
+    // still registers a 'login' limiter so that flipping this value back works correctly.
     'limiters' => [
         'login' => null,
         'passkeys' => null,
