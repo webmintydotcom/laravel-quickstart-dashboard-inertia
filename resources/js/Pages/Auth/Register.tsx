@@ -2,8 +2,8 @@ import { Link, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { route } from 'ziggy-js';
 
+import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/AuthLayout';
 
 export default function Register() {
@@ -27,85 +27,62 @@ export default function Register() {
         <AuthLayout title="Create an account" description="A few details and you're in.">
             <form onSubmit={submit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                        <label htmlFor="first_name" className="text-sm font-medium">
-                            First name
-                        </label>
-                        <Input
-                            id="first_name"
-                            autoComplete="given-name"
-                            autoFocus
-                            required
-                            aria-invalid={Boolean(form.errors.first_name)}
-                            value={form.data.first_name}
-                            onChange={(event) => form.setData('first_name', event.target.value)}
-                        />
-                        {form.errors.first_name && <p className="text-destructive text-sm">{form.errors.first_name}</p>}
-                    </div>
-
-                    <div className="space-y-2">
-                        <label htmlFor="last_name" className="text-sm font-medium">
-                            Last name
-                        </label>
-                        <Input
-                            id="last_name"
-                            autoComplete="family-name"
-                            required
-                            aria-invalid={Boolean(form.errors.last_name)}
-                            value={form.data.last_name}
-                            onChange={(event) => form.setData('last_name', event.target.value)}
-                        />
-                        {form.errors.last_name && <p className="text-destructive text-sm">{form.errors.last_name}</p>}
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium">
-                        Email
-                    </label>
-                    <Input
-                        id="email"
-                        type="email"
-                        autoComplete="username"
+                    <FormField
+                        id="first_name"
+                        label="First name"
+                        autoComplete="given-name"
+                        autoFocus
                         required
-                        aria-invalid={Boolean(form.errors.email)}
-                        value={form.data.email}
-                        onChange={(event) => form.setData('email', event.target.value)}
+                        error={form.errors.first_name}
+                        value={form.data.first_name}
+                        onChange={(event) => form.setData('first_name', event.target.value)}
                     />
-                    {form.errors.email && <p className="text-destructive text-sm">{form.errors.email}</p>}
-                </div>
 
-                <div className="space-y-2">
-                    <label htmlFor="password" className="text-sm font-medium">
-                        Password
-                    </label>
-                    <Input
-                        id="password"
-                        type="password"
-                        autoComplete="new-password"
+                    <FormField
+                        id="last_name"
+                        label="Last name"
+                        autoComplete="family-name"
                         required
-                        aria-invalid={Boolean(form.errors.password)}
-                        value={form.data.password}
-                        onChange={(event) => form.setData('password', event.target.value)}
-                    />
-                    {form.errors.password && <p className="text-destructive text-sm">{form.errors.password}</p>}
-                </div>
-
-                <div className="space-y-2">
-                    <label htmlFor="password_confirmation" className="text-sm font-medium">
-                        Confirm password
-                    </label>
-                    <Input
-                        id="password_confirmation"
-                        type="password"
-                        autoComplete="new-password"
-                        required
-                        value={form.data.password_confirmation}
-                        onChange={(event) => form.setData('password_confirmation', event.target.value)}
+                        error={form.errors.last_name}
+                        value={form.data.last_name}
+                        onChange={(event) => form.setData('last_name', event.target.value)}
                     />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={form.processing}>
+                <FormField
+                    id="email"
+                    label="Email"
+                    type="email"
+                    autoComplete="username"
+                    required
+                    error={form.errors.email}
+                    value={form.data.email}
+                    onChange={(event) => form.setData('email', event.target.value)}
+                />
+
+                <FormField
+                    id="password"
+                    label="Password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    error={form.errors.password}
+                    value={form.data.password}
+                    onChange={(event) => form.setData('password', event.target.value)}
+                />
+
+                <FormField
+                    id="password_confirmation"
+                    label="Confirm password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    error={form.errors.password_confirmation}
+                    value={form.data.password_confirmation}
+                    onChange={(event) => form.setData('password_confirmation', event.target.value)}
+                />
+
+                <Button type="submit" className="w-full" disabled={form.processing} aria-busy={form.processing}>
                     Create account
                 </Button>
 

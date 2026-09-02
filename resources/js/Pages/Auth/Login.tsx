@@ -1,13 +1,17 @@
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { route } from 'ziggy-js';
 
+import { FormField } from '@/components/form-field';
+import { StatusAlert } from '@/components/status-alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/AuthLayout';
+import type { SharedProps } from '@/types';
 
 export default function Login() {
+    const { flash } = usePage<SharedProps>().props;
+
     const form = useForm({
         email: '',
         password: '',
@@ -24,47 +28,39 @@ export default function Login() {
 
     return (
         <AuthLayout title="Log in" description="Welcome back. Enter your details to continue.">
-            <form onSubmit={submit} className="space-y-4">
-                <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium">
-                        Email
-                    </label>
-                    <Input
-                        id="email"
-                        type="email"
-                        autoComplete="username"
-                        autoFocus
-                        required
-                        aria-invalid={Boolean(form.errors.email)}
-                        value={form.data.email}
-                        onChange={(event) => form.setData('email', event.target.value)}
-                    />
-                    {form.errors.email && <p className="text-destructive text-sm">{form.errors.email}</p>}
-                </div>
+            <StatusAlert status={flash.status} />
 
-                <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                        <label htmlFor="password" className="text-sm font-medium">
-                            Password
-                        </label>
+            <form onSubmit={submit} className="space-y-4">
+                <FormField
+                    id="email"
+                    label="Email"
+                    type="email"
+                    autoComplete="username"
+                    autoFocus
+                    required
+                    error={form.errors.email}
+                    value={form.data.email}
+                    onChange={(event) => form.setData('email', event.target.value)}
+                />
+
+                <FormField
+                    id="password"
+                    label="Password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    error={form.errors.password}
+                    labelSuffix={
                         <Link
                             href={route('password.request')}
                             className="text-muted-foreground text-sm hover:underline"
                         >
                             Forgot password?
                         </Link>
-                    </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        aria-invalid={Boolean(form.errors.password)}
-                        value={form.data.password}
-                        onChange={(event) => form.setData('password', event.target.value)}
-                    />
-                    {form.errors.password && <p className="text-destructive text-sm">{form.errors.password}</p>}
-                </div>
+                    }
+                    value={form.data.password}
+                    onChange={(event) => form.setData('password', event.target.value)}
+                />
 
                 <label className="flex items-center gap-2 text-sm">
                     <Checkbox
@@ -74,7 +70,7 @@ export default function Login() {
                     Remember me
                 </label>
 
-                <Button type="submit" className="w-full" disabled={form.processing}>
+                <Button type="submit" className="w-full" disabled={form.processing} aria-busy={form.processing}>
                     Log in
                 </Button>
 
