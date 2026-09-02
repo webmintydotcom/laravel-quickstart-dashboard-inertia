@@ -23,3 +23,6 @@ yarn-error.log
 /.vscode
 /.zed
 .DS_Store
+
+# Design specs and implementation plans - kept on disk, never committed
+/docs/superpowers
