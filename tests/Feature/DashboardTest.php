@@ -86,3 +86,17 @@ test('a flashed status reaches the page props', function (): void {
                 ->where('flash.status', trans(Password::RESET_LINK_SENT))
         );
 });
+
+test('the dashboard renders inside the application shell', function (): void {
+    $user = User::factory()->create(['first_name' => 'Ada', 'last_name' => 'Lovelace']);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->component('Dashboard')
+                ->where('sidebarCollapsed', false)
+                ->where('appearance', 'system')
+        );
+});

@@ -11,6 +11,7 @@ parameters:
     checkModelProperties: true
     treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: true
+    parseModelCastsMethod: true
 
 #    ignoreErrors:
 #        - '#PHPDoc tag @var#'

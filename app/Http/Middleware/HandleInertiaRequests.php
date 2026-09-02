@@ -48,6 +48,8 @@ final class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => $request->session()->get('status'),
             ],
+            'appearance'       => HandleAppearance::resolve($request),
+            'sidebarCollapsed' => $request->cookie('sidebar_collapsed') === '1',
         ];
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $appearance ?? 'system' }}">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,6 +13,23 @@
         rel="stylesheet"
     />
 
+    <script>
+        // Only 'system' needs resolving. 'light' and 'dark' are already correct
+        // in the server response, so this script does nothing for them.
+        // Mirrored in resources/js/lib/appearance.ts, which applies the same
+        // resolution client side after Inertia navigations.
+        (function () {
+            var root = document.documentElement;
+
+            if (!root.classList.contains('system')) {
+                return;
+            }
+
+            var resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            root.classList.remove('light', 'dark', 'system');
+            root.classList.add(resolved);
+        })();
+    </script>
     @inertiaHead
     @routes
     @viteReactRefresh

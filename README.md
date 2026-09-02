@@ -168,6 +168,15 @@ Prettier is included to help you format your code consistently across your proje
 
 [Docs](https://github.com/stillat/blade-parser-typescript)
 
+## Application Shell
+
+The authenticated app (sidebar, top bar, and pages like Settings) ships as a starting shell, not a finished product.
+
+- **Navigation** is a single list edited in `resources/js/components/app-shell/navigation.ts`. Add, remove, or reorder entries there rather than hunting through the sidebar and mobile drawer components separately.
+- **Appearance** (light/dark/system) lives on the authenticated user's record, so it follows them across devices. It's also mirrored into an `appearance` cookie on save, purely so the very first server-rendered response can paint the right theme before Inertia props are available - without that mirror, the page would flash the wrong theme on load. The cookie is `httpOnly` and read only on the server; no JavaScript touches it. It's exempt from Laravel's cookie encryption in `bootstrap/app.php`, sharing that exemption list with the `sidebar_collapsed` cookie below, which JavaScript genuinely does read and write.
+- **Sidebar collapse** is stored in a cookie rather than `localStorage`. This starter has SSR wired up, and `localStorage` isn't available during a server render - a cookie is, so the collapsed/expanded state can be read on the very first render instead of flashing open and then collapsing.
+- **Originality is still your job.** This shell (layout, components, and defaults) is intentionally generic so it can serve any product. A real product built on this starter still needs its own product promise and a signature visual device that makes it feel like something, not a starter kit - see DESIGN.md §4.
+
 ## Additional Configurations
 
 Changes to the default Laravel files are included in this starter kit to improve performance and developer experience.
