@@ -6,6 +6,7 @@ import AppLayout from '@/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { applyAppearance, type Appearance } from '@/lib/appearance';
 import { cn } from '@/lib/utils';
 
 interface TimezoneOption {
@@ -33,7 +34,19 @@ export default function Settings({ settings, timezones }: SettingsProps) {
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        patch(route('settings.update'), { preserveScroll: true });
+        patch(route('settings.update'), {
+            preserveScroll: true,
+            // The appearance class was already applied optimistically on
+            // selection (see the radio's onChange below). If the save is
+            // rejected, the document is left showing an appearance the
+            // server never persisted, so fall back to the last confirmed
+            // value here.
+            onError: (formErrors) => {
+                if (formErrors.appearance) {
+                    applyAppearance(settings.appearance as Appearance);
+                }
+            },
+        });
     };
 
     return (
@@ -68,7 +81,11 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                                 name="appearance"
                                                 value={option.value}
                                                 checked={data.appearance === option.value}
-                                                onChange={(event) => setData('appearance', event.target.value)}
+                                                onChange={(event) => {
+                                                    const value = event.target.value as Appearance;
+                                                    setData('appearance', value);
+                                                    applyAppearance(value);
+                                                }}
                                                 className="sr-only"
                                             />
                                             {option.label}

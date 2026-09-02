@@ -28,6 +28,21 @@ test('the settings page renders with the current preferences', function (): void
         );
 });
 
+test('the default timezone appears in the grouped options', function (): void {
+    // 'UTC' is the column default from the migration. It has no '/', so an
+    // identifier filter that requires one silently drops it and every new
+    // user opens settings to a blank timezone.
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('settings'))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('settings.timezone', 'UTC')
+                ->has('timezones.Other')
+        );
+});
+
 test('both preferences can be updated', function (): void {
     $user = User::factory()->create();
 

@@ -31,6 +31,21 @@ final class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Mirrors the appearance/timezone migration defaults so a freshly
+     * instantiated model (including right after create(), before any
+     * round trip back to the database) already has them in memory. Without
+     * this, reading $user->appearance on an unrefreshed model created
+     * without those keys explicitly set throws a MissingAttributeException
+     * under Model::preventAccessingMissingAttributes().
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'appearance' => 'system',
+        'timezone'   => 'UTC',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

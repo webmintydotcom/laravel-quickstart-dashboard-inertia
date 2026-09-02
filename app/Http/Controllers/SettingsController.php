@@ -45,17 +45,21 @@ final class SettingsController extends Controller
         foreach (timezone_identifiers_list() as $identifier) {
             $parts = explode('/', $identifier, 2);
 
-            if (! isset($parts[1])) {
-                continue;
-            }
-
             $offset = (new DateTimeZone($identifier))->getOffset($now);
             $hours = intdiv($offset, 3600);
             $minutes = abs($offset % 3600) / 60;
 
-            $grouped[$parts[0]][] = [
+            // An identifier with no '/' (e.g. UTC, which is also the timezone
+            // column's own migration default) doesn't belong to a region.
+            // Group those under "Other" instead of dropping them, or every
+            // new user would open settings to a blank timezone field.
+            [$region, $label] = isset($parts[1])
+                ? [$parts[0], str_replace('_', ' ', $parts[1])]
+                : ['Other', $identifier];
+
+            $grouped[$region][] = [
                 'value'  => $identifier,
-                'label'  => str_replace('_', ' ', $parts[1]),
+                'label'  => $label,
                 'offset' => sprintf('UTC%s%02d:%02d', $offset >= 0 ? '+' : '-', abs($hours), $minutes),
             ];
         }
