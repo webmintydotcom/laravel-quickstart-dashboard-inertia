@@ -63,12 +63,22 @@ test('no chart series sits in the purple hue band', function (): void {
 
     expect($matches[1])->toHaveCount(10);
 
+    // Band floor is 240, not 255: #7e6bc4 (the violation this test guards against)
+    // sits at 252.8 degrees, so a 255 floor would miss it. Tailwind violet-500 is at
+    // 258, purple-500 at 271, fuchsia-500 at 292. Chart-2 blue is at 200, leaving
+    // 40 degrees of headroom below the band.
     foreach ($matches[1] as $hex) {
-        expect(hueOf($hex))->not->toBeBetween(255.0, 330.0, "{$hex} is purple");
+        expect(hueOf($hex))->not->toBeBetween(240.0, 330.0, "{$hex} is purple");
     }
 });
 
 test('the unused sidebar token family is gone', function (): void {
     expect((string) file_get_contents(resource_path('css/app.css')))
         ->not->toContain('--sidebar');
+});
+
+test('the hue band catches the violation it was written for', function (): void {
+    // #7e6bc4 was the real --chart-4 value in this repo. A band that misses it
+    // is decoration, not a guard.
+    expect(hueOf('#7e6bc4'))->toBeBetween(240.0, 330.0);
 });
