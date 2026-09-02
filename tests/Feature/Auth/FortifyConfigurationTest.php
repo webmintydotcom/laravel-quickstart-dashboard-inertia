@@ -35,3 +35,16 @@ test('login throttling stays inside fortify pipeline', function (): void {
     // form error.
     expect(config('fortify.limiters.login'))->toBeNull();
 });
+
+test('the unauthenticated auth endpoints are rate limited', function (string $name): void {
+    // Only login is throttled inside Fortify's own pipeline. These three rely on the
+    // 'throttle:60,1' entry in config/fortify.php's middleware array, which a clone
+    // re-publishing that config would silently drop.
+    $middleware = Route::getRoutes()->getByName($name)->gatherMiddleware();
+
+    expect($middleware)->toContain('throttle:60,1');
+})->with([
+    'registration'          => 'register.store',
+    'reset link request'    => 'password.email',
+    'password update'       => 'password.update',
+]);
