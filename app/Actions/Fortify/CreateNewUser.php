@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Webminty\PersonName\Rules\ValidPersonName;
 
 final class CreateNewUser implements CreatesNewUsers
 {
@@ -25,8 +26,8 @@ final class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name'  => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255', new ValidPersonName],
+            'last_name'  => ['required', 'string', 'max:255', new ValidPersonName],
             'email'      => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
             'password'   => $this->passwordRules(),
         ])->validate();
