@@ -29,6 +29,7 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
   - [Inertia.js](#inertiajs)
   - [Ziggy](#ziggy)
   - [Spatie Laravel Data](#spatie-laravel-data)
+  - [Laravel Fortify](#laravel-fortify)
 - [Frontend](#frontend)
   - [React](#react)
   - [Shadcn UI](#shadcn-ui)
@@ -70,6 +71,16 @@ Ziggy provides a `route()` helper in JavaScript, so you can use Laravel named ro
 Spatie Laravel Data is included to help you create data transfer objects (DTOs) in a simple and elegant way.
 
 [Docs](https://spatie.be/docs/laravel-data/v4/introduction)
+
+#### Laravel Fortify
+
+Fortify is the authentication backend. There are no auth controllers in this starter kit. Fortify registers the routes, and this app supplies the React screens and the actions behind them. Only two of Fortify's features are enabled in `config/fortify.php`: registration and password reset. Everything else it ships (email verification, two-factor authentication, passkeys, profile and password updates) is deliberately switched off, and you enable one by adding it back to the `features` array.
+
+That leaves `/login`, `/register`, `/forgot-password`, `/reset-password/{token}` and `/user/confirm-password`, rendered by the Inertia pages in `resources/js/Pages/Auth/`. The views are bound in `app/Providers/FortifyServiceProvider.php` and the create-user and reset-password actions live in `app/Actions/Fortify/`. A successful login, registration or password confirmation lands on `/dashboard`.
+
+Password reset needs real mail configuration in production. `.env.example` ships `MAIL_MAILER=log`, so reset links are written to `storage/logs/laravel.log` locally instead of being delivered.
+
+[Docs](https://laravel.com/docs/12.x/fortify)
 
 ### Frontend
 
