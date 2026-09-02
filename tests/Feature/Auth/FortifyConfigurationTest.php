@@ -28,6 +28,8 @@ test('fortify sends authenticated users to the dashboard', function (): void {
     expect(config('fortify.home'))->toBe('/dashboard');
 });
 
-test('the login route is rate limited', function (): void {
-    expect(config('fortify.limiters.login'))->toBe('login');
+test('login throttling stays inside fortify pipeline', function (): void {
+    // A named limiter would remove EnsureLoginIsNotThrottled from Fortify's login
+    // pipeline, turning a throttled login into a raw 429 instead of a form error.
+    expect(config('fortify.limiters.login'))->toBeNull();
 });

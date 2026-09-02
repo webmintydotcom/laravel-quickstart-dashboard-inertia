@@ -114,8 +114,12 @@ return [
     |
     */
 
+    // 'login' is deliberately null: naming a limiter here removes Fortify's own
+    // EnsureLoginIsNotThrottled step from the login pipeline in favor of Laravel's
+    // generic throttle middleware, which aborts with a raw 429 instead of the
+    // ValidationException-on-email form error the login screen expects.
     'limiters' => [
-        'login' => 'login',
+        'login' => null,
         'passkeys' => null,
     ],
 
