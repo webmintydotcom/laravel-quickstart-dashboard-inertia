@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Inertia embeds resources as plain props; the default "data" wrapper
+        // would break the flat shape our shared props and TypeScript types expect.
+        JsonResource::withoutWrapping();
+
         //https://planetscale.com/blog/laravels-safety-mechanisms
 
         // Prevent lazy loading of relationships in development to avoid N+1 query issues.

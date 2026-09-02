@@ -40,6 +40,9 @@ final class User extends Authenticatable
         ];
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function name(): Attribute
     {
         return Attribute::make(
