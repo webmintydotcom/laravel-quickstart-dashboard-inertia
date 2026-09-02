@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Data;
+
+use App\Models\User;
+use Spatie\LaravelData\Data;
+
+final class UserData extends Data
+{
+    public function __construct(
+        public int $id,
+        public string $first_name,
+        public string $last_name,
+        public string $name,
+        public string $email,
+    ) {}
+
+    /**
+     * Build from a model explicitly rather than letting laravel-data infer it.
+     *
+     * Inference normalises the model through toArray(), which omits `name` - it is
+     * an accessor and is not in the model's $appends.
+     */
+    public static function fromModel(User $user): self
+    {
+        return new self(
+            id: $user->id,
+            first_name: $user->first_name,
+            last_name: $user->last_name,
+            name: $user->name,
+            email: $user->email,
+        );
+    }
+}

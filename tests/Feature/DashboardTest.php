@@ -37,6 +37,27 @@ test('the authenticated user is shared with every page', function (): void {
         );
 });
 
+test('the shared user prop is flat and carries exactly the documented keys', function (): void {
+    // Guards two things at once: that the prop shape still matches
+    // resources/js/types/index.d.ts, and that no "data" envelope wraps it.
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->has(
+                    'auth.user',
+                    fn (AssertableInertia $prop) => $prop
+                        ->where('id', $user->id)
+                        ->where('first_name', $user->first_name)
+                        ->where('last_name', $user->last_name)
+                        ->where('name', $user->name)
+                        ->where('email', $user->email)
+                )
+        );
+});
+
 test('guests are shared a null user', function (): void {
     $this->get('/')
         ->assertInertia(fn (AssertableInertia $page) => $page->where('auth.user', null));

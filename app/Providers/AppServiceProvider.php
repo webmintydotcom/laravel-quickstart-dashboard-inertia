@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -23,12 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Inertia resolves a JsonResource prop through toResponse(), which applies
-        // Laravel's "data" envelope. Every prop in this app is consumed by Inertia,
-        // not a JSON:API client, so the envelope is off by default. A resource that
-        // genuinely wants it can set `public static $wrap = 'data';` on itself.
-        JsonResource::withoutWrapping();
-
         //https://planetscale.com/blog/laravels-safety-mechanisms
 
         // Prevent lazy loading of relationships in development to avoid N+1 query issues.
