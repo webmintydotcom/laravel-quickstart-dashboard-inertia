@@ -1,5 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 
 import { MobileDrawer } from '@/components/app-shell/mobile-drawer';
 import { Sidebar } from '@/components/app-shell/sidebar';
@@ -19,6 +19,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
     // SSR wired, and a render-time browser API read would break it.
     const [collapsed, setCollapsed] = useState(sidebarCollapsed);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const drawerTriggerRef = useRef<HTMLButtonElement>(null);
 
     const toggleCollapse = () => {
         const next = !collapsed;
@@ -48,16 +49,16 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                     </div>
                 </aside>
 
-                <div id="app-drawer">
-                    <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
-                </div>
+                <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} triggerRef={drawerTriggerRef} />
 
                 <div className="flex min-w-0 flex-1 flex-col">
                     <TopBar
                         title={title}
                         collapsed={collapsed}
+                        drawerOpen={drawerOpen}
                         onToggleCollapse={toggleCollapse}
                         onOpenDrawer={() => setDrawerOpen(true)}
+                        drawerTriggerRef={drawerTriggerRef}
                     />
 
                     <main id="main-content" tabIndex={-1} className="bg-background flex-1 focus:outline-none">

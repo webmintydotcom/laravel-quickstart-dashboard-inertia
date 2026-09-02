@@ -1,22 +1,33 @@
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import type { RefObject } from 'react';
 
 import { UserMenu } from '@/components/app-shell/user-menu';
 
 interface TopBarProps {
     title: string;
     collapsed: boolean;
+    drawerOpen: boolean;
     onToggleCollapse: () => void;
     onOpenDrawer: () => void;
+    drawerTriggerRef: RefObject<HTMLButtonElement | null>;
 }
 
-export function TopBar({ title, collapsed, onToggleCollapse, onOpenDrawer }: TopBarProps) {
+export function TopBar({
+    title,
+    collapsed,
+    drawerOpen,
+    onToggleCollapse,
+    onOpenDrawer,
+    drawerTriggerRef,
+}: TopBarProps) {
     return (
         <header className="flex h-16 shrink-0 items-center gap-3 bg-stone-900 px-4 text-white sm:px-6">
             <button
+                ref={drawerTriggerRef}
                 type="button"
                 onClick={onOpenDrawer}
                 aria-label="Open navigation"
-                aria-controls="app-drawer"
+                aria-expanded={drawerOpen}
                 className="grid size-11 place-items-center rounded-md hover:bg-white/10 lg:hidden"
             >
                 <Menu className="size-5" aria-hidden="true" />
