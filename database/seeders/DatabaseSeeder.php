@@ -19,8 +19,8 @@ final class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@' . config('app.domain'),
+            'last_name'  => 'User',
+            'email'      => 'test@' . config('app.domain'),
         ]);
     }
 }
