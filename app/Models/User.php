@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Appearance;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,6 +18,8 @@ use Illuminate\Notifications\Notifiable;
     'last_name',
     'email',
     'password',
+    'appearance',
+    'timezone',
 ])]
 #[Hidden([
     'password',
@@ -35,6 +38,7 @@ final class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'appearance'        => Appearance::class,
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
         ];
