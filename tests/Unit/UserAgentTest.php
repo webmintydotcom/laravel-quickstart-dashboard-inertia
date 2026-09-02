@@ -42,3 +42,11 @@ it('truncates an absurdly long unrecognised agent', function (): void {
     // one row wreck the layout.
     expect(mb_strlen(UserAgent::describe(str_repeat('x', 500))))->toBeLessThanOrEqual(120);
 });
+
+it('reports a modern iPad as macOS, which is a known limit of user-agent sniffing', function (): void {
+    // iPadOS 13+ Safari sends a macOS-identical agent by default. Nothing in the
+    // string distinguishes it, so this is documented rather than fixed.
+    expect(UserAgent::describe(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15'
+    ))->toBe('Safari on macOS');
+});

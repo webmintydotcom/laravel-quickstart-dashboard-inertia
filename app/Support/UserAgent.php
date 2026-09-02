@@ -22,7 +22,14 @@ final class UserAgent
         'Safari/'  => 'Safari',
     ];
 
-    /** @var array<string, string> */
+    /**
+     * Order matters. iPadOS 13+ Safari sends a macOS-identical user agent by default,
+     * so iPads without explicit mobile request markers are reported as macOS. This is
+     * a known limitation of substring-based detection and is accepted rather than
+     * worked around, to keep the parser simple.
+     *
+     * @var array<string, string>
+     */
     private const PLATFORMS = [
         'iPhone'      => 'iOS',
         'iPad'        => 'iPadOS',
