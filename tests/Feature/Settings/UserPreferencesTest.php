@@ -27,3 +27,10 @@ test('the factory can override both preferences', function (): void {
     expect($user->refresh()->appearance)->toBe(Appearance::Light)
         ->and($user->timezone)->toBe('America/Los_Angeles');
 });
+
+test('the model defaults match the migration defaults', function (): void {
+    // $attributes wins over the column default on insert, so these two
+    // declarations must agree or the migration's default becomes dead code.
+    expect((new User)->getAttributes())
+        ->toMatchArray(['appearance' => 'system', 'timezone' => 'UTC']);
+});

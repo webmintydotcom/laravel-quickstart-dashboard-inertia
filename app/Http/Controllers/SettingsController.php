@@ -10,6 +10,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,33 +40,39 @@ final class SettingsController extends Controller
      */
     private function groupedTimezones(): array
     {
-        $grouped = [];
-        $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        // Offsets are DST-dependent, so this is cached for a day rather than
+        // forever - long enough to spare every settings render from building
+        // 419 DateTimeZone objects, short enough to stay accurate across DST
+        // transitions.
+        return Cache::remember('settings.grouped-timezones', 60 * 60 * 24, function (): array {
+            $grouped = [];
+            $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
 
-        foreach (timezone_identifiers_list() as $identifier) {
-            $parts = explode('/', $identifier, 2);
+            foreach (timezone_identifiers_list() as $identifier) {
+                $parts = explode('/', $identifier, 2);
 
-            $offset = (new DateTimeZone($identifier))->getOffset($now);
-            $hours = intdiv($offset, 3600);
-            $minutes = abs($offset % 3600) / 60;
+                $offset = (new DateTimeZone($identifier))->getOffset($now);
+                $hours = intdiv($offset, 3600);
+                $minutes = abs($offset % 3600) / 60;
 
-            // An identifier with no '/' (e.g. UTC, which is also the timezone
-            // column's own migration default) doesn't belong to a region.
-            // Group those under "Other" instead of dropping them, or every
-            // new user would open settings to a blank timezone field.
-            [$region, $label] = isset($parts[1])
-                ? [$parts[0], str_replace('_', ' ', $parts[1])]
-                : ['Other', $identifier];
+                // An identifier with no '/' (e.g. UTC, which is also the timezone
+                // column's own migration default) doesn't belong to a region.
+                // Group those under "Other" instead of dropping them, or every
+                // new user would open settings to a blank timezone field.
+                [$region, $label] = isset($parts[1])
+                    ? [$parts[0], str_replace('_', ' ', $parts[1])]
+                    : ['Other', $identifier];
 
-            $grouped[$region][] = [
-                'value'  => $identifier,
-                'label'  => $label,
-                'offset' => sprintf('UTC%s%02d:%02d', $offset >= 0 ? '+' : '-', abs($hours), $minutes),
-            ];
-        }
+                $grouped[$region][] = [
+                    'value'  => $identifier,
+                    'label'  => $label,
+                    'offset' => sprintf('UTC%s%02d:%02d', $offset >= 0 ? '+' : '-', abs($hours), $minutes),
+                ];
+            }
 
-        ksort($grouped);
+            ksort($grouped);
 
-        return $grouped;
+            return $grouped;
+        });
     }
 }

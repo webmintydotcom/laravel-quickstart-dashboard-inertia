@@ -5,6 +5,8 @@ export interface NavItem {
     icon: LucideIcon;
     /** Ziggy route name. */
     route: string;
+    /** Parameters for the Ziggy route, when it needs any. */
+    params?: Record<string, string | number>;
     /** Ziggy pattern for the active check, when the route name alone is too narrow. */
     activeMatch?: string;
 }

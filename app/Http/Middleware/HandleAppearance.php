@@ -13,6 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 final class HandleAppearance
 {
     /**
+     * Resolves the appearance for any context that needs it (the shared view
+     * and the Inertia shared prop), so both stay in agreement for guests too.
+     */
+    public static function resolve(Request $request): string
+    {
+        return $request->user()?->appearance->value ?? self::fromCookie($request);
+    }
+
+    /**
      * Shares the resolved appearance with the root view so the class lands on
      * <html> in the server response. Without this the page paints in the wrong
      * theme and corrects itself after hydration, which reads as a flash.
@@ -22,15 +31,12 @@ final class HandleAppearance
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $appearance = $request->user()?->appearance->value
-            ?? $this->fromCookie($request);
-
-        View::share('appearance', $appearance);
+        View::share('appearance', self::resolve($request));
 
         return $next($request);
     }
 
-    private function fromCookie(Request $request): string
+    private static function fromCookie(Request $request): string
     {
         $cookie = $request->cookie('appearance');
 

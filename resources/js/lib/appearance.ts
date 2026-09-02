@@ -10,5 +10,7 @@ export function applyAppearance(appearance: Appearance): void {
                 : 'light'
             : appearance;
 
-    document.documentElement.className = resolved;
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark', 'system');
+    root.classList.add(resolved);
 }

@@ -18,6 +18,12 @@ test('a guest cookie drives the root element class', function (): void {
         ->assertSee('class="dark"', escape: false);
 });
 
+test('a guest cookie also drives the shared appearance prop', function (): void {
+    $this->withUnencryptedCookie('appearance', 'dark')
+        ->get('/')
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('appearance', 'dark'));
+});
+
 test('the user record wins over the cookie', function (): void {
     $user = User::factory()->create(['appearance' => Appearance::Light]);
 

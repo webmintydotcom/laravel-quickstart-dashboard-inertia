@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { GooeyToaster, gooeyToast } from 'goey-toast';
 
 import type { SharedProps } from '@/types';
@@ -9,8 +9,8 @@ const MESSAGES: Record<string, string> = {
 };
 
 /**
- * Turns the shared flash.status prop into a toast exactly once per value.
- * Toasts supplement validation and error UI; they never replace it.
+ * Turns the shared flash.status prop into a toast exactly once per server
+ * response. Toasts supplement validation and error UI; they never replace it.
  *
  * Renders the GooeyToaster viewport itself, so this must be mounted exactly
  * once — in AppLayout, not on individual pages — or no toast ever appears
@@ -18,16 +18,12 @@ const MESSAGES: Record<string, string> = {
  */
 export function FlashToaster() {
     const { flash } = usePage<SharedProps>().props;
-    const lastShown = useRef<string | null>(null);
 
     useEffect(() => {
-        if (!flash.status || flash.status === lastShown.current) {
-            return;
+        if (flash.status) {
+            gooeyToast.success(MESSAGES[flash.status] ?? flash.status);
         }
-
-        lastShown.current = flash.status;
-        gooeyToast.success(MESSAGES[flash.status] ?? flash.status);
-    }, [flash.status]);
+    }, [flash]);
 
     return <GooeyToaster />;
 }

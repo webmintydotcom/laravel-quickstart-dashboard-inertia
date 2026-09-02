@@ -16,7 +16,7 @@ export function SidebarLink({ item, collapsed, onNavigate }: SidebarLinkProps) {
 
     return (
         <Link
-            href={route(item.route)}
+            href={route(item.route, item.params)}
             onClick={onNavigate}
             aria-current={isActive ? 'page' : undefined}
             aria-label={collapsed ? item.label : undefined}

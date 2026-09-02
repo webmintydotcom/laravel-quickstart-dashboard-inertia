@@ -64,8 +64,9 @@ test('updating appearance also sets the cookie so the next first paint is correc
     $this->actingAs($user)
         ->patch(route('settings.update'), ['appearance' => 'dark', 'timezone' => 'UTC'])
         // Third argument is false because this cookie is deliberately exempt from
-        // encryption in bootstrap/app.php - the front end reads it from document.cookie
-        // to avoid a flash of the wrong theme. assertCookie() decrypts by default.
+        // encryption in bootstrap/app.php - it shares that exemption list with
+        // sidebar_collapsed, which JavaScript genuinely does write via document.cookie.
+        // assertCookie() decrypts by default, so the plaintext cookie needs this.
         ->assertCookie('appearance', 'dark', false);
 });
 

@@ -5,7 +5,15 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { applyAppearance, type Appearance } from '@/lib/appearance';
 import { cn } from '@/lib/utils';
 
@@ -41,11 +49,7 @@ export default function Settings({ settings, timezones }: SettingsProps) {
             // rejected, the document is left showing an appearance the
             // server never persisted, so fall back to the last confirmed
             // value here.
-            onError: (formErrors) => {
-                if (formErrors.appearance) {
-                    applyAppearance(settings.appearance as Appearance);
-                }
-            },
+            onError: () => applyAppearance(settings.appearance as Appearance),
         });
     };
 
@@ -70,7 +74,7 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                         <label
                                             key={option.value}
                                             className={cn(
-                                                'flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm',
+                                                'flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm peer-focus-visible:ring-ring peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
                                                 data.appearance === option.value
                                                     ? 'border-primary bg-accent text-accent-foreground font-medium'
                                                     : 'hover:bg-accent/50',
@@ -86,7 +90,7 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                                     setData('appearance', value);
                                                     applyAppearance(value);
                                                 }}
-                                                className="sr-only"
+                                                className="peer sr-only"
                                             />
                                             {option.label}
                                         </label>
@@ -113,13 +117,16 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {Object.entries(timezones).map(([region, zones]) =>
-                                            zones.map((zone) => (
-                                                <SelectItem key={zone.value} value={zone.value}>
-                                                    {region} / {zone.label} ({zone.offset})
-                                                </SelectItem>
-                                            )),
-                                        )}
+                                        {Object.entries(timezones).map(([region, zones]) => (
+                                            <SelectGroup key={region}>
+                                                <SelectLabel>{region}</SelectLabel>
+                                                {zones.map((zone) => (
+                                                    <SelectItem key={zone.value} value={zone.value}>
+                                                        {zone.label} ({zone.offset})
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                                 {errors.timezone && <p className="text-destructive text-sm">{errors.timezone}</p>}

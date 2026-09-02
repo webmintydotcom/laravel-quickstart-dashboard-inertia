@@ -40,6 +40,8 @@ final class User extends Authenticatable
      *
      * @var array<string, mixed>
      */
+    // Must match the column defaults in the
+    // 2026_09_02_000000_add_appearance_and_timezone_to_users_table migration.
     protected $attributes = [
         'appearance' => 'system',
         'timezone'   => 'UTC',

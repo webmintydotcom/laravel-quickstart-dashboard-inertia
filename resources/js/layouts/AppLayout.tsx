@@ -1,5 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { MobileDrawer } from '@/components/app-shell/mobile-drawer';
 import { Sidebar } from '@/components/app-shell/sidebar';
@@ -25,8 +25,30 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
     const toggleCollapse = () => {
         const next = !collapsed;
         setCollapsed(next);
-        document.cookie = `sidebar_collapsed=${next ? '1' : '0'};path=/;max-age=31536000;SameSite=Lax`;
+        const secure = location.protocol === 'https:' ? ';Secure' : '';
+        document.cookie = `sidebar_collapsed=${next ? '1' : '0'};path=/;max-age=31536000;SameSite=Lax${secure}`;
     };
+
+    // The drawer is mobile/tablet-only UI. If the viewport crosses up to the
+    // desktop breakpoint while it's open (e.g. rotating a tablet, resizing a
+    // window), close it so it doesn't float over the now-visible sidebar.
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const query = window.matchMedia('(min-width: 64rem)');
+
+        const handleChange = (event: MediaQueryListEvent) => {
+            if (event.matches) {
+                setDrawerOpen(false);
+            }
+        };
+
+        query.addEventListener('change', handleChange);
+
+        return () => query.removeEventListener('change', handleChange);
+    }, []);
 
     return (
         <>
@@ -35,7 +57,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
 
             <a
                 href="#main-content"
-                className="bg-background focus:ring-ring sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:px-4 focus:py-2 focus:ring-2"
+                className="bg-background focus:ring-ring sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-md focus:px-4 focus:py-2 focus:ring-2"
             >
                 Skip to content
             </a>
