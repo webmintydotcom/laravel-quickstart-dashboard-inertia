@@ -1,28 +1,17 @@
-import { Head, router, usePage } from '@inertiajs/react';
-import { route } from 'ziggy-js';
+import { usePage } from '@inertiajs/react';
 
-import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/AppLayout';
 import type { SharedProps } from '@/types';
 
 export default function Dashboard() {
     const { auth } = usePage<SharedProps>().props;
 
     return (
-        <>
-            <Head title="Dashboard" />
-
-            <div className="bg-background text-foreground min-h-screen px-6 py-10">
-                <div className="mx-auto flex max-w-4xl items-start justify-between gap-6">
-                    <div>
-                        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-                        <p className="text-muted-foreground mt-1 text-sm">Signed in as {auth.user?.name}</p>
-                    </div>
-
-                    <Button variant="outline" onClick={() => router.post(route('logout'))}>
-                        Log out
-                    </Button>
-                </div>
+        <AppLayout title="Dashboard">
+            <div className="px-4 py-6 sm:px-6 lg:px-8">
+                <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">Dashboard</h1>
+                <p className="text-muted-foreground mt-2 text-sm">Signed in as {auth.user?.name}</p>
             </div>
-        </>
+        </AppLayout>
     );
 }
