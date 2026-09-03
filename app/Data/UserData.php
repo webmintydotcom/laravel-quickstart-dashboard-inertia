@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Data;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelData\Data;
 
 final class UserData extends Data
@@ -15,6 +16,7 @@ final class UserData extends Data
         public string $last_name,
         public string $name,
         public string $email,
+        public ?string $avatar_url,
     ) {}
 
     /**
@@ -25,12 +27,17 @@ final class UserData extends Data
      */
     public static function fromModel(User $user): self
     {
+        $avatarPath = $user->avatar_path;
+
         return new self(
             id: $user->id,
             first_name: $user->first_name,
             last_name: $user->last_name,
             name: $user->name,
             email: $user->email,
+            avatar_url: $avatarPath === null
+                ? null
+                : Storage::disk('public')->url($avatarPath),
         );
     }
 }

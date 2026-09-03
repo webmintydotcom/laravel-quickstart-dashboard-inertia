@@ -36,15 +36,21 @@ final class User extends Authenticatable
      * round trip back to the database) already has them in memory. Without
      * this, reading $user->appearance on an unrefreshed model created
      * without those keys explicitly set throws a MissingAttributeException
-     * under Model::preventAccessingMissingAttributes().
+     * under Model::preventAccessingMissingAttributes(). Nullable columns with
+     * no column default - avatar_path, for one - belong here too: their "default"
+     * is just null, but without an entry the key is still absent from a fresh
+     * model's attributes, and reading it throws the same exception. Add every
+     * new nullable column here rather than reaching for getRawOriginal() at
+     * each call site.
      *
      * @var array<string, mixed>
      */
     // Must match the column defaults in the
     // 2026_09_02_000000_add_appearance_and_timezone_to_users_table migration.
     protected $attributes = [
-        'appearance' => 'system',
-        'timezone'   => 'UTC',
+        'appearance'   => 'system',
+        'timezone'     => 'UTC',
+        'avatar_path'  => null,
     ];
 
     /**

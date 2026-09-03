@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia;
 
 test('guests are redirected to the login page', function (): void {
@@ -54,7 +55,19 @@ test('the shared user prop is flat and carries exactly the documented keys', fun
                         ->where('last_name', $user->last_name)
                         ->where('name', $user->name)
                         ->where('email', $user->email)
+                        ->where('avatar_url', null)
                 )
+        );
+});
+
+test('the shared user prop carries the avatar url when one is set', function (): void {
+    $user = User::factory()->create(['avatar_path' => 'avatars/example.webp']);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('auth.user.avatar_url', Storage::disk('public')->url('avatars/example.webp'))
         );
 });
 

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, Settings, UserCircle, type LucideIcon } from 'lucide-react';
 
 export interface NavItem {
     label: string;
@@ -28,5 +28,8 @@ export const primaryNavigation: NavGroup[] = [
 
 /** Anchored to the bottom of the sidebar in expanded, collapsed and drawer states. */
 export const footerNavigation: NavGroup = {
-    items: [{ label: 'Settings', icon: Settings, route: 'settings', activeMatch: 'settings*' }],
+    items: [
+        { label: 'Profile', icon: UserCircle, route: 'profile' },
+        { label: 'Settings', icon: Settings, route: 'settings', activeMatch: 'settings*' },
+    ],
 };
