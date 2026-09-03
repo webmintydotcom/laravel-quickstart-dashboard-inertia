@@ -71,3 +71,27 @@ test('a wrong password leaves other sessions alone', function (): void {
 
     expect(DB::table('sessions')->where('user_id', $user->id)->count())->toBe(2);
 });
+
+test('logging out other devices does not touch another user\'s sessions', function (): void {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+
+    $this->actingAs($user)->get(route('profile'));
+    $currentSessionId = DB::table('sessions')->where('user_id', $user->id)->value('id');
+
+    DB::table('sessions')->insert([
+        'id'            => 'other-users-session-id',
+        'user_id'       => $otherUser->id,
+        'ip_address'    => '203.0.113.9',
+        'user_agent'    => 'Mozilla/5.0',
+        'payload'       => '',
+        'last_activity' => now()->subHour()->getTimestamp(),
+    ]);
+
+    $this->actingAs($user)
+        ->withCookie(config('session.cookie'), $currentSessionId)
+        ->delete(route('profile.sessions.destroy'), ['password' => 'password'])
+        ->assertRedirect();
+
+    expect(DB::table('sessions')->where('id', 'other-users-session-id')->exists())->toBeTrue();
+});

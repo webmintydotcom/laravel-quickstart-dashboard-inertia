@@ -46,6 +46,10 @@ final class ProfileController extends Controller
     {
         $currentSessionId = $request->session()->getId();
 
+        // Hard dependency on SESSION_DRIVER=database: sessions only exist as rows
+        // in this table under that driver. With any other driver (file, redis,
+        // ...) this query returns nothing and the browser-sessions list renders
+        // empty, even though the user is plainly signed in right now.
         return DB::table('sessions')
             ->where('user_id', $request->user()->id)
             ->orderByDesc('last_activity')

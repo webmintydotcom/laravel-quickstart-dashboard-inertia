@@ -179,9 +179,11 @@ The authenticated app (sidebar, top bar, and pages like Settings) ships as a sta
 
 ### Profile Page
 
-`/profile` (`resources/js/Pages/Profile.tsx`) gives the signed-in user five independent forms, each backed by its own controller and validated into its own named Laravel error bag: profile information (name/email, via Fortify), password, avatar, browser sessions, and account deletion. Each form's `useForm()` call passes its bag name as both the remember key and the `errorBag` request option, so a validation error from one form never renders under another form's field - this only works because every submit call names its bag explicitly.
+`/profile` (`resources/js/Pages/Profile.tsx`) gives the signed-in user five independent forms, each backed by its own controller and validated into its own named Laravel error bag: profile information (name/email, via Fortify), password, avatar, browser sessions, and account deletion. Each form's `useForm()` call passes its bag name only as the `errorBag` request option on that form's submit call, so a validation error from one form never renders under another form's field - this only works because every submit call names its bag explicitly. Never pass that bag name (or anything else) as a leading string argument to `useForm()` itself: in @inertiajs/react that argument is a history remember key, which mirrors the form's state into `window.history.replaceState` on every keystroke, and three of these forms hold a plaintext password.
 
 Avatars are resized to a 256px square WebP (`app/Actions/Profile/StoreAvatar.php`) and stored on the `public` disk. That disk is only browser-reachable through the `storage` symlink, which `php artisan storage:link` creates - already wired into `composer.json`'s `post-create-project-cmd`, so a fresh `laravel new --using=...` install has it from the start. If avatars 404 in an existing checkout, run `php artisan storage:link` yourself.
+
+The browser sessions list and "Log out other devices" both depend on `SESSION_DRIVER=database` - they read from and delete rows in the `sessions` table. With any other driver the list renders empty and the logout button evicts nobody, though it still reports success.
 
 Two features Fortify ships are still switched off and are not part of this page: email verification and two-factor authentication. Both are cycle 2b work - enabling them means adding a "Verify email" prompt and a two-factor section here.
 

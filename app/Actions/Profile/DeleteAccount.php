@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Profile;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 final class DeleteAccount
@@ -16,17 +17,18 @@ final class DeleteAccount
      */
     public function __invoke(User $user): void
     {
-        // getRawOriginal(), not the avatar_path accessor: see the same idiom in
-        // StoreAvatar and AvatarController. A User instance that never had this
-        // column selected or defaulted has no 'avatar_path' key in its attributes
-        // at all, and Model::shouldBeStrict() turns direct access into a
-        // MissingAttributeException. getRawOriginal() tolerates the key being
-        // absent, returning null either way.
-        $path = $user->getRawOriginal('avatar_path');
+        $path = $user->avatar_path;
 
         if ($path !== null) {
             Storage::disk('public')->delete($path);
         }
+
+        // The user's own session rows outlive the invalidate() call the controller
+        // makes on the current session alone - that only destroys the session the
+        // request arrived on. Without this, a deleted account's IP, user agent and
+        // serialized payload sit in the sessions table indefinitely. This only
+        // deletes anything under SESSION_DRIVER=database; see the README.
+        DB::table('sessions')->where('user_id', $user->id)->delete();
 
         $user->delete();
     }

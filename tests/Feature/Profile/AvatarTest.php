@@ -28,7 +28,8 @@ test('a user can upload an avatar and it is resized to a square', function (): v
     $size = getimagesizefromstring(Storage::disk('public')->get($path));
 
     expect($size[0])->toBe(256)
-        ->and($size[1])->toBe(256);
+        ->and($size[1])->toBe(256)
+        ->and($size['mime'])->toBe('image/webp');
 });
 
 test('replacing an avatar deletes the previous file', function (): void {
@@ -86,6 +87,31 @@ test('an oversized image is rejected', function (): void {
             'avatar' => UploadedFile::fake()->image('huge.jpg')->size(5000),
         ])
         ->assertSessionHasErrors('avatar', errorBag: 'updateAvatar');
+});
+
+test('an image with excessive pixel dimensions is rejected', function (): void {
+    $user = User::factory()->create();
+
+    // A small file can still decode to a huge bitmap - a solid-colour 8000x8000
+    // PNG is only a few KB on disk but needs hundreds of MB once GD decodes it.
+    // The dimensions rule reads the header via getimagesize() and rejects this
+    // before Intervention ever touches the file. UploadedFile::fake()->image()
+    // itself calls imagecreatetruecolor() to build the fixture, which - unlike
+    // the app code under test - does need real memory for an 8000x8000 buffer,
+    // so the PHP memory limit is raised only around building the fixture.
+    $previousLimit = ini_set('memory_limit', '512M');
+
+    try {
+        $this->actingAs($user)
+            ->post(route('profile.avatar.store'), [
+                'avatar' => UploadedFile::fake()->image('huge.png', 8000, 8000),
+            ])
+            ->assertSessionHasErrors('avatar', errorBag: 'updateAvatar');
+    } finally {
+        ini_set('memory_limit', $previousLimit);
+    }
+
+    expect($user->refresh()->avatar_path)->toBeNull();
 });
 
 test('guests cannot upload an avatar', function (): void {

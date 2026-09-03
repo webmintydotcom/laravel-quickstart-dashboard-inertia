@@ -23,6 +23,10 @@ it('describes common browsers and platforms', function (string $agent, string $e
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
         'Edge on Windows',
     ],
+    'opera on windows' => [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 OPR/117.0.0.0',
+        'Opera on Windows',
+    ],
     'chrome on android' => [
         'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36',
         'Chrome on Android',
@@ -35,6 +39,14 @@ it('falls back to the raw string when it recognises nothing', function (): void 
 
 it('handles a missing user agent', function (): void {
     expect(UserAgent::describe(null))->toBe('Unknown device');
+});
+
+it('handles an empty user agent', function (): void {
+    expect(UserAgent::describe(''))->toBe('Unknown device');
+});
+
+it('handles a whitespace-only user agent', function (): void {
+    expect(UserAgent::describe('   '))->toBe('Unknown device');
 });
 
 it('truncates an absurdly long unrecognised agent', function (): void {

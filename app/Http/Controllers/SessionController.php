@@ -26,6 +26,13 @@ final class SessionController extends Controller
         // middleware - the middleware keeps only a timestamp.
         Auth::logoutOtherDevices($request->string('password')->value());
 
+        // This DELETE is the only thing that actually evicts other devices. The
+        // rehash above only forces other sessions to fail re-authentication if the
+        // AuthenticateSession middleware is checking the password hash on every
+        // request, and this starter does not register it (see the Profile Page
+        // section of the README). Without SESSION_DRIVER=database this query has
+        // no rows to act on, so nothing is logged out even though the flash
+        // message below still claims success.
         DB::table('sessions')
             ->where('user_id', $request->user()->id)
             ->where('id', '!=', $currentSessionId)

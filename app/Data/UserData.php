@@ -27,12 +27,7 @@ final class UserData extends Data
      */
     public static function fromModel(User $user): self
     {
-        // getRawOriginal(), not the avatar_path accessor: a User resolved via
-        // actingAs() in tests has no 'avatar_path' key in its attributes at
-        // all when the factory doesn't set one, and Model::shouldBeStrict()
-        // turns that into a MissingAttributeException. See the same pattern
-        // in StoreAvatar and AvatarController.
-        $avatarPath = $user->getRawOriginal('avatar_path');
+        $avatarPath = $user->avatar_path;
 
         return new self(
             id: $user->id,

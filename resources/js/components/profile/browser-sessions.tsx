@@ -12,6 +12,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/form-field';
 import type { Session } from '@/types';
@@ -51,77 +52,96 @@ export function BrowserSessions({ sessions }: Props) {
                     Where you&apos;re currently signed in. Log out of other devices if any of these look unfamiliar.
                 </p>
 
-                <ul className="mt-4 divide-y">
-                    {sessions.map((session, index) => (
-                        <li key={index} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
-                            <div>
-                                <p className="font-medium">
-                                    {session.device}
-                                    {session.is_current && (
-                                        <span className="text-primary ml-2 text-xs font-semibold">
-                                            Current session
-                                        </span>
-                                    )}
-                                </p>
-                                <p className="text-muted-foreground">
-                                    {session.ip_address ?? 'Unknown location'} &middot; {session.last_active}
-                                </p>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                {sessions.length === 0 ? (
+                    <p className="text-muted-foreground mt-4 text-sm">
+                        No sessions to show. This list requires the database session driver
+                        (<code>SESSION_DRIVER=database</code>).
+                    </p>
+                ) : (
+                    <ul className="mt-4 divide-y">
+                        {sessions.map((session) => (
+                            <li
+                                key={`${session.ip_address}-${session.last_active}`}
+                                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
+                            >
+                                <div>
+                                    <p className="font-medium">
+                                        {session.device}
+                                        {session.is_current && (
+                                            <span className="text-primary ml-2 text-xs font-semibold">
+                                                Current session
+                                            </span>
+                                        )}
+                                    </p>
+                                    <p className="text-muted-foreground">
+                                        {session.ip_address ?? 'Unknown location'} &middot; {session.last_active}
+                                    </p>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <Button type="button" variant="outline" className="mt-4 min-h-11" onClick={() => setOpen(true)}>
-                        Log out other devices
-                    </Button>
+                {sessions.length > 0 && (
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                            <Button type="button" variant="outline" className="mt-4 min-h-11">
+                                Log out other devices
+                            </Button>
+                        </DialogTrigger>
 
-                    <DialogContent
-                        onOpenAutoFocus={(event) => {
-                            event.preventDefault();
-                            cancelRef.current?.focus();
-                        }}
-                    >
-                        <form onSubmit={submit}>
-                            <DialogHeader>
-                                <DialogTitle>Log out of other browser sessions?</DialogTitle>
-                                <DialogDescription>
-                                    This signs you out on every device except this one. Enter your password to
-                                    confirm.
-                                </DialogDescription>
-                            </DialogHeader>
+                        <DialogContent
+                            onOpenAutoFocus={(event) => {
+                                event.preventDefault();
+                                cancelRef.current?.focus();
+                            }}
+                        >
+                            <form onSubmit={submit}>
+                                <DialogHeader>
+                                    <DialogTitle>Log out of other browser sessions?</DialogTitle>
+                                    <DialogDescription>
+                                        This signs you out on every device except this one. Enter your password to
+                                        confirm.
+                                    </DialogDescription>
+                                </DialogHeader>
 
-                            <FormField
-                                id="logout-sessions-password"
-                                label="Password"
-                                type="password"
-                                autoComplete="current-password"
-                                value={data.password}
-                                error={errors.password}
-                                onChange={(event) => setData('password', event.target.value)}
-                                className="mt-4"
-                            />
+                                <FormField
+                                    id="logout-sessions-password"
+                                    label="Password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    value={data.password}
+                                    error={errors.password}
+                                    onChange={(event) => setData('password', event.target.value)}
+                                    className="mt-4"
+                                />
 
-                            <DialogFooter className="mt-6">
-                                <Button
-                                    ref={cancelRef}
-                                    type="button"
-                                    variant="outline"
-                                    className="min-h-11"
-                                    onClick={() => {
-                                        reset('password');
-                                        setOpen(false);
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button type="submit" variant="destructive" className="min-h-11" disabled={processing}>
-                                    Log out other devices
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+                                <DialogFooter className="mt-6">
+                                    <Button
+                                        ref={cancelRef}
+                                        type="button"
+                                        variant="outline"
+                                        className="min-h-11"
+                                        onClick={() => {
+                                            reset('password');
+                                            setOpen(false);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        variant="destructive"
+                                        className="min-h-11"
+                                        disabled={processing}
+                                    >
+                                        Log out other devices
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </CardContent>
         </Card>
     );

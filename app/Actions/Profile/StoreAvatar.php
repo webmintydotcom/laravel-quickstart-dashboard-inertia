@@ -8,8 +8,10 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Exceptions\DecoderException;
 use Intervention\Image\ImageManager;
 
 final class StoreAvatar
@@ -21,22 +23,27 @@ final class StoreAvatar
      */
     public function __invoke(User $user, UploadedFile $file): void
     {
-        $encoded = (new ImageManager(new Driver()))
-            ->decode($file->getRealPath())
-            ->cover(256, 256)
-            ->encode(new WebpEncoder(quality: 82));
+        try {
+            $encoded = (new ImageManager(new Driver()))
+                ->decode($file->getRealPath())
+                ->cover(256, 256)
+                ->encode(new WebpEncoder(quality: 82));
+        } catch (DecoderException) {
+            // A mime-valid but structurally corrupt file (a truncated PNG, an
+            // animated WebP) passes the `image`/`mimes` request rules and only
+            // fails here, when Intervention actually decodes it. Without this,
+            // that throws past the controller as an uncaught 500 instead of the
+            // field error the avatar form expects.
+            throw ValidationException::withMessages([
+                'avatar' => 'The avatar could not be processed. Please choose a different image.',
+            ])->errorBag('updateAvatar');
+        }
 
         $path = 'avatars/' . Str::uuid()->toString() . '.webp';
 
         Storage::disk('public')->put($path, (string) $encoded);
 
-        // getRawOriginal(), not the avatar_path accessor: a User resolved via
-        // actingAs() in tests (or any instance that never had this column selected
-        // or defaulted) has no 'avatar_path' key in its attributes at all, and
-        // Model::shouldBeStrict() turns that direct access into a
-        // MissingAttributeException. getRawOriginal() reads the raw attribute array
-        // and tolerates the key being absent, returning null either way.
-        $previous = $user->getRawOriginal('avatar_path');
+        $previous = $user->avatar_path;
 
         $user->forceFill(['avatar_path' => $path])->save();
 

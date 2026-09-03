@@ -23,10 +23,7 @@ final class AvatarController extends Controller
     {
         $user = $request->user();
 
-        // See the comment in StoreAvatar: getRawOriginal() tolerates a User
-        // instance that never had this column selected or defaulted, which the
-        // avatar_path accessor does not under Model::shouldBeStrict().
-        $path = $user->getRawOriginal('avatar_path');
+        $path = $user->avatar_path;
 
         $user->forceFill(['avatar_path' => null])->save();
 

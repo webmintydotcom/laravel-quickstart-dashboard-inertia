@@ -24,6 +24,6 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/profile/avatar', [AvatarController::class, 'store'])->name('profile.avatar.store');
     Route::delete('/profile/avatar', [AvatarController::class, 'destroy'])->name('profile.avatar.destroy');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::delete('/profile/sessions', [SessionController::class, 'destroy'])->name('profile.sessions.destroy');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->middleware('throttle:6,1')->name('profile.destroy');
+    Route::delete('/profile/sessions', [SessionController::class, 'destroy'])->middleware('throttle:6,1')->name('profile.sessions.destroy');
 });

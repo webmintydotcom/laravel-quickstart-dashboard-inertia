@@ -12,6 +12,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/form-field';
 
@@ -26,6 +27,7 @@ export function DeleteAccountForm() {
     const submit = (event: FormEvent) => {
         event.preventDefault();
         destroy(route('profile.destroy'), {
+            preserveScroll: true,
             errorBag: 'deleteAccount',
             // A plaintext password must never sit in component state after the
             // request settles, so it's cleared on both outcomes. A successful
@@ -45,14 +47,11 @@ export function DeleteAccountForm() {
                 </p>
 
                 <Dialog open={open} onOpenChange={setOpen}>
-                    <Button
-                        type="button"
-                        variant="destructive"
-                        className="mt-4 min-h-11"
-                        onClick={() => setOpen(true)}
-                    >
-                        Delete account
-                    </Button>
+                    <DialogTrigger asChild>
+                        <Button type="button" variant="destructive" className="mt-4 min-h-11">
+                            Delete account
+                        </Button>
+                    </DialogTrigger>
 
                     <DialogContent
                         onOpenAutoFocus={(event) => {
