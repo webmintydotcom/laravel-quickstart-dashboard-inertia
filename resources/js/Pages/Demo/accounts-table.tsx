@@ -5,6 +5,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { cn } from '@/lib/utils';
 
 import type { AccountRow, Accounts } from './Dashboard';
+import { PanelEmpty, PanelError } from './panel-state';
 
 const ERROR_DETAIL = "Couldn't load onboarding accounts.";
 
@@ -37,6 +38,7 @@ export function AccountsTable({ accounts }: { accounts: Accounts }) {
         <section
             id="accounts-table"
             aria-labelledby="accounts-table-heading"
+            aria-busy={accounts.status === 'loading'}
             className="bg-card overflow-hidden rounded-lg border"
         >
             <div className="flex min-h-11 items-center justify-between gap-4 border-b px-4 py-4 sm:px-5">
@@ -47,6 +49,7 @@ export function AccountsTable({ accounts }: { accounts: Accounts }) {
 
             {accounts.status === 'loading' && (
                 <div className="divide-y">
+                    <span className="sr-only">Loading onboarding accounts…</span>
                     {Array.from({ length: 5 }).map((_, index) => (
                         <div key={index} className="flex items-center justify-between gap-4 px-4 py-4 sm:px-5">
                             <div className="min-w-0 flex-1 space-y-2">
@@ -60,20 +63,14 @@ export function AccountsTable({ accounts }: { accounts: Accounts }) {
             )}
 
             {accounts.status === 'empty' && (
-                <div className="px-4 py-10 text-center sm:px-5">
-                    <p className="text-sm font-semibold">Start your first onboarding</p>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                        Every account moving from signed contract to live use will appear here.
-                    </p>
-                </div>
+                <PanelEmpty
+                    title="Start your first onboarding"
+                    detail="Every account moving from signed contract to live use will appear here."
+                    className="py-10"
+                />
             )}
 
-            {accounts.status === 'error' && (
-                <div className="px-4 py-10 text-center sm:px-5">
-                    <p className="text-sm font-semibold">{ERROR_DETAIL}</p>
-                    <p className="text-muted-foreground mt-1 text-sm">Reload the page to try again.</p>
-                </div>
-            )}
+            {accounts.status === 'error' && <PanelError detail={ERROR_DETAIL} className="py-10" />}
 
             {accounts.status === 'ready' && (
                 <>

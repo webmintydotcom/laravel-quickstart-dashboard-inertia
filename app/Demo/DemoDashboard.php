@@ -32,9 +32,12 @@ final class DemoDashboard
     {
         return match ($state) {
             'empty', 'loading' => $state,
-            'partial'          => $panel === 'chart' ? 'empty' : 'ready',
-            'error'            => $panel === 'chart' ? 'error' : 'ready',
-            default            => 'ready',
+            // 'partial' means the chart is unavailable while every other panel
+            // stays populated - distinct from 'empty', which is the chart's
+            // genuine first-run state with no data yet.
+            'partial' => $panel === 'chart' ? 'unavailable' : 'ready',
+            'error'   => $panel === 'chart' ? 'error' : 'ready',
+            default   => 'ready',
         };
     }
 

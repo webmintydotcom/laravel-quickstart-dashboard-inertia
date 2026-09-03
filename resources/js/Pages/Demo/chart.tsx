@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
 import ChartJS from 'chart.js/auto';
 
+// Only --chart-1 through --chart-5 are defined in resources/css/app.css. Wrapping
+// the series index against this count - here and in analysis-panel.tsx's legend -
+// keeps a sixth series' line colour and legend swatch in agreement instead of
+// silently diverging.
+export const CHART_TOKEN_COUNT = 5;
+
 interface Series {
     label: string;
     data: number[];
@@ -41,8 +47,9 @@ export function Chart({ labels, series, ariaLabel }: ChartProps) {
             const token = (n: number) => styles.getPropertyValue(`--chart-${n}`).trim();
 
             // The global prefers-reduced-motion rule in app.css governs CSS
-            // animation and does not reach canvas rendering.
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            // animation and does not reach canvas rendering. jsdom does not
+            // implement matchMedia, so guard the same way AppLayout.tsx does.
+            const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
 
             chartRef.current = new ChartJS(canvas, {
                 type: 'line',
@@ -51,8 +58,8 @@ export function Chart({ labels, series, ariaLabel }: ChartProps) {
                     datasets: series.map((s, index) => ({
                         label: s.label,
                         data: s.data,
-                        borderColor: token(index + 1),
-                        backgroundColor: token(index + 1),
+                        borderColor: token((index % CHART_TOKEN_COUNT) + 1),
+                        backgroundColor: token((index % CHART_TOKEN_COUNT) + 1),
                         tension: 0.3,
                     })),
                 },
@@ -77,8 +84,8 @@ export function Chart({ labels, series, ariaLabel }: ChartProps) {
             chartRef.current?.destroy();
             chartRef.current = null;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- dataKey is the
-        // intentional, stable stand-in for labels/series; see comment above.
+        // dataKey is the intentional, stable stand-in for labels/series; see
+        // comment above.
     }, [dataKey]);
 
     return <canvas ref={canvasRef} role="img" aria-label={ariaLabel} />;

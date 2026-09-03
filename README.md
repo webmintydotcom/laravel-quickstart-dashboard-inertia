@@ -102,6 +102,13 @@ Tailwind CSS v4 with the Vite plugin. Configured with Shadcn's full oklch color 
 
 [Homepage](https://tailwindcss.com/) | [Docs](https://tailwindcss.com/docs/installation)
 
+#### Toast Notifications
+
+`goey-toast` powers the flash-message toaster (`resources/js/components/flash-toaster.tsx`). It declares
+`framer-motion` as a non-optional peer dependency (floor `>=10.0.0`), so `framer-motion` is installed either
+way; it is listed directly in `package.json` at `^13.1.1` so the resolved version is one we choose rather
+than one that drifts to goey-toast's much older floor.
+
 ### Debugging
 
 #### Spatie Laravel Ray
@@ -196,18 +203,20 @@ Every panel reads its state from a single `?state=` query switch on the route, s
 - `populated` (default) - every panel ready with sample data.
 - `empty` - every panel in its empty, first-run state.
 - `loading` - every panel showing its skeleton.
-- `partial` - everything ready except the chart, which is empty. Demonstrates that one stalled panel shouldn't block the rest of the page.
+- `partial` - metrics, the attention queue, and the accounts table stay ready; the chart panel is unavailable (distinct from `empty` - the chart has data, it just can't be shown right now). Demonstrates that one stalled panel shouldn't block the rest of the page.
 - `error` - everything ready except the chart, which shows a load failure and a retry action.
 
 An unrecognised value falls back to `populated` rather than erroring.
 
 **Removing it is a two-step contract**, and is meant to be genuinely that short:
 
-1. Delete the two directories that hold every demo-only file - the controller and data provider on the backend, and the page and its four panel components on the frontend:
+1. Delete the three directories that hold every demo-only file - the controller and data provider on the backend, the page and its four panel components on the frontend, and the demo's own tests:
 
    ```bash
-   rm -rf app/Demo resources/js/Pages/Demo
+   rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo
    ```
+
+   `chart.js` is a dependency only the demo uses (via `resources/js/Pages/Demo/chart.tsx`); it can be uninstalled in the same pass with `npm uninstall chart.js`.
 2. In `routes/web.php`, point the `dashboard` route back at the fallback controller that already sits in the tree unrouted for exactly this, and restore its import:
 
    ```php
@@ -216,11 +225,11 @@ An unrecognised value falls back to `populated` rather than erroring.
 
    The route's `name('dashboard')` does not change, so `resources/js/components/app-shell/navigation.ts` needs no edit - it links by route name, not by component.
 
-A test suite enforces that this stays true as the starter grows: the isolation test under the demo's own test directory fails the build the moment anything outside those two directories references the demo namespace, so a stray import can't quietly widen the removal surface.
+A test suite enforces that this stays true as the starter grows: the isolation test under the demo's own test directory fails the build the moment anything outside those three directories references the demo namespace, so a stray import can't quietly widen the removal surface.
 
-This contract was executed for real - directories deleted, route repointed, full suite and production build run - as part of building this feature, to prove it rather than just assert it. One gap surfaced: the pre-existing dashboard test file (the one that predates the demo and asserts the page you get back) still names the demo's Inertia component, so two of its assertions fail after the two steps above and need updating by hand to the fallback component's name. Removal is code-clean in two steps; getting the pre-existing test suite back to green after that takes one small manual edit that the contract doesn't (and probably shouldn't) try to script.
+This contract was executed for real - directories deleted, route repointed, full suite and production build run - as part of building this feature, to prove it rather than just assert it. The pre-existing dashboard test file (the one that predates the demo and asserts the page you get back) asserts only what stays true regardless of which controller serves the route, so it needs no edit after removal; the demo's own component-name assertions live in its own test directory and disappear with it. The `rm` above plus the route repoint is the whole contract - it leaves a green suite with no manual edit required.
 
-Two things that look like they belong to the demo but do not: `table` and `skeleton` in `components/ui/` are general-purpose primitives used elsewhere too, and are not part of the removal. And the demo's own components live under the page directory rather than the shared `components/` tree - a deliberate deviation - specifically so that deleting the demo never means picking components back out of a shared folder; it stays two directories, full stop.
+Two things that look like they belong to the demo but do not: `table` and `skeleton` in `components/ui/` are general-purpose primitives used elsewhere too, and are not part of the removal. And the demo's own components live under the page directory rather than the shared `components/` tree - a deliberate deviation - specifically so that deleting the demo never means picking components back out of a shared folder.
 
 ## Additional Configurations
 

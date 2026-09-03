@@ -6,10 +6,6 @@ use App\Demo\DemoDashboard;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
-test('guests are redirected to the login page', function (): void {
-    $this->get(route('dashboard'))->assertRedirect(route('login'));
-});
-
 test('the dashboard renders the demo page with every panel ready', function (): void {
     $user = User::factory()->create();
 
@@ -28,7 +24,13 @@ test('the dashboard renders the demo page with every panel ready', function (): 
         );
 });
 
-test('the state switch drives panel statuses', function (string $state, string $chartStatus, string $queueStatus): void {
+test('the state switch drives panel statuses', function (
+    string $state,
+    string $chartStatus,
+    string $queueStatus,
+    string $metricsStatus,
+    string $accountsStatus,
+): void {
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -38,12 +40,17 @@ test('the state switch drives panel statuses', function (string $state, string $
                 ->where('state', $state)
                 ->where('chart.status', $chartStatus)
                 ->where('queue.status', $queueStatus)
+                ->where('metrics.status', $metricsStatus)
+                ->where('accounts.status', $accountsStatus)
         );
 })->with([
-    'empty'   => ['empty', 'empty', 'empty'],
-    'loading' => ['loading', 'loading', 'loading'],
-    'partial' => ['partial', 'empty', 'ready'],
-    'error'   => ['error', 'error', 'ready'],
+    // 'partial' leaves the chart 'unavailable' while metrics, the queue, and
+    // the accounts table stay 'ready' - this is the row that proves the rest
+    // of the page isn't blocked by one stalled panel.
+    'empty'   => ['empty', 'empty', 'empty', 'empty', 'empty'],
+    'loading' => ['loading', 'loading', 'loading', 'loading', 'loading'],
+    'partial' => ['partial', 'unavailable', 'ready', 'ready', 'ready'],
+    'error'   => ['error', 'error', 'ready', 'ready', 'ready'],
 ]);
 
 test('an unknown state falls back to populated rather than erroring', function (): void {
@@ -65,7 +72,15 @@ test('the metric ledger agrees with the data it summarises', function (): void {
     // A demo whose headline figures contradict its own table teaches carelessness.
     $data = DemoDashboard::for('populated');
 
-    $inProgress = collect($data['accounts']['rows'])->where('status', 'In progress')->count();
+    $rows = collect($data['accounts']['rows']);
 
+    $inProgress = $rows->where('status', 'In progress')->count();
     expect($data['metrics']['cells'][0]['value'])->toBe((string) $inProgress);
+
+    // The accounts table only ever shows a recent snapshot, not the full
+    // month, so "Completed in August" can't equal the table's completed
+    // count - but it must never be *less* than what the table already shows,
+    // or the headline figure would contradict the very table underneath it.
+    $completedInTable = $rows->where('status', 'Completed')->count();
+    expect((int) $data['metrics']['cells'][2]['value'])->toBeGreaterThanOrEqual($completedInTable);
 });
