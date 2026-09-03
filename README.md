@@ -187,6 +187,41 @@ The browser sessions list and "Log out other devices" both depend on `SESSION_DR
 
 Two features Fortify ships are still switched off and are not part of this page: email verification and two-factor authentication. Both are cycle 2b work - enabling them means adding a "Verify email" prompt and a two-factor section here.
 
+### Demo Dashboard
+
+`/dashboard` currently renders a fictional customer-onboarding pipeline instead of a blank page, so a cloned application has real layouts, empty/loading/error states, and content density to hold itself to instead of starting from nothing. It exists purely as a worked example - the metrics, chart, attention queue, and accounts table are fixed, deterministic sample data, not a feature meant to ship.
+
+Every panel reads its state from a single `?state=` query switch on the route, so the full range of a data-driven page can be reviewed without wiring up real data first:
+
+- `populated` (default) - every panel ready with sample data.
+- `empty` - every panel in its empty, first-run state.
+- `loading` - every panel showing its skeleton.
+- `partial` - everything ready except the chart, which is empty. Demonstrates that one stalled panel shouldn't block the rest of the page.
+- `error` - everything ready except the chart, which shows a load failure and a retry action.
+
+An unrecognised value falls back to `populated` rather than erroring.
+
+**Removing it is a two-step contract**, and is meant to be genuinely that short:
+
+1. Delete the two directories that hold every demo-only file - the controller and data provider on the backend, and the page and its four panel components on the frontend:
+
+   ```bash
+   rm -rf app/Demo resources/js/Pages/Demo
+   ```
+2. In `routes/web.php`, point the `dashboard` route back at the fallback controller that already sits in the tree unrouted for exactly this, and restore its import:
+
+   ```php
+   Route::get('/dashboard', DashboardController::class)->name('dashboard');
+   ```
+
+   The route's `name('dashboard')` does not change, so `resources/js/components/app-shell/navigation.ts` needs no edit - it links by route name, not by component.
+
+A test suite enforces that this stays true as the starter grows: the isolation test under the demo's own test directory fails the build the moment anything outside those two directories references the demo namespace, so a stray import can't quietly widen the removal surface.
+
+This contract was executed for real - directories deleted, route repointed, full suite and production build run - as part of building this feature, to prove it rather than just assert it. One gap surfaced: the pre-existing dashboard test file (the one that predates the demo and asserts the page you get back) still names the demo's Inertia component, so two of its assertions fail after the two steps above and need updating by hand to the fallback component's name. Removal is code-clean in two steps; getting the pre-existing test suite back to green after that takes one small manual edit that the contract doesn't (and probably shouldn't) try to script.
+
+Two things that look like they belong to the demo but do not: `table` and `skeleton` in `components/ui/` are general-purpose primitives used elsewhere too, and are not part of the removal. And the demo's own components live under the page directory rather than the shared `components/` tree - a deliberate deviation - specifically so that deleting the demo never means picking components back out of a shared folder; it stays two directories, full stop.
+
 ## Additional Configurations
 
 Changes to the default Laravel files are included in this starter kit to improve performance and developer experience.
