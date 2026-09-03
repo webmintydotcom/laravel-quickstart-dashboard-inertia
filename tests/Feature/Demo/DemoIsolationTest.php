@@ -30,7 +30,10 @@ test('nothing outside the demo namespace references it', function (): void {
 
             $contents = (string) file_get_contents($file->getPathname());
 
-            if (preg_match('#App\\\\Demo|Pages/Demo|@/Pages/Demo#', $contents) === 1) {
+            // The quote-anchored alternative catches the bare Inertia component name
+            // ('Demo/Dashboard') as a string literal, without flagging incidental
+            // prose that happens to contain the characters "Demo/".
+            if (preg_match('#App\\\\Demo|Pages/Demo|@/Pages/Demo|[\'"]Demo/#', $contents) === 1) {
                 $offenders[] = $relative;
             }
         }
