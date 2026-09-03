@@ -3,6 +3,10 @@ import { usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/AppLayout';
 import type { SharedProps } from '@/types';
 
+// Intentionally unrouted while the demo dashboard is installed. This is the
+// fallback that removing the demo dashboard's code restores: point the
+// /dashboard route back at DashboardController and this page renders again
+// unmodified.
 export default function Dashboard() {
     const { auth } = usePage<SharedProps>().props;
 
