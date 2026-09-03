@@ -14,7 +14,7 @@ interface Props {
 export function UpdateAvatarForm({ profile }: Props) {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const { setData, post, delete: destroy, processing, errors } = useForm('updateAvatar', {
+    const { setData, post, delete: destroy, processing, errors } = useForm({
         avatar: null as File | null,
     });
 

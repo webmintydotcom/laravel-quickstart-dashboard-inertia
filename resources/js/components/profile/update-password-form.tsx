@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FormField } from '@/components/form-field';
 
 export function UpdatePasswordForm() {
-    const { data, setData, put, processing, errors, reset } = useForm('updatePassword', {
+    const { data, setData, put, processing, errors, reset } = useForm({
         current_password: '',
         password: '',
         password_confirmation: '',

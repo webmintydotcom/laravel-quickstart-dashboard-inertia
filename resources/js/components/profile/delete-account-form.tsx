@@ -19,7 +19,7 @@ export function DeleteAccountForm() {
     const [open, setOpen] = useState(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const { data, setData, delete: destroy, processing, errors, reset } = useForm('deleteAccount', {
+    const { data, setData, delete: destroy, processing, errors, reset } = useForm({
         password: '',
     });
 

@@ -24,7 +24,7 @@ export function BrowserSessions({ sessions }: Props) {
     const [open, setOpen] = useState(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const { data, setData, delete: destroy, processing, errors, reset } = useForm('logoutOtherSessions', {
+    const { data, setData, delete: destroy, processing, errors, reset } = useForm({
         password: '',
     });
 

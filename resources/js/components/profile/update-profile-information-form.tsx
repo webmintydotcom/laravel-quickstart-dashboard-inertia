@@ -12,11 +12,12 @@ interface Props {
 }
 
 export function UpdateProfileInformationForm({ profile }: Props) {
-    // The error bag is both the form's remember key and, passed explicitly as
-    // `errorBag` on the request below, what scopes validation errors to this
-    // form. Five forms share this page; without a bag, an error from one
-    // would render under another form's field.
-    const { data, setData, put, processing, errors } = useForm('updateProfileInformation', {
+    // `errorBag` on the request below is what scopes validation errors to
+    // this form. Five forms share this page; without it, an error from one
+    // would render under another form's field (or nowhere at all - useForm's
+    // first argument is a history remember-key, not an error bag, despite
+    // how it reads).
+    const { data, setData, put, processing, errors } = useForm({
         first_name: profile.first_name,
         last_name: profile.last_name,
         email: profile.email,
