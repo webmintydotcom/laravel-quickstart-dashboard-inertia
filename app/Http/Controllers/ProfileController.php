@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Profile\DeleteAccount;
 use App\Data\SessionData;
 use App\Data\UserData;
+use App\Http\Requests\ProfileDestroyRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,6 +23,20 @@ final class ProfileController extends Controller
             'profile'  => UserData::from($request->user()),
             'sessions' => $this->sessions($request),
         ]);
+    }
+
+    public function destroy(ProfileDestroyRequest $request, DeleteAccount $deleteAccount): RedirectResponse
+    {
+        $user = $request->user();
+
+        Auth::logout();
+
+        $deleteAccount($user);
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 
     /**
