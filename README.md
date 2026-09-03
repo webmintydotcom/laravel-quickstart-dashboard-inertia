@@ -177,6 +177,14 @@ The authenticated app (sidebar, top bar, and pages like Settings) ships as a sta
 - **Sidebar collapse** is stored in a cookie rather than `localStorage`. This starter has SSR wired up, and `localStorage` isn't available during a server render - a cookie is, so the collapsed/expanded state can be read on the very first render instead of flashing open and then collapsing.
 - **Originality is still your job.** This shell (layout, components, and defaults) is intentionally generic so it can serve any product. A real product built on this starter still needs its own product promise and a signature visual device that makes it feel like something, not a starter kit - see DESIGN.md §4.
 
+### Profile Page
+
+`/profile` (`resources/js/Pages/Profile.tsx`) gives the signed-in user five independent forms, each backed by its own controller and validated into its own named Laravel error bag: profile information (name/email, via Fortify), password, avatar, browser sessions, and account deletion. Each form's `useForm()` call passes its bag name as both the remember key and the `errorBag` request option, so a validation error from one form never renders under another form's field - this only works because every submit call names its bag explicitly.
+
+Avatars are resized to a 256px square WebP (`app/Actions/Profile/StoreAvatar.php`) and stored on the `public` disk. That disk is only browser-reachable through the `storage` symlink, which `php artisan storage:link` creates - already wired into `composer.json`'s `post-create-project-cmd`, so a fresh `laravel new --using=...` install has it from the start. If avatars 404 in an existing checkout, run `php artisan storage:link` yourself.
+
+Two features Fortify ships are still switched off and are not part of this page: email verification and two-factor authentication. Both are cycle 2b work - enabling them means adding a "Verify email" prompt and a two-factor section here.
+
 ## Additional Configurations
 
 Changes to the default Laravel files are included in this starter kit to improve performance and developer experience.

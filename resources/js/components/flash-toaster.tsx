@@ -6,6 +6,11 @@ import type { SharedProps } from '@/types';
 
 const MESSAGES: Record<string, string> = {
     'settings-updated': 'Settings saved.',
+    'profile-information-updated': 'Profile updated.',
+    'password-updated': 'Password updated.',
+    'avatar-updated': 'Photo updated.',
+    'avatar-removed': 'Photo removed.',
+    'other-sessions-logged-out': 'Signed out of other devices.',
 };
 
 /**

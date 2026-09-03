@@ -1,5 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, UserCircle } from 'lucide-react';
 import { route } from 'ziggy-js';
 
 import {
@@ -47,6 +47,12 @@ export function UserMenu() {
                     <p className="text-muted-foreground truncate text-xs">{auth.user.email}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                    <Link href={route('profile')}>
+                        <UserCircle aria-hidden="true" />
+                        Profile
+                    </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link href={route('settings')}>
                         <Settings aria-hidden="true" />
