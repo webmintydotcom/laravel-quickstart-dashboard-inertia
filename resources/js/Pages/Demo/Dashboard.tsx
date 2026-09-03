@@ -1,5 +1,7 @@
 import AppLayout from '@/layouts/AppLayout';
 
+import { AccountsTable } from './accounts-table';
+import { AttentionQueue } from './attention-queue';
 import { MetricLedger } from './metric-ledger';
 
 export type PanelStatus = 'ready' | 'loading' | 'empty' | 'error';
@@ -15,11 +17,38 @@ export interface Metrics {
     cells: MetricCell[];
 }
 
-interface DemoDashboardProps {
-    metrics: Metrics;
+export interface QueueItem {
+    title: string;
+    reason: string;
+    age: string;
+    severity: 'high' | 'medium' | 'low';
 }
 
-export default function DemoDashboard({ metrics }: DemoDashboardProps) {
+export interface Queue {
+    status: PanelStatus;
+    items: QueueItem[];
+}
+
+export interface AccountRow {
+    name: string;
+    owner: string;
+    stage: string;
+    started: string;
+    status: string;
+}
+
+export interface Accounts {
+    status: PanelStatus;
+    rows: AccountRow[];
+}
+
+interface DemoDashboardProps {
+    metrics: Metrics;
+    queue: Queue;
+    accounts: Accounts;
+}
+
+export default function DemoDashboard({ metrics, queue, accounts }: DemoDashboardProps) {
     return (
         <AppLayout title="Onboarding">
             <div className="px-4 py-6 sm:px-6 lg:px-8">
@@ -35,6 +64,16 @@ export default function DemoDashboard({ metrics }: DemoDashboardProps) {
 
                 <div className="mt-6 space-y-6">
                     <MetricLedger metrics={metrics} />
+
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        {/* Primary analysis slot - the Chart.js panel lands here in a later pass.
+                            Left empty on purpose so that pass only has to fill this cell. */}
+                        <div className="lg:col-span-2" />
+
+                        <AttentionQueue queue={queue} />
+                    </div>
+
+                    <AccountsTable accounts={accounts} />
                 </div>
             </div>
         </AppLayout>
