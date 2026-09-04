@@ -2,8 +2,12 @@
 
 ## Introduction
 
-A starter kit for Laravel applications with React, Inertia.js, Shadcn UI, and Tailwind CSS v4. 
+A starter kit for Laravel applications with React, Inertia.js, Shadcn UI, and Tailwind CSS v4.
 Designed to help you quickly set up a new full-stack Laravel project with a modern development environment.
+
+Out of the box it ships Fortify-backed authentication screens, an authenticated app shell (sidebar, top bar,
+light/dark/system appearance), a Settings page, a Profile page, and a removable demo dashboard that shows
+every panel state a data-driven page needs. See [Application Shell](#application-shell) for the details.
 
 ## Installation
 
@@ -18,6 +22,7 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
 | Backend | Laravel 13, PHP 8.4  |
 | Frontend | React 19, TypeScript |
 | Routing | Inertia.js           |
+| Auth | Laravel Fortify      |
 | UI Components | Shadcn UI            |
 | Styling | Tailwind CSS v4      |
 | Build | Vite 8               |
@@ -30,10 +35,14 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
   - [Ziggy](#ziggy)
   - [Spatie Laravel Data](#spatie-laravel-data)
   - [Laravel Fortify](#laravel-fortify)
+  - [Intervention Image](#intervention-image)
+  - [Laravel Person Name](#laravel-person-name)
+  - [Hashids](#hashids)
 - [Frontend](#frontend)
   - [React](#react)
   - [Shadcn UI](#shadcn-ui)
   - [Tailwind CSS](#tailwind-css)
+  - [Toast Notifications](#toast-notifications)
 - [Debugging](#debugging)
   - [Spatie Laravel Ray](#spatie-laravel-ray)
 - [Testing](#testing)
@@ -42,13 +51,17 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
     - [Pest Plugin - Faker](#pest-plugin---faker)
     - [Pest Plugin - Laravel](#pest-plugin---laravel)
     - [Pest Plugin - Type Coverage](#pest-plugin---type-coverage)
+    - [Pest Plugin - Browser](#pest-plugin---browser)
+  - [Laravel Pao](#laravel-pao)
   - [Larastan](#larastan)
   - [Pint](#pint)
-  - [Rector](#rector)
+  - [Rector Laravel](#rector-laravel)
 - [Formatting](#formatting)
   - [Prettier](#prettier)
     - [Prettier Plugin - Tailwind CSS](#prettier-plugin---tailwind-css)
     - [Prettier Plugin - Blade](#prettier-plugin---blade)
+- [AI Tooling](#ai-tooling)
+  - [Laravel Boost Guidelines](#laravel-boost-guidelines)
 
 ### Laravel
 
@@ -74,13 +87,31 @@ Spatie Laravel Data is included to help you create data transfer objects (DTOs) 
 
 #### Laravel Fortify
 
-Fortify is the authentication backend. There are no auth controllers in this starter kit. Fortify registers the routes, and this app supplies the React screens and the actions behind them. Only two of Fortify's features are enabled in `config/fortify.php`: registration and password reset. Everything else it ships (email verification, two-factor authentication, passkeys, profile and password updates) is deliberately switched off, and you enable one by adding it back to the `features` array.
+Fortify is the authentication backend. There are no auth controllers in this starter kit. Fortify registers the routes, and this app supplies the React screens and the actions behind them. Four of Fortify's features are enabled in `config/fortify.php`: registration, password reset, profile information updates and password updates. Everything else it ships (email verification, two-factor authentication, passkeys) is deliberately switched off, and you enable one by adding it back to the `features` array.
 
-That leaves `/login`, `/register`, `/forgot-password`, `/reset-password/{token}` and `/user/confirm-password`, rendered by the Inertia pages in `resources/js/Pages/Auth/`. The views are bound in `app/Providers/FortifyServiceProvider.php` and the create-user and reset-password actions live in `app/Actions/Fortify/`. A successful login, registration or password confirmation lands on `/dashboard`.
+That gives you `/login`, `/register`, `/forgot-password`, `/reset-password/{token}` and `/user/confirm-password`, rendered by the Inertia pages in `resources/js/Pages/Auth/`, plus the `PUT /user/profile-information` and `PUT /user/password` endpoints that the [Profile page](#profile-page) submits to. The views are bound in `app/Providers/FortifyServiceProvider.php` and the actions behind each feature (create user, reset password, update profile information, update password) live in `app/Actions/Fortify/`. A successful login, registration or password confirmation lands on `/dashboard`.
 
 Password reset needs real mail configuration in production. `.env.example` ships `MAIL_MAILER=log`, so reset links are written to `storage/logs/laravel.log` locally instead of being delivered.
 
-[Docs](https://laravel.com/docs/12.x/fortify)
+[Docs](https://laravel.com/framework/docs/13.x/fortify)
+
+#### Intervention Image
+
+Intervention Image does the server-side avatar resizing in `app/Actions/Profile/StoreAvatar.php` (see [Profile Page](#profile-page)).
+
+[Homepage](https://image.intervention.io/) | [Docs](https://image.intervention.io/v4)
+
+#### Laravel Person Name
+
+A validation rule (`ValidPersonName`) for first and last names, applied by the Fortify create-user and update-profile actions.
+
+[Docs](https://github.com/webmintydotcom/laravel-person-name)
+
+#### Hashids
+
+A Hashids bridge for Laravel, included for obfuscating sequential ids in URLs. Nothing in the starter kit uses it yet; it is installed and configured so it is ready when you need it.
+
+[Docs](https://github.com/vinkla/laravel-hashids)
 
 ### Frontend
 
@@ -106,8 +137,11 @@ Tailwind CSS v4 with the Vite plugin. Configured with Shadcn's full oklch color 
 
 `goey-toast` powers the flash-message toaster (`resources/js/components/flash-toaster.tsx`). It declares
 `framer-motion` as a non-optional peer dependency (floor `>=10.0.0`), so `framer-motion` is installed either
-way; it is listed directly in `package.json` at `^13.1.1` so the resolved version is one we choose rather
-than one that drifts to goey-toast's much older floor.
+way; it is listed directly in `package.json` at `^13.2.0` so the resolved version is one we choose rather
+than one that drifts to goey-toast's much older floor. Nothing in `resources/js` imports `framer-motion`
+directly, so do not remove it thinking it is unused.
+
+[Homepage](https://goey-toast.vercel.app) | [Docs](https://github.com/anl331/goey-toast)
 
 ### Debugging
 
@@ -141,6 +175,18 @@ Pest is included to help you write expressive and elegant tests for your Laravel
 
 [Docs](https://pestphp.com/docs/type-coverage)
 
+##### Pest Plugin - Browser
+
+Browser testing through Playwright. `tests/Pest.php` already binds the `Browser` directory to the Laravel test case, so create `tests/Browser/` and start writing `visit()` tests. `playwright` is in `devDependencies`; run `npx playwright install` once before the first browser test.
+
+[Docs](https://pestphp.com/docs/browser-testing)
+
+#### Laravel Pao
+
+Pao reformats Pest and PHPStan output into a compact form that is easier for AI coding agents to read.
+
+[Docs](https://github.com/laravel/pao)
+
 #### Larastan
 
 Larastan is included to help you catch type errors in your Laravel applications using PHPStan.
@@ -151,11 +197,11 @@ Larastan is included to help you catch type errors in your Laravel applications 
 
 Pint is included to help you format your Laravel code according to the Webminty coding standard.
 
-[Docs](https://laravel.com/docs/12.x/pint)
+[Docs](https://laravel.com/framework/docs/13.x/pint)
 
-#### Laravel Rector
+#### Rector Laravel
 
-Rector is included to help you refactor and upgrade your Laravel codebase automatically.
+Rector, with the Laravel rule set, is included to help you refactor and upgrade your codebase automatically.
 
 [Docs](https://github.com/driftingly/rector-laravel)
 
@@ -175,6 +221,28 @@ Prettier is included to help you format your code consistently across your proje
 
 [Docs](https://github.com/stillat/blade-parser-typescript)
 
+### AI Tooling
+
+#### Laravel Boost Guidelines
+
+Webminty's Laravel and PHP coding guidelines, packaged for [Laravel Boost](https://github.com/laravel/boost) so AI coding agents working in this repository follow the same conventions the human contributors do.
+
+[Docs](https://webminty.com)
+
+## Development
+
+`composer run dev` starts the PHP server, queue listener, log tail and Vite together. `composer run dev:ssr` does the same with the Inertia SSR server instead of the Vite dev server (it builds the SSR bundle first).
+
+| Task | Command |
+|------|---------|
+| Tests | `vendor/bin/pest` |
+| Static analysis | `vendor/bin/phpstan` |
+| PHP formatting | `vendor/bin/pint` |
+| Rector | `vendor/bin/rector` |
+| TypeScript check | `npm run typecheck` |
+| Prettier | `npm run format` (or `format:check`) |
+| Production build | `npm run build` (add `:ssr` for the SSR bundle) |
+
 ## Application Shell
 
 The authenticated app (sidebar, top bar, and pages like Settings) ships as a starting shell, not a finished product.
@@ -182,11 +250,11 @@ The authenticated app (sidebar, top bar, and pages like Settings) ships as a sta
 - **Navigation** is a single list edited in `resources/js/components/app-shell/navigation.ts`. Add, remove, or reorder entries there rather than hunting through the sidebar and mobile drawer components separately.
 - **Appearance** (light/dark/system) lives on the authenticated user's record, so it follows them across devices. It's also mirrored into an `appearance` cookie on save, purely so the very first server-rendered response can paint the right theme before Inertia props are available - without that mirror, the page would flash the wrong theme on load. The cookie is `httpOnly` and read only on the server; no JavaScript touches it. It's exempt from Laravel's cookie encryption in `bootstrap/app.php`, sharing that exemption list with the `sidebar_collapsed` cookie below, which JavaScript genuinely does read and write.
 - **Sidebar collapse** is stored in a cookie rather than `localStorage`. This starter has SSR wired up, and `localStorage` isn't available during a server render - a cookie is, so the collapsed/expanded state can be read on the very first render instead of flashing open and then collapsing.
-- **Originality is still your job.** This shell (layout, components, and defaults) is intentionally generic so it can serve any product. A real product built on this starter still needs its own product promise and a signature visual device that makes it feel like something, not a starter kit - see DESIGN.md §4.
+- **Originality is still your job.** This shell (layout, components, and defaults) is intentionally generic so it can serve any product. A real product built on this starter still needs its own product promise and a signature visual device that makes it feel like something, not a starter kit.
 
 ### Profile Page
 
-`/profile` (`resources/js/Pages/Profile.tsx`) gives the signed-in user five independent forms, each backed by its own controller and validated into its own named Laravel error bag: profile information (name/email, via Fortify), password, avatar, browser sessions, and account deletion. Each form's `useForm()` call passes its bag name only as the `errorBag` request option on that form's submit call, so a validation error from one form never renders under another form's field - this only works because every submit call names its bag explicitly. Never pass that bag name (or anything else) as a leading string argument to `useForm()` itself: in @inertiajs/react that argument is a history remember key, which mirrors the form's state into `window.history.replaceState` on every keystroke, and three of these forms hold a plaintext password.
+`/profile` (`resources/js/Pages/Profile.tsx`) gives the signed-in user five independent forms, each backed by its own controller and validated into its own named Laravel error bag: profile information (name/email) and password (both submitted to Fortify's own endpoints), avatar, browser sessions, and account deletion. Each form's `useForm()` call passes its bag name only as the `errorBag` request option on that form's submit call, so a validation error from one form never renders under another form's field - this only works because every submit call names its bag explicitly. Never pass that bag name (or anything else) as a leading string argument to `useForm()` itself: in @inertiajs/react that argument is a history remember key, which mirrors the form's state into `window.history.replaceState` on every keystroke, and three of these forms hold a plaintext password.
 
 Avatars are resized to a 256px square WebP (`app/Actions/Profile/StoreAvatar.php`) and stored on the `public` disk. That disk is only browser-reachable through the `storage` symlink, which `php artisan storage:link` creates - already wired into `composer.json`'s `post-create-project-cmd`, so a fresh `laravel new --using=...` install has it from the start. If avatars 404 in an existing checkout, run `php artisan storage:link` yourself.
 
@@ -210,7 +278,7 @@ An unrecognised value falls back to `populated` rather than erroring.
 
 **Removing it is a two-step contract**, and is meant to be genuinely that short:
 
-1. Delete the three directories that hold every demo-only file - the controller and data provider on the backend, the page and its four panel components on the frontend, and the demo's own tests:
+1. Delete the three directories that hold every demo-only file - the controller and data provider on the backend, the page, its panel components and the chart on the frontend, and the demo's own tests:
 
    ```bash
    rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo
