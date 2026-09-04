@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Demo\DemoDashboardController;
 use App\Http\Controllers\AvatarController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SettingsController;
@@ -15,7 +15,11 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function (): void {
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    // The demo dashboard owns this route while it is installed. To remove the demo:
+    // rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo, then point this
+    // back at DashboardController::class. See the README's Demo Dashboard section
+    // for the full removal contract.
+    Route::get('/dashboard', DemoDashboardController::class)->name('dashboard');
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
 

@@ -102,6 +102,13 @@ Tailwind CSS v4 with the Vite plugin. Configured with Shadcn's full oklch color 
 
 [Homepage](https://tailwindcss.com/) | [Docs](https://tailwindcss.com/docs/installation)
 
+#### Toast Notifications
+
+`goey-toast` powers the flash-message toaster (`resources/js/components/flash-toaster.tsx`). It declares
+`framer-motion` as a non-optional peer dependency (floor `>=10.0.0`), so `framer-motion` is installed either
+way; it is listed directly in `package.json` at `^13.1.1` so the resolved version is one we choose rather
+than one that drifts to goey-toast's much older floor.
+
 ### Debugging
 
 #### Spatie Laravel Ray
@@ -186,6 +193,43 @@ Avatars are resized to a 256px square WebP (`app/Actions/Profile/StoreAvatar.php
 The browser sessions list and "Log out other devices" both depend on `SESSION_DRIVER=database` - they read from and delete rows in the `sessions` table. With any other driver the list renders empty and the logout button evicts nobody, though it still reports success.
 
 Two features Fortify ships are still switched off and are not part of this page: email verification and two-factor authentication. Both are cycle 2b work - enabling them means adding a "Verify email" prompt and a two-factor section here.
+
+### Demo Dashboard
+
+`/dashboard` currently renders a fictional customer-onboarding pipeline instead of a blank page, so a cloned application has real layouts, empty/loading/error states, and content density to hold itself to instead of starting from nothing. It exists purely as a worked example - the metrics, chart, attention queue, and accounts table are fixed, deterministic sample data, not a feature meant to ship.
+
+Every panel reads its state from a single `?state=` query switch on the route, so the full range of a data-driven page can be reviewed without wiring up real data first:
+
+- `populated` (default) - every panel ready with sample data.
+- `empty` - every panel in its empty, first-run state.
+- `loading` - every panel showing its skeleton.
+- `partial` - metrics, the attention queue, and the accounts table stay ready; the chart panel is unavailable (distinct from `empty` - the chart has data, it just can't be shown right now). Demonstrates that one stalled panel shouldn't block the rest of the page.
+- `error` - everything ready except the chart, which shows a load failure and a retry action.
+
+An unrecognised value falls back to `populated` rather than erroring.
+
+**Removing it is a two-step contract**, and is meant to be genuinely that short:
+
+1. Delete the three directories that hold every demo-only file - the controller and data provider on the backend, the page and its four panel components on the frontend, and the demo's own tests:
+
+   ```bash
+   rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo
+   ```
+
+   `chart.js` is a dependency only the demo uses (via `resources/js/Pages/Demo/chart.tsx`); it can be uninstalled in the same pass with `npm uninstall chart.js`.
+2. In `routes/web.php`, point the `dashboard` route back at the fallback controller that already sits in the tree unrouted for exactly this, and restore its import:
+
+   ```php
+   Route::get('/dashboard', DashboardController::class)->name('dashboard');
+   ```
+
+   The route's `name('dashboard')` does not change, so `resources/js/components/app-shell/navigation.ts` needs no edit - it links by route name, not by component.
+
+A test suite enforces that this stays true as the starter grows: the isolation test under the demo's own test directory fails the build the moment anything outside those three directories references the demo namespace, so a stray import can't quietly widen the removal surface.
+
+This contract was executed for real - directories deleted, route repointed, full suite and production build run - as part of building this feature, to prove it rather than just assert it. The pre-existing dashboard test file (the one that predates the demo and asserts the page you get back) asserts only what stays true regardless of which controller serves the route, so it needs no edit after removal; the demo's own component-name assertions live in its own test directory and disappear with it. The `rm` above plus the route repoint is the whole contract - it leaves a green suite with no manual edit required.
+
+Two things that look like they belong to the demo but do not: `table` and `skeleton` in `components/ui/` are general-purpose primitives used elsewhere too, and are not part of the removal. And the demo's own components live under the page directory rather than the shared `components/` tree - a deliberate deviation - specifically so that deleting the demo never means picking components back out of a shared folder.
 
 ## Additional Configurations
 

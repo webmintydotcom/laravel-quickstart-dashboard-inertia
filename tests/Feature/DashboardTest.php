@@ -17,8 +17,7 @@ test('authenticated users can view the dashboard', function (): void {
 
     $this->actingAs($user)
         ->get(route('dashboard'))
-        ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('Dashboard'));
+        ->assertOk();
 });
 
 test('the authenticated user is shared with every page', function (): void {
@@ -108,7 +107,6 @@ test('the dashboard renders inside the application shell', function (): void {
         ->assertOk()
         ->assertInertia(
             fn (AssertableInertia $page) => $page
-                ->component('Dashboard')
                 ->where('sidebarCollapsed', false)
                 ->where('appearance', 'system')
         );
