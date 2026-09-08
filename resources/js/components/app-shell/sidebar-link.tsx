@@ -25,8 +25,8 @@ export function SidebarLink({ item, collapsed, onNavigate }: SidebarLinkProps) {
                 'flex min-h-11 items-center gap-3 border-l-[3px] px-4 text-sm transition-colors',
                 collapsed && 'justify-center px-0',
                 isActive
-                    ? 'border-l-mint-500 bg-white/5 font-medium text-white'
-                    : 'border-l-transparent text-stone-400 hover:text-white',
+                    ? 'border-l-mint-500 text-shell-foreground bg-white/5 font-medium'
+                    : 'text-shell-muted-foreground hover:text-shell-foreground border-l-transparent',
             )}
         >
             <Icon className="size-5 shrink-0" strokeWidth={1.8} aria-hidden="true" />

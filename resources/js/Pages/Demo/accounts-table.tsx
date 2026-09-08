@@ -76,10 +76,17 @@ export function AccountsTable({ accounts }: { accounts: Accounts }) {
                 <>
                     {/* md and above: a real table. */}
                     <div className="hidden md:block">
-                        <Table>
-                            <TableCaption>Onboarding accounts, from signed contract to live use.</TableCaption>
-                            <TableHeader>
-                                <TableRow>
+                        {/*
+                            shadcn's table cells default to a 8px gutter, which does not
+                            line up with the panel header's 16/20px. Set the gutter once
+                            on the table rather than on every cell.
+                        */}
+                        <Table className="[&_td]:px-4 sm:[&_td]:px-5 [&_th]:px-4 sm:[&_th]:px-5">
+                            <TableCaption className="px-4 pb-4 sm:px-5">
+                                Onboarding accounts, from signed contract to live use.
+                            </TableCaption>
+                            <TableHeader className="bg-muted/60">
+                                <TableRow className="hover:bg-transparent">
                                     <TableHead scope="col">Account</TableHead>
                                     <TableHead scope="col">Stage</TableHead>
                                     <TableHead scope="col">Owner</TableHead>

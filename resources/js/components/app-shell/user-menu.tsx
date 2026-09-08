@@ -28,11 +28,7 @@ export function UserMenu() {
                 className="flex min-h-11 items-center gap-2 rounded-md px-2 hover:bg-white/10"
             >
                 {auth.user.avatar_url ? (
-                    <img
-                        src={auth.user.avatar_url}
-                        alt=""
-                        className="size-8 shrink-0 rounded-full object-cover"
-                    />
+                    <img src={auth.user.avatar_url} alt="" className="size-8 shrink-0 rounded-full object-cover" />
                 ) : (
                     <span className="bg-mint-500 text-mint-950 grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold">
                         {initials}

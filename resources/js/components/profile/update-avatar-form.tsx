@@ -14,7 +14,13 @@ interface Props {
 export function UpdateAvatarForm({ profile }: Props) {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const { setData, post, delete: destroy, processing, errors } = useForm({
+    const {
+        setData,
+        post,
+        delete: destroy,
+        processing,
+        errors,
+    } = useForm({
         avatar: null as File | null,
     });
 
@@ -50,17 +56,13 @@ export function UpdateAvatarForm({ profile }: Props) {
 
     return (
         <Card>
-            <CardContent className="p-5">
+            <CardContent>
                 <h2 className="text-base font-semibold">Photo</h2>
                 <p className="text-muted-foreground mt-1 text-sm">A photo helps teammates recognise you.</p>
 
                 <div className="mt-4 flex items-center gap-4">
                     {profile.avatar_url ? (
-                        <img
-                            src={profile.avatar_url}
-                            alt=""
-                            className="size-16 shrink-0 rounded-full object-cover"
-                        />
+                        <img src={profile.avatar_url} alt="" className="size-16 shrink-0 rounded-full object-cover" />
                     ) : (
                         <span className="bg-mint-500 text-mint-950 grid size-16 shrink-0 place-items-center rounded-full text-lg font-semibold">
                             {initials}

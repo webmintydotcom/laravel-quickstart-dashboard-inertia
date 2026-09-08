@@ -45,6 +45,13 @@ export function Chart({ labels, series, ariaLabel }: ChartProps) {
             // from the document element at draw time.
             const styles = getComputedStyle(document.documentElement);
             const token = (n: number) => styles.getPropertyValue(`--chart-${n}`).trim();
+            const themeToken = (name: string) => styles.getPropertyValue(`--${name}`).trim();
+
+            // Chart.js defaults its ticks and grid lines to fixed greys, which
+            // vanish against the dark card. Both are re-read on every build(),
+            // so they follow the theme along with the series colours.
+            const tickColor = themeToken('muted-foreground');
+            const gridColor = themeToken('border');
 
             // The global prefers-reduced-motion rule in app.css governs CSS
             // animation and does not reach canvas rendering. jsdom does not
@@ -67,6 +74,23 @@ export function Chart({ labels, series, ariaLabel }: ChartProps) {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: reduceMotion ? false : undefined,
+                    // The panel renders its own legend beneath the canvas so the
+                    // swatches can use the same tokens as the lines; Chart.js's
+                    // built-in one would be a second copy of it.
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            border: { color: gridColor },
+                            grid: { display: false },
+                            ticks: { color: tickColor },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            border: { display: false },
+                            grid: { color: gridColor },
+                            ticks: { color: tickColor },
+                        },
+                    },
                 },
             });
         };

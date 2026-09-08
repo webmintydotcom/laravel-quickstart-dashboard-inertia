@@ -27,7 +27,7 @@ export function UpdatePasswordForm() {
 
     return (
         <Card>
-            <CardContent className="p-5">
+            <CardContent>
                 <h2 className="text-base font-semibold">Password</h2>
                 <p className="text-muted-foreground mt-1 text-sm">Update your account password.</p>
 

@@ -12,13 +12,13 @@ export default function AuthLayout({ title, description, children }: AuthLayoutP
         <>
             <Head title={title} />
 
-            <div className="bg-muted/40 text-foreground flex min-h-screen flex-col items-center justify-center px-4 py-12">
+            <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center px-4 py-12">
                 <div className="w-full max-w-sm">
                     <Link href="/" className="text-primary block text-center text-lg font-bold tracking-tight">
                         Webminty
                     </Link>
 
-                    <div className="bg-card mt-6 rounded-xl border p-6 shadow-sm">
+                    <div className="bg-card mt-6 rounded-lg border p-6">
                         <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
                         <p className="text-muted-foreground mt-1 text-sm">{description}</p>
 

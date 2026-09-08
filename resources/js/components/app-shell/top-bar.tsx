@@ -21,7 +21,7 @@ export function TopBar({
     drawerTriggerRef,
 }: TopBarProps) {
     return (
-        <header className="flex h-16 shrink-0 items-center gap-3 bg-stone-900 px-4 text-white sm:px-6">
+        <header className="bg-shell-raised text-shell-foreground flex h-16 shrink-0 items-center gap-3 px-4 sm:px-6">
             <button
                 ref={drawerTriggerRef}
                 type="button"
@@ -48,7 +48,7 @@ export function TopBar({
                 )}
             </button>
 
-            <p className="truncate text-sm text-stone-400">{title}</p>
+            <p className="text-shell-muted-foreground truncate text-sm">{title}</p>
 
             <div className="flex-1" />
 
