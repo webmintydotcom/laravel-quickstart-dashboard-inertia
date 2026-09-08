@@ -33,7 +33,7 @@ export function UpdateProfileInformationForm({ profile }: Props) {
 
     return (
         <Card>
-            <CardContent className="p-5">
+            <CardContent>
                 <h2 className="text-base font-semibold">Profile information</h2>
                 <p className="text-muted-foreground mt-1 text-sm">Your name and email address.</p>
 

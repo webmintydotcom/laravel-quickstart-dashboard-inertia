@@ -20,7 +20,14 @@ export function DeleteAccountForm() {
     const [open, setOpen] = useState(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const { data, setData, delete: destroy, processing, errors, reset } = useForm({
+    const {
+        data,
+        setData,
+        delete: destroy,
+        processing,
+        errors,
+        reset,
+    } = useForm({
         password: '',
     });
 
@@ -40,7 +47,7 @@ export function DeleteAccountForm() {
 
     return (
         <Card className="border-destructive/50">
-            <CardContent className="p-5">
+            <CardContent>
                 <h2 className="text-destructive text-base font-semibold">Delete account</h2>
                 <p className="text-muted-foreground mt-1 text-sm">
                     Permanently delete your account and everything associated with it. This cannot be undone.

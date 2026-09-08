@@ -14,7 +14,11 @@ const NUMERIC_VALUE = /^\d+$/;
 
 export function MetricLedger({ metrics }: { metrics: Metrics }) {
     return (
-        <section aria-label="Key metrics" aria-busy={metrics.status === 'loading'} className="bg-card overflow-hidden rounded-lg border">
+        <section
+            aria-label="Key metrics"
+            aria-busy={metrics.status === 'loading'}
+            className="bg-card overflow-hidden rounded-lg border"
+        >
             {metrics.status === 'loading' && <span className="sr-only">Loading key metrics…</span>}
 
             <div className="grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">

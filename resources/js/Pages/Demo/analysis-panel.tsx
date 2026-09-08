@@ -142,7 +142,9 @@ export function AnalysisPanel({ chart }: { chart: ChartData }) {
                     </>
                 )}
 
-                {chart.status === 'empty' && <PanelEmpty title={EMPTY_TITLE} detail={EMPTY_DETAIL} className={CHART_HEIGHT} />}
+                {chart.status === 'empty' && (
+                    <PanelEmpty title={EMPTY_TITLE} detail={EMPTY_DETAIL} className={CHART_HEIGHT} />
+                )}
 
                 {chart.status === 'unavailable' && (
                     <PanelEmpty title={UNAVAILABLE_TITLE} detail={UNAVAILABLE_DETAIL} className={CHART_HEIGHT} />

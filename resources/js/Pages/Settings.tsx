@@ -55,17 +55,15 @@ export default function Settings({ settings, timezones }: SettingsProps) {
 
     return (
         <AppLayout title="Settings">
-            <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
                 <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">Settings</h1>
                 <p className="text-muted-foreground mt-2 text-sm">Appearance and regional preferences.</p>
 
                 <form onSubmit={submit} className="mt-6 space-y-6">
                     <Card>
-                        <CardContent className="p-5">
+                        <CardContent>
                             <h2 className="text-base font-semibold">Appearance</h2>
-                            <p className="text-muted-foreground mt-1 text-sm">
-                                System follows your device setting.
-                            </p>
+                            <p className="text-muted-foreground mt-1 text-sm">System follows your device setting.</p>
 
                             <fieldset className="mt-4">
                                 <legend className="sr-only">Appearance</legend>
@@ -74,7 +72,7 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                         <label
                                             key={option.value}
                                             className={cn(
-                                                'flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2',
+                                                'focus-within:ring-ring flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm focus-within:ring-2 focus-within:ring-offset-2',
                                                 data.appearance === option.value
                                                     ? 'border-primary bg-accent text-accent-foreground font-medium'
                                                     : 'hover:bg-accent/50',
@@ -98,14 +96,12 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                 </div>
                             </fieldset>
 
-                            {errors.appearance && (
-                                <p className="text-destructive mt-2 text-sm">{errors.appearance}</p>
-                            )}
+                            {errors.appearance && <p className="text-destructive mt-2 text-sm">{errors.appearance}</p>}
                         </CardContent>
                     </Card>
 
                     <Card>
-                        <CardContent className="p-5">
+                        <CardContent>
                             <h2 className="text-base font-semibold">General</h2>
 
                             <div className="mt-4 max-w-sm space-y-2">

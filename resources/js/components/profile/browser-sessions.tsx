@@ -25,7 +25,14 @@ export function BrowserSessions({ sessions }: Props) {
     const [open, setOpen] = useState(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const { data, setData, delete: destroy, processing, errors, reset } = useForm({
+    const {
+        data,
+        setData,
+        delete: destroy,
+        processing,
+        errors,
+        reset,
+    } = useForm({
         password: '',
     });
 
@@ -46,7 +53,7 @@ export function BrowserSessions({ sessions }: Props) {
 
     return (
         <Card>
-            <CardContent className="p-5">
+            <CardContent>
                 <h2 className="text-base font-semibold">Browser sessions</h2>
                 <p className="text-muted-foreground mt-1 text-sm">
                     Where you&apos;re currently signed in. Log out of other devices if any of these look unfamiliar.
@@ -54,8 +61,8 @@ export function BrowserSessions({ sessions }: Props) {
 
                 {sessions.length === 0 ? (
                     <p className="text-muted-foreground mt-4 text-sm">
-                        No sessions to show. This list requires the database session driver
-                        (<code>SESSION_DRIVER=database</code>).
+                        No sessions to show. This list requires the database session driver (
+                        <code>SESSION_DRIVER=database</code>).
                     </p>
                 ) : (
                     <ul className="mt-4 divide-y">

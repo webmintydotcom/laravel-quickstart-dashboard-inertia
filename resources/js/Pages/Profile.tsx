@@ -14,7 +14,7 @@ interface ProfileProps {
 export default function Profile({ profile, sessions }: ProfileProps) {
     return (
         <AppLayout title="Profile">
-            <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
                 <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">Profile</h1>
                 <p className="text-muted-foreground mt-2 text-sm">
                     Your account details, security, and active sessions.

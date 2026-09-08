@@ -11,7 +11,7 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onNavigate }: SidebarProps) {
     return (
-        <div className="flex h-full flex-col bg-stone-950 text-white">
+        <div className="bg-shell text-shell-foreground flex h-full flex-col">
             <Link
                 href="/"
                 className={cn('flex h-16 items-center gap-3 px-4 font-semibold', collapsed && 'justify-center px-0')}
@@ -26,7 +26,7 @@ export function Sidebar({ collapsed, onNavigate }: SidebarProps) {
                 {primaryNavigation.map((group, index) => (
                     <div key={group.heading ?? index} className="space-y-1 py-1">
                         {group.heading && !collapsed && (
-                            <p className="px-4 py-1 text-[11px] font-semibold tracking-wider text-stone-500 uppercase">
+                            <p className="text-shell-muted-foreground px-4 py-1 text-[11px] font-semibold tracking-wider uppercase">
                                 {group.heading}
                             </p>
                         )}
@@ -37,7 +37,7 @@ export function Sidebar({ collapsed, onNavigate }: SidebarProps) {
                 ))}
             </nav>
 
-            <div className="border-t border-white/10 py-2">
+            <div className="border-shell-border border-t py-2">
                 {footerNavigation.items.map((item) => (
                     <SidebarLink key={item.route} item={item} collapsed={collapsed} onNavigate={onNavigate} />
                 ))}
