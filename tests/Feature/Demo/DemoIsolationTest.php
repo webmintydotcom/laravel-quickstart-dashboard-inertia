@@ -38,6 +38,15 @@ function scanForDemoReferences(): array
                 continue;
             }
 
+            // bootstrap/cache holds Laravel's generated provider and package manifests.
+            // Registering the demo's provider bakes its FQCN into services.php on the
+            // next boot, in CI and in a fresh clone alike. That file is build output,
+            // never hand-authored and never committed, so a reference there is not a
+            // widening of the removal surface - it disappears with `optimize:clear`.
+            if (str_starts_with($relative, 'bootstrap/cache/')) {
+                continue;
+            }
+
             $contents = (string) file_get_contents($file->getPathname());
 
             // The quote-anchored alternative catches the bare Inertia component name
@@ -56,7 +65,10 @@ function scanForDemoReferences(): array
 }
 
 test('nothing outside the demo namespace references it', function (): void {
-    $allowed = ['routes/web.php'];
+    // Both files are permitted because they are the two steps of the demo's
+    // documented removal contract: routes/web.php wires up the dashboard route,
+    // and bootstrap/providers.php registers DemoServiceProvider.
+    $allowed = ['routes/web.php', 'bootstrap/providers.php'];
 
     expect(array_diff(scanForDemoReferences(), $allowed))->toBe([]);
 });
