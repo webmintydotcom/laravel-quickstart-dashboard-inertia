@@ -6,8 +6,9 @@ A starter kit for Laravel applications with React, Inertia.js, Shadcn UI, and Ta
 Designed to help you quickly set up a new full-stack Laravel project with a modern development environment.
 
 Out of the box it ships Fortify-backed authentication screens, an authenticated app shell (sidebar, top bar,
-light/dark/system appearance), a Settings page, a Profile page, and a removable demo dashboard that shows
-every panel state a data-driven page needs. See [Application Shell](#application-shell) for the details.
+light/dark/system appearance), a Settings page, a Profile page, and two removable demo pages: a dashboard that
+shows every panel state a data-driven page needs, and a vehicle list, detail and edit flow that shows real
+server-side search, filtering, sorting and pagination. See [Application Shell](#application-shell) for the details.
 
 ## Installation
 
@@ -262,42 +263,108 @@ The browser sessions list and "Log out other devices" both depend on `SESSION_DR
 
 Two features Fortify ships are still switched off and are not part of this page: email verification and two-factor authentication. Both are cycle 2b work - enabling them means adding a "Verify email" prompt and a two-factor section here.
 
-### Demo Dashboard
+### Demo Pages
 
-`/dashboard` currently renders a fictional customer-onboarding pipeline instead of a blank page, so a cloned application has real layouts, empty/loading/error states, and content density to hold itself to instead of starting from nothing. It exists purely as a worked example - the metrics, chart, attention queue, and accounts table are fixed, deterministic sample data, not a feature meant to ship.
+Two of this starter's routes render a worked example rather than a blank page, so a cloned application has real
+layouts, states, and content density to hold itself to instead of starting from nothing. Both are fiction -
+fixed sample data, not features meant to ship - and both are built to be deleted together.
 
-Every panel reads its state from a single `?state=` query switch on the route, so the full range of a data-driven page can be reviewed without wiring up real data first:
+- **`/dashboard`** - a customer-onboarding pipeline: metrics, a chart, an attention queue and a table. The page
+  shape a dashboard needs.
+- **`/vehicles`** - a fleet of 45 vehicles, listed, viewed and edited. The page shape almost every dashboard
+  application actually needs next: a list with real server-side search, filtering, sorting and pagination; a
+  detail view; and a form that validates and saves.
+
+The two use deliberately unrelated vocabularies. That is the honest signal that both are disposable examples
+rather than two halves of a half-built product.
+
+#### States
+
+Every dashboard panel reads its state from a `?state=` query switch:
 
 - `populated` (default) - every panel ready with sample data.
 - `empty` - every panel in its empty, first-run state.
 - `loading` - every panel showing its skeleton.
-- `partial` - metrics, the attention queue, and the accounts table stay ready; the chart panel is unavailable (distinct from `empty` - the chart has data, it just can't be shown right now). Demonstrates that one stalled panel shouldn't block the rest of the page.
+- `partial` - the chart panel is unavailable while everything else stays ready. Demonstrates that one stalled
+  panel shouldn't block the rest of the page.
 - `error` - everything ready except the chart, which shows a load failure and a retry action.
 
-An unrecognised value falls back to `populated` rather than erroring.
+The vehicle list carries the same switch, with the two states a list has: `?state=empty` for a fleet with
+nothing in it yet, and `?state=loading` for the skeleton. The detail and edit pages have none - they always
+have a record, so an empty state there would be invented rather than demonstrated. Filtering to nothing is a
+third, different state, and the list says so in different words with a way to undo it: try `/vehicles?q=zzzz`.
 
-**Removing it is a two-step contract**, and is meant to be genuinely that short:
+An unrecognised value falls back to the populated state rather than erroring.
 
-1. Delete the three directories that hold every demo-only file - the controller and data provider on the backend, the page, its panel components and the chart on the frontend, and the demo's own tests:
+#### Data
 
-   ```bash
-   rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo
-   ```
+The dashboard's numbers come from a deterministic PHP provider with no database behind it. The vehicles are a
+real table, `demo_vehicles`, because an edit form that appears to save but changes nothing teaches the wrong
+thing, and search, sorting and pagination are only worth copying if they are the real server-side
+implementations.
 
-   `chart.js` is a dependency only the demo uses (via `resources/js/Pages/Demo/chart.tsx`); it can be uninstalled in the same pass with `npm uninstall chart.js`.
-2. In `routes/web.php`, point the `dashboard` route back at the fallback controller that already sits in the tree unrouted for exactly this, and restore its import:
+That table is created **and populated** by a migration inside `app/Demo/`, loaded by
+`App\Demo\DemoServiceProvider`. A migration that seeds is unusual on purpose: it means a fresh clone is
+populated by `php artisan migrate` alone, every test starts from the same 45 rows, and removing the demo never
+has to touch `database/seeders/DatabaseSeeder.php`. The cost is that those rows exist in every test's database,
+including tests that have nothing to do with vehicles.
+
+#### Removing both
+
+```bash
+rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo
+```
+
+`chart.js` is a dependency only the demo uses (via `resources/js/Pages/Demo/chart.tsx`); it can be uninstalled
+in the same pass with `npm uninstall chart.js`.
+
+Then three one-line edits:
+
+1. In `bootstrap/providers.php`, delete the `App\Demo\DemoServiceProvider::class` entry.
+2. In `routes/web.php`, point the `dashboard` route back at the fallback controller that already sits in the
+   tree unrouted for exactly this, restore its import, and delete the four `vehicles.*` routes:
 
    ```php
    Route::get('/dashboard', DashboardController::class)->name('dashboard');
    ```
 
-   The route's `name('dashboard')` does not change, so `resources/js/components/app-shell/navigation.ts` needs no edit - it links by route name, not by component.
+   The route's `name('dashboard')` does not change, so the Dashboard entry in
+   `resources/js/components/app-shell/navigation.ts` needs no edit - it links by route name, not by component.
+3. In `resources/js/components/app-shell/navigation.ts`, delete the `Vehicles` entry and the now-unused `Car`
+   icon import.
 
-A test suite enforces that this stays true as the starter grows: the isolation test under the demo's own test directory fails the build the moment anything outside those three directories references the demo namespace, so a stray import can't quietly widen the removal surface.
+One thing the contract cannot do for you: deleting the migration does not drop `demo_vehicles` from a database
+that has already run it. A fresh clone never creates the table. An existing install drops it by hand.
 
-This contract was executed for real - directories deleted, route repointed, full suite and production build run - as part of building this feature, to prove it rather than just assert it. The pre-existing dashboard test file (the one that predates the demo and asserts the page you get back) asserts only what stays true regardless of which controller serves the route, so it needs no edit after removal; the demo's own component-name assertions live in its own test directory and disappear with it. The `rm` above plus the route repoint is the whole contract - it leaves a green suite with no manual edit required.
+A test suite enforces the rest as the starter grows. The isolation test under the demo's own test directory
+fails the build the moment anything outside those three directories references the demo namespace, so a stray
+import can't quietly widen the removal surface. `routes/web.php` and `bootstrap/providers.php` are its only two
+exceptions, both named explicitly. Laravel's generated provider manifest under `bootstrap/cache/` is also
+exempt from the scan, because it is build output that regenerates itself and is never committed - a reader who
+greps for the demo's name and finds a hit in `bootstrap/cache/services.php` should not conclude the removal
+contract is broken. The navigation entry is the one piece no scan can catch - it links by route name and
+contains nothing that looks like the demo - so it has a test of its own that disappears along with the demo.
 
-Two things that look like they belong to the demo but do not: `table` and `skeleton` in `components/ui/` are general-purpose primitives used elsewhere too, and are not part of the removal. And the demo's own components live under the page directory rather than the shared `components/` tree - a deliberate deviation - specifically so that deleting the demo never means picking components back out of a shared folder.
+This contract was executed for real - directories deleted, provider and routes and navigation stripped, full
+suite and production build run - as part of building this work, to prove it rather than just assert it.
+
+#### What is not part of the demo
+
+`table`, `skeleton`, `badge`, `select`, `switch` and `textarea` in `components/ui/` are general-purpose
+primitives used elsewhere too, and are not part of the removal. Neither is `components/form-field.tsx`, which
+the vehicle form uses and the profile and auth pages use too.
+
+The demo's own components live under its page directory rather than the shared `components/` tree - a
+deliberate deviation - specifically so that deleting the demo never means picking components back out of a
+shared folder.
+
+#### What the tests don't cover
+
+There are no browser tests in this repository, and the vehicle list has two behaviours that only a browser
+exercises: the debounce on the search box (the server-side result of a search is tested; the fact that typing
+issues one request rather than one per keystroke is not), and the click behaviour of a sortable column header
+(the sorted result is tested; the header's own state is not). `?state=loading` proves the skeleton branch
+renders - not that it appears at the right moment during a real in-flight visit.
 
 ## Additional Configurations
 

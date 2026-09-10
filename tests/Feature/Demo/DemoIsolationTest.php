@@ -117,3 +117,32 @@ test('an escaped FQCN with doubled backslashes is caught', function (): void {
         unlink($path);
     }
 });
+
+test('bootstrap/providers.php is the only other permitted reference', function (): void {
+    // Named explicitly so that if the registration moves, this test says where to look.
+    expect(file_get_contents(base_path('bootstrap/providers.php')))
+        ->toContain('App\Demo\DemoServiceProvider');
+});
+
+test('a demo reference under bootstrap outside the provider list is caught', function (): void {
+    // bootstrap/ is scanned, but the allow-list names one file in it. A second
+    // file quietly reaching for the demo would widen the removal surface.
+    $path = base_path('bootstrap/_demo_isolation_sabotage.php');
+    file_put_contents($path, "<?php\n\nreturn [App\\Demo\\DemoServiceProvider::class];\n");
+
+    try {
+        expect(scanForDemoReferences())->toContain('bootstrap/_demo_isolation_sabotage.php');
+    } finally {
+        unlink($path);
+    }
+});
+
+test('the navigation entry the demo adds is accounted for', function (): void {
+    // navigation.ts links by route name, so it never trips the scan above - the
+    // string 'vehicles.index' contains nothing that looks like the demo. That
+    // makes it the one piece of the removal contract no scan can enforce, which
+    // is exactly why it gets a test of its own: this file disappears with the
+    // demo, and until it does it fails loudly if the entry is renamed or moved.
+    expect(file_get_contents(base_path('resources/js/components/app-shell/navigation.ts')))
+        ->toContain("route: 'vehicles.index'");
+});
