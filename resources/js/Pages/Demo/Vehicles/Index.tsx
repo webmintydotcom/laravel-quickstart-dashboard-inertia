@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/AppLayout';
 
-import type { StatusOption, VehicleFilters, VehicleListMeta, VehicleRow } from './list';
+import type { SelectOption, VehicleFilters, VehicleListMeta, VehicleRow } from './list';
 import { VehiclesPager } from './vehicles-pager';
 import { VehiclesTable } from './vehicles-table';
 import { VehiclesToolbar } from './vehicles-toolbar';
@@ -13,11 +13,13 @@ interface VehiclesIndexProps {
         links: { prev: string | null; next: string | null };
     };
     filters: VehicleFilters;
-    statusOptions: StatusOption[];
+    statusOptions: SelectOption[];
     listQuery: Record<string, string | number>;
 }
 
 export default function VehiclesIndex({ vehicles, filters, statusOptions, listQuery }: VehiclesIndexProps) {
+    const hasFilters = filters.q !== '' || filters.status !== '';
+
     return (
         <AppLayout title="Vehicles">
             <div className="px-4 py-6 sm:px-6 lg:px-8">
@@ -32,13 +34,13 @@ export default function VehiclesIndex({ vehicles, filters, statusOptions, listQu
                         Vehicle list
                     </h2>
 
-                    <VehiclesToolbar filters={filters} statusOptions={statusOptions} />
+                    <VehiclesToolbar filters={filters} statusOptions={statusOptions} hasFilters={hasFilters} />
                     <VehiclesTable
                         rows={vehicles.rows}
                         filters={filters}
                         listQuery={listQuery}
                         status={vehicles.status}
-                        hasFilters={filters.q !== '' || filters.status !== ''}
+                        hasFilters={hasFilters}
                     />
                     {vehicles.status === 'ready' && vehicles.rows.length > 0 && (
                         <VehiclesPager meta={vehicles.meta} links={vehicles.links} />

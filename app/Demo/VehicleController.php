@@ -28,6 +28,9 @@ final class VehicleController
         'make'         => ['make', 'model'],
         'year'         => ['year'],
         'odometer'     => ['odometer'],
+        // Orders alphabetically by the backing string - available, in_maintenance,
+        // in_service, retired - not by any lifecycle order. Correct as implemented;
+        // noted so a future reader doesn't file it as a bug.
         'status'       => ['status'],
         'purchased_on' => ['purchased_on'],
     ];
@@ -136,6 +139,10 @@ final class VehicleController
 
     public function update(VehicleUpdateRequest $request, Vehicle $vehicle): RedirectResponse
     {
+        // A real application would authorize here (e.g. $this->authorize('update',
+        // $vehicle)) before writing. The `auth` middleware alone is the right scope
+        // for this starter - org/team scoping is deliberately app-level work - but
+        // this is the seam where a policy check belongs once one exists.
         $vehicle->update($request->vehicleAttributes());
 
         // A plain sentence rather than a key, because flash-toaster.tsx falls

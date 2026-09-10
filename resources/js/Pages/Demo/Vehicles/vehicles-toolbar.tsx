@@ -8,16 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { listUrl, type StatusOption, type VehicleFilters } from './list';
+import { listUrl, type SelectOption, type VehicleFilters } from './list';
 
 const ALL_STATUSES = 'all';
 
 export function VehiclesToolbar({
     filters,
     statusOptions,
+    hasFilters,
 }: {
     filters: VehicleFilters;
-    statusOptions: StatusOption[];
+    statusOptions: SelectOption[];
+    hasFilters: boolean;
 }) {
     const [term, setTerm] = useState(filters.q);
     // The first render must not fire a visit - it would replay the search the
@@ -45,8 +47,6 @@ export function VehiclesToolbar({
         // including it would re-fire the moment the server answers.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [term]);
-
-    const hasFilters = filters.q !== '' || filters.status !== '';
 
     return (
         <div className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:px-5">

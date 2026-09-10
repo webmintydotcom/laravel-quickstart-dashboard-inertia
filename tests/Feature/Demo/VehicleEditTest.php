@@ -166,6 +166,7 @@ test('each rule rejects what it is there to reject', function (array $overrides,
     'price must be a number'        => [['purchase_price' => 'cheap'], 'purchase_price'],
     'price cannot be negative'      => [['purchase_price' => '-1'], 'purchase_price'],
     'price has a ceiling'           => [['purchase_price' => '500001'], 'purchase_price'],
+    'price allows at most 2 decimals' => [['purchase_price' => '1234.567'], 'purchase_price'],
     'notes have a length limit'     => [['notes' => str_repeat('a', 2001)], 'notes'],
 ]);
 

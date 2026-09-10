@@ -10,20 +10,15 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout';
 
-import type { Vehicle } from './list';
-
-interface Option {
-    value: string;
-    label: string;
-}
+import type { SelectOption, Vehicle } from './list';
 
 interface VehicleEditProps {
     vehicle: Vehicle;
     backUrl: string;
     listQuery: Record<string, string | number>;
-    statusOptions: Option[];
-    bodyTypeOptions: Option[];
-    fuelTypeOptions: Option[];
+    statusOptions: SelectOption[];
+    bodyTypeOptions: SelectOption[];
+    fuelTypeOptions: SelectOption[];
 }
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
@@ -48,7 +43,7 @@ function SelectField({
     id: string;
     label: string;
     value: string;
-    options: Option[];
+    options: SelectOption[];
     error?: string;
     onChange: (value: string) => void;
 }) {

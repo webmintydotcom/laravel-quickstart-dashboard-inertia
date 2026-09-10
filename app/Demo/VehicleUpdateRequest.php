@@ -34,8 +34,10 @@ final class VehicleUpdateRequest extends FormRequest
             'bookable'         => ['required', 'boolean'],
             'purchased_on'     => ['required', 'date', 'before_or_equal:today'],
             'last_serviced_on' => ['nullable', 'date', 'after_or_equal:purchased_on', 'before_or_equal:today'],
-            // Dollars here; the column holds cents. See vehicleAttributes().
-            'purchase_price'   => ['required', 'numeric', 'min:0', 'max:500000'],
+            // Dollars here; the column holds cents. See vehicleAttributes(). decimal:0,2
+            // makes the cents rounding below a stated rule rather than a silent one -
+            // without it, 1234.567 would validate and then be rounded to 123457 cents.
+            'purchase_price'   => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:500000'],
             'notes'            => ['nullable', 'string', 'max:2000'],
         ];
     }

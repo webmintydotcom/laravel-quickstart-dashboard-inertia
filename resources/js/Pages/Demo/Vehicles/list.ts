@@ -29,7 +29,8 @@ export interface VehicleListMeta {
     total: number;
 }
 
-export interface StatusOption {
+/** Shared by every status/body-type/fuel-type dropdown the demo renders. */
+export interface SelectOption {
     value: string;
     label: string;
 }

@@ -289,12 +289,14 @@ Every dashboard panel reads its state from a `?state=` query switch:
   panel shouldn't block the rest of the page.
 - `error` - everything ready except the chart, which shows a load failure and a retry action.
 
+An unrecognised value falls back to the populated state rather than erroring.
+
 The vehicle list carries the same switch, with the two states a list has: `?state=empty` for a fleet with
 nothing in it yet, and `?state=loading` for the skeleton. The detail and edit pages have none - they always
 have a record, so an empty state there would be invented rather than demonstrated. Filtering to nothing is a
 third, different state, and the list says so in different words with a way to undo it: try `/vehicles?q=zzzz`.
-
-An unrecognised value falls back to the populated state rather than erroring.
+An unrecognised value here falls back to `ready` rather than erroring - the vehicle list's own default state,
+not the dashboard's `populated`.
 
 #### Data
 
@@ -334,7 +336,9 @@ Then three one-line edits:
    icon import.
 
 One thing the contract cannot do for you: deleting the migration does not drop `demo_vehicles` from a database
-that has already run it. A fresh clone never creates the table. An existing install drops it by hand.
+that has already run it. A fresh clone never creates the table. An existing install drops it by hand. The
+deleted migration's row in Laravel's own `migrations` tracking table is left orphaned too, but that is benign -
+modern Laravel prints "Migration not found" for it and continues rather than failing.
 
 A test suite enforces the rest as the starter grows. The isolation test under the demo's own test directory
 fails the build the moment anything outside those three directories references the demo namespace, so a stray
