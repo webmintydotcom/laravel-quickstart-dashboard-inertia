@@ -350,9 +350,12 @@ suite and production build run - as part of building this work, to prove it rath
 
 #### What is not part of the demo
 
-`table`, `skeleton`, `badge`, `select`, `switch` and `textarea` in `components/ui/` are general-purpose
-primitives used elsewhere too, and are not part of the removal. Neither is `components/form-field.tsx`, which
-the vehicle form uses and the profile and auth pages use too.
+`badge`, `select`, `switch` and `textarea` in `components/ui/` are general-purpose primitives the rest of the
+application uses too, and are not part of the removal. `table` and `skeleton` are the same kind of stock
+primitive, but the demo currently happens to be their only consumer - they stay for the same reason every
+other unused primitive does: an application built on this starter will want a table and a loading skeleton,
+and re-adding them by hand is worse than leaving them. Neither is `components/form-field.tsx`, which the
+vehicle form uses and the profile and auth pages use too.
 
 The demo's own components live under its page directory rather than the shared `components/` tree - a
 deliberate deviation - specifically so that deleting the demo never means picking components back out of a
