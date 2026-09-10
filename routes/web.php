@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function (): void {
     // the three demo directories - see the README's Demo section.
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
     Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
+    Route::get('/vehicles/{vehicle}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
+    Route::patch('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('vehicles.update');
 
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');

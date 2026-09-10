@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Demo;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -104,6 +105,29 @@ final class VehicleController
         ]);
     }
 
+    public function edit(Request $request, Vehicle $vehicle): Response
+    {
+        return Inertia::render('Demo/Vehicles/Edit', [
+            'vehicle'         => VehicleData::from($vehicle),
+            'backUrl'         => route('vehicles.show', ['vehicle' => $vehicle->stock_number, ...$this->listQuery($request)]),
+            'listQuery'       => $this->listQuery($request),
+            'statusOptions'   => VehicleStatus::options(),
+            'bodyTypeOptions' => BodyType::options(),
+            'fuelTypeOptions' => FuelType::options(),
+        ]);
+    }
+
+    public function update(VehicleUpdateRequest $request, Vehicle $vehicle): RedirectResponse
+    {
+        $vehicle->update($request->vehicleAttributes());
+
+        // A plain sentence rather than a key, because flash-toaster.tsx falls
+        // back to the raw status string when a key is unmapped. That is what
+        // keeps the demo from having to add an entry to a shared component.
+        return to_route('vehicles.show', ['vehicle' => $vehicle->stock_number, ...$this->listQuery($request)])
+            ->with('status', 'Vehicle saved.');
+    }
+
     /**
      * Every filter is echoed back so the toolbar renders controlled inputs and
      * every link can rebuild the current query string. Unrecognised values fall
@@ -114,16 +138,29 @@ final class VehicleController
      */
     private function filters(Request $request): array
     {
-        $sort = $request->string('sort', 'stock_number')->value();
-        $direction = $request->string('direction', 'asc')->value();
-        $status = $request->string('status')->value();
+        $sort = $this->queryParameter($request, 'sort', 'stock_number');
+        $direction = $this->queryParameter($request, 'direction', 'asc');
+        $status = $this->queryParameter($request, 'status');
 
         return [
-            'q'         => $request->string('q')->trim()->value(),
+            'q'         => trim($this->queryParameter($request, 'q')),
             'status'    => VehicleStatus::tryFrom($status) !== null ? $status : '',
             'sort'      => array_key_exists($sort, self::SORTS) ? $sort : 'stock_number',
             'direction' => in_array($direction, ['asc', 'desc'], true) ? $direction : 'asc',
         ];
+    }
+
+    /**
+     * These four are list filters: they live in the URL's query string and
+     * nowhere else. Request::string() would read the merged input bag, so on a
+     * PATCH the edit form's own `status` field would be mistaken for the list's
+     * status filter and follow the visitor back to the record they just saved.
+     */
+    private function queryParameter(Request $request, string $key, string $default = ''): string
+    {
+        $value = $request->query($key, $default);
+
+        return is_string($value) ? $value : $default;
     }
 
     /**
