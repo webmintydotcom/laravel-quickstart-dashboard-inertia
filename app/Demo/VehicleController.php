@@ -7,6 +7,7 @@ namespace App\Demo;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -68,13 +69,16 @@ final class VehicleController
         // swap places between page one and page two of the same sort.
         $query->orderBy('stock_number');
 
+        $state = $this->state($request);
+
         // withQueryString() is what keeps the search alive when you turn the page.
-        $vehicles = $query->paginate(self::PER_PAGE)->withQueryString();
+        $vehicles = $state === 'empty'
+            ? new LengthAwarePaginator([], 0, self::PER_PAGE)
+            : $query->paginate(self::PER_PAGE)->withQueryString();
 
         return Inertia::render('Demo/Vehicles/Index', [
             'vehicles' => [
-                // Task 6 replaces this constant with the ?state= switch.
-                'status' => 'ready',
+                'status' => $state,
                 'rows'   => VehicleSummaryData::collect($vehicles->getCollection()),
                 // A hand-built meta rather than the paginator's own payload,
                 // which carries fifteen keys and a links array this table
@@ -148,6 +152,19 @@ final class VehicleController
             'sort'      => array_key_exists($sort, self::SORTS) ? $sort : 'stock_number',
             'direction' => in_array($direction, ['asc', 'desc'], true) ? $direction : 'asc',
         ];
+    }
+
+    /**
+     * The index carries the same ?state= switch the demo dashboard documents, so
+     * the states a data-driven list needs can be reviewed without wiring up real
+     * data first. Only these two: the detail and edit screens always have a
+     * record, so an empty state there would be invented rather than demonstrated.
+     */
+    private function state(Request $request): string
+    {
+        $state = $this->queryParameter($request, 'state');
+
+        return in_array($state, ['empty', 'loading'], true) ? $state : 'ready';
     }
 
     /**

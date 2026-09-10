@@ -163,3 +163,30 @@ test('the last page has no next link and the first has no previous', function ()
     $this->get(route('vehicles.index', ['page' => 5]))
         ->assertInertia(fn (AssertableInertia $page) => $page->where('vehicles.links.next', null));
 });
+
+test('the state switch drives the list', function (string $state, string $expected, int $rows): void {
+    $this->get(route('vehicles.index', ['state' => $state]))
+        ->assertOk()
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('vehicles.status', $expected)
+                ->has('vehicles.rows', $rows)
+        );
+})->with([
+    // 'empty' is the genuine first-run state: a fleet with nothing in it yet.
+    'empty'   => ['empty', 'empty', 0],
+    // 'loading' keeps the real rows in the payload; the page paints skeletons
+    // over them, which is what a real in-flight visit looks like.
+    'loading' => ['loading', 'loading', 10],
+    'unknown' => ['nonsense', 'ready', 10],
+]);
+
+test('the empty state reports a total of zero', function (): void {
+    $this->get(route('vehicles.index', ['state' => 'empty']))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('vehicles.meta.total', 0)
+                ->where('vehicles.meta.last_page', 1)
+                ->where('vehicles.links.next', null)
+        );
+});

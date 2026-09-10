@@ -33,8 +33,16 @@ export default function VehiclesIndex({ vehicles, filters, statusOptions, listQu
                     </h2>
 
                     <VehiclesToolbar filters={filters} statusOptions={statusOptions} />
-                    <VehiclesTable rows={vehicles.rows} filters={filters} listQuery={listQuery} />
-                    <VehiclesPager meta={vehicles.meta} links={vehicles.links} />
+                    <VehiclesTable
+                        rows={vehicles.rows}
+                        filters={filters}
+                        listQuery={listQuery}
+                        status={vehicles.status}
+                        hasFilters={filters.q !== '' || filters.status !== ''}
+                    />
+                    {vehicles.status === 'ready' && vehicles.rows.length > 0 && (
+                        <VehiclesPager meta={vehicles.meta} links={vehicles.links} />
+                    )}
                 </section>
             </div>
         </AppLayout>
