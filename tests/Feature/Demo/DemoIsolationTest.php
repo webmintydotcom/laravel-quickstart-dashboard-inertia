@@ -38,12 +38,14 @@ function scanForDemoReferences(): array
                 continue;
             }
 
-            // bootstrap/cache holds Laravel's generated provider and package manifests.
-            // Registering the demo's provider bakes its FQCN into services.php on the
-            // next boot, in CI and in a fresh clone alike. That file is build output,
-            // never hand-authored and never committed, so a reference there is not a
-            // widening of the removal surface - it disappears with `optimize:clear`.
-            if (str_starts_with($relative, 'bootstrap/cache/')) {
+            // Everything generated under bootstrap/ is build output: cache/ holds
+            // Laravel's provider and package manifests, ssr/ holds the compiled SSR
+            // bundle. Both bake in whatever the app currently contains - the demo's
+            // FQCN, the demo's compiled components - on the next boot or build, in CI
+            // and in a fresh clone alike. Neither is hand-authored and neither is
+            // committed, so a reference in them is not a widening of the removal
+            // surface; they disappear with `optimize:clear` and a rebuild.
+            if (str_starts_with($relative, 'bootstrap/cache/') || str_starts_with($relative, 'bootstrap/ssr/')) {
                 continue;
             }
 
@@ -102,6 +104,7 @@ function scanForVehicleRouteReferences(): array
                 || str_starts_with($relative, 'resources/js/Pages/Demo')
                 || str_starts_with($relative, 'tests/Feature/Demo')
                 || str_starts_with($relative, 'bootstrap/cache/')
+                || str_starts_with($relative, 'bootstrap/ssr/')
                 || in_array($relative, $allowed, true)
             ) {
                 continue;
