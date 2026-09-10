@@ -1,11 +1,9 @@
-import { Link } from '@inertiajs/react';
-import { route } from 'ziggy-js';
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout';
 
 import type { StatusOption, VehicleFilters, VehicleListMeta, VehicleRow } from './list';
-import { StatusBadge } from './status-badge';
+import { VehiclesPager } from './vehicles-pager';
+import { VehiclesTable } from './vehicles-table';
+import { VehiclesToolbar } from './vehicles-toolbar';
 
 interface VehiclesIndexProps {
     vehicles: {
@@ -19,7 +17,7 @@ interface VehiclesIndexProps {
     listQuery: Record<string, string | number>;
 }
 
-export default function VehiclesIndex({ vehicles, listQuery }: VehiclesIndexProps) {
+export default function VehiclesIndex({ vehicles, filters, statusOptions, listQuery }: VehiclesIndexProps) {
     return (
         <AppLayout title="Vehicles">
             <div className="px-4 py-6 sm:px-6 lg:px-8">
@@ -34,55 +32,9 @@ export default function VehiclesIndex({ vehicles, listQuery }: VehiclesIndexProp
                         Vehicle list
                     </h2>
 
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Stock</TableHead>
-                                    <TableHead>Vehicle</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Odometer</TableHead>
-                                    <TableHead>Driver</TableHead>
-                                    <TableHead>Purchased</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {vehicles.rows.map((vehicle) => (
-                                    <TableRow key={vehicle.stock_number}>
-                                        <TableCell className="font-medium">
-                                            <Link
-                                                href={route('vehicles.show', {
-                                                    vehicle: vehicle.stock_number,
-                                                    ...listQuery,
-                                                })}
-                                                className="hover:underline focus-visible:underline"
-                                            >
-                                                {vehicle.stock_number}
-                                                <span className="sr-only">
-                                                    {' '}
-                                                    — {vehicle.make} {vehicle.model}
-                                                </span>
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className="font-medium">
-                                                {vehicle.make} {vehicle.model}
-                                            </span>
-                                            <span className="text-muted-foreground block text-xs">
-                                                {vehicle.year} · {vehicle.color}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <StatusBadge status={vehicle.status} label={vehicle.status_label} />
-                                        </TableCell>
-                                        <TableCell>{vehicle.odometer_label}</TableCell>
-                                        <TableCell>{vehicle.assigned_driver ?? '—'}</TableCell>
-                                        <TableCell>{vehicle.purchased_on_label}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <VehiclesToolbar filters={filters} statusOptions={statusOptions} />
+                    <VehiclesTable rows={vehicles.rows} filters={filters} listQuery={listQuery} />
+                    <VehiclesPager meta={vehicles.meta} links={vehicles.links} />
                 </section>
             </div>
         </AppLayout>

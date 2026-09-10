@@ -1,3 +1,5 @@
+import { route } from 'ziggy-js';
+
 export interface VehicleRow {
     stock_number: string;
     make: string;
@@ -57,4 +59,25 @@ export interface Vehicle {
     purchase_price: string;
     purchase_price_label: string;
     notes: string | null;
+}
+
+/**
+ * Every link on this page is the current filters with one thing changed. Built
+ * here rather than from location.search so it works under SSR, and defaults are
+ * dropped so the URL stays short and shareable.
+ */
+export function listUrl(
+    filters: VehicleFilters,
+    overrides: Partial<Record<'q' | 'status' | 'sort' | 'direction' | 'page', string | number>>,
+): string {
+    const merged = { page: 1, ...filters, ...overrides };
+    const query: Record<string, string | number> = {};
+
+    if (merged.q) query.q = merged.q;
+    if (merged.status) query.status = merged.status;
+    if (merged.sort && merged.sort !== 'stock_number') query.sort = merged.sort;
+    if (merged.direction && merged.direction !== 'asc') query.direction = merged.direction;
+    if (Number(merged.page) > 1) query.page = Number(merged.page);
+
+    return route('vehicles.index', query);
 }

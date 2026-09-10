@@ -141,3 +141,25 @@ test('sorting inside a search keeps the search', function (): void {
                 ->where('vehicles.rows.0.stock_number', 'FL-1020')
         );
 });
+
+test('a pagination link keeps the filters it was built under', function (): void {
+    // The pager renders these URLs verbatim. If withQueryString() is ever
+    // dropped from the controller, turning the page silently drops the search.
+    $this->get(route('vehicles.index', ['q' => 'o', 'sort' => 'year', 'direction' => 'desc']))
+        ->assertInertia(function (AssertableInertia $page): void {
+            $next = $page->toArray()['props']['vehicles']['links']['next'];
+
+            expect($next)->toContain('q=o')
+                ->and($next)->toContain('sort=year')
+                ->and($next)->toContain('direction=desc')
+                ->and($next)->toContain('page=2');
+        });
+});
+
+test('the last page has no next link and the first has no previous', function (): void {
+    $this->get(route('vehicles.index'))
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('vehicles.links.prev', null));
+
+    $this->get(route('vehicles.index', ['page' => 5]))
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('vehicles.links.next', null));
+});
