@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Demo\DemoDashboardController;
+use App\Demo\VehicleController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
@@ -20,6 +21,11 @@ Route::middleware('auth')->group(function (): void {
     // back at DashboardController::class. See the README's Demo Dashboard section
     // for the full removal contract.
     Route::get('/dashboard', DemoDashboardController::class)->name('dashboard');
+
+    // The demo also owns /vehicles. To remove it, delete these routes along with
+    // the three demo directories - see the README's Demo section.
+    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
 

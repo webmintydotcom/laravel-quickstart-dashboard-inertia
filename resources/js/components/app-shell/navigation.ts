@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, UserCircle, type LucideIcon } from 'lucide-react';
+import { Car, LayoutDashboard, Settings, UserCircle, type LucideIcon } from 'lucide-react';
 
 export interface NavItem {
     label: string;
@@ -22,7 +22,12 @@ export interface NavGroup {
  */
 export const primaryNavigation: NavGroup[] = [
     {
-        items: [{ label: 'Dashboard', icon: LayoutDashboard, route: 'dashboard' }],
+        items: [
+            { label: 'Dashboard', icon: LayoutDashboard, route: 'dashboard' },
+            // Added by the removable demo. Deleting this entry is step 4 of the
+            // removal contract in the README.
+            { label: 'Vehicles', icon: Car, route: 'vehicles.index', activeMatch: 'vehicles.*' },
+        ],
     },
 ];
 
