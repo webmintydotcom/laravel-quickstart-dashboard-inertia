@@ -26,3 +26,6 @@ yarn-error.log
 
 # Design specs and implementation plans - kept on disk, never committed
 /docs/superpowers
+
+# Scratch space for plan execution - ledgers, briefs, review packages
+/.superpowers
