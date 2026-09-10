@@ -92,6 +92,15 @@ final class VehicleController
             ],
             'filters'       => $filters,
             'statusOptions' => VehicleStatus::options(),
+            'listQuery'     => $this->listQuery($request),
+        ]);
+    }
+
+    public function show(Request $request, Vehicle $vehicle): Response
+    {
+        return Inertia::render('Demo/Vehicles/Show', [
+            'vehicle' => VehicleData::from($vehicle),
+            'backUrl' => route('vehicles.index', $this->listQuery($request)),
         ]);
     }
 
@@ -115,5 +124,30 @@ final class VehicleController
             'sort'      => array_key_exists($sort, self::SORTS) ? $sort : 'stock_number',
             'direction' => in_array($direction, ['asc', 'desc'], true) ? $direction : 'asc',
         ];
+    }
+
+    /**
+     * The active filters and page, with every default stripped out, so a link
+     * built from them stays short: /vehicles?q=Ford rather than
+     * /vehicles?q=Ford&status=&sort=stock_number&direction=asc&page=1.
+     *
+     * Every value here has already been through filters(), so it is safe to put
+     * straight into a URL - an unrecognised sort or status never survives that
+     * far.
+     *
+     * @return array<string, string|int>
+     */
+    private function listQuery(Request $request): array
+    {
+        $filters = $this->filters($request);
+        $page = max((int) $request->query('page', 1), 1);
+
+        return array_filter([
+            'q'         => $filters['q'],
+            'status'    => $filters['status'],
+            'sort'      => $filters['sort'] === 'stock_number' ? '' : $filters['sort'],
+            'direction' => $filters['direction'] === 'asc' ? '' : $filters['direction'],
+            'page'      => $page > 1 ? $page : '',
+        ], fn (string|int $value): bool => $value !== '');
     }
 }

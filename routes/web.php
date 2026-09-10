@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function (): void {
     // The demo also owns /vehicles. To remove it, delete these routes along with
     // the three demo directories - see the README's Demo section.
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+    Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
 
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');

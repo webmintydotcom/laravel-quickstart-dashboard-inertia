@@ -1,3 +1,6 @@
+import { Link } from '@inertiajs/react';
+import { route } from 'ziggy-js';
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout';
 
@@ -13,9 +16,10 @@ interface VehiclesIndexProps {
     };
     filters: VehicleFilters;
     statusOptions: StatusOption[];
+    listQuery: Record<string, string | number>;
 }
 
-export default function VehiclesIndex({ vehicles }: VehiclesIndexProps) {
+export default function VehiclesIndex({ vehicles, listQuery }: VehiclesIndexProps) {
     return (
         <AppLayout title="Vehicles">
             <div className="px-4 py-6 sm:px-6 lg:px-8">
@@ -45,7 +49,21 @@ export default function VehiclesIndex({ vehicles }: VehiclesIndexProps) {
                             <TableBody>
                                 {vehicles.rows.map((vehicle) => (
                                     <TableRow key={vehicle.stock_number}>
-                                        <TableCell className="font-medium">{vehicle.stock_number}</TableCell>
+                                        <TableCell className="font-medium">
+                                            <Link
+                                                href={route('vehicles.show', {
+                                                    vehicle: vehicle.stock_number,
+                                                    ...listQuery,
+                                                })}
+                                                className="hover:underline focus-visible:underline"
+                                            >
+                                                {vehicle.stock_number}
+                                                <span className="sr-only">
+                                                    {' '}
+                                                    — {vehicle.make} {vehicle.model}
+                                                </span>
+                                            </Link>
+                                        </TableCell>
                                         <TableCell>
                                             <span className="font-medium">
                                                 {vehicle.make} {vehicle.model}
