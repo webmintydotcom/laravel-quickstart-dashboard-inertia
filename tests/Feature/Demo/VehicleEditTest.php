@@ -63,6 +63,30 @@ test('an unknown stock number is a 404', function (): void {
     $this->get(route('vehicles.edit', 'FL-9999'))->assertNotFound();
 });
 
+// Both tests below exist because, before the Show -> Edit fix, nothing in this
+// file ever put a query string on `edit` or `update`. Every request here used a
+// bare /vehicles/FL-1000 URL, so listQuery, backUrl and the update() redirect
+// were always exercised with an empty list of filters - the exact shape that
+// hid the dead-code bug. Without a query string, [] === [] and the chain looks
+// fine whether or not the filters were actually threaded through.
+
+test('the edit backUrl carries the filters the visitor arrived with', function (): void {
+    $this->get(route('vehicles.edit', ['vehicle' => 'FL-1000', 'q' => 'Ford', 'page' => 2]))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('backUrl', route('vehicles.show', ['vehicle' => 'FL-1000', 'q' => 'Ford', 'page' => 2]))
+        );
+});
+
+test('saving carries the filters the visitor arrived with back to the detail page', function (): void {
+    $this->patch(
+        route('vehicles.update', ['vehicle' => 'FL-1000', 'q' => 'Ford', 'sort' => 'year', 'direction' => 'desc']),
+        vehiclePayload(),
+    )->assertRedirect(
+        route('vehicles.show', ['vehicle' => 'FL-1000', 'q' => 'Ford', 'sort' => 'year', 'direction' => 'desc']),
+    );
+});
+
 test('a valid change is saved and confirmed', function (): void {
     $this->patch(route('vehicles.update', 'FL-1000'), vehiclePayload())
         ->assertRedirect(route('vehicles.show', 'FL-1000'))

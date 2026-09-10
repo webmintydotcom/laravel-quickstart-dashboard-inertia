@@ -104,8 +104,9 @@ final class VehicleController
     public function show(Request $request, Vehicle $vehicle): Response
     {
         return Inertia::render('Demo/Vehicles/Show', [
-            'vehicle' => VehicleData::from($vehicle),
-            'backUrl' => route('vehicles.index', $this->listQuery($request)),
+            'vehicle'   => VehicleData::from($vehicle),
+            'backUrl'   => route('vehicles.index', $this->listQuery($request)),
+            'listQuery' => $this->listQuery($request),
         ]);
     }
 

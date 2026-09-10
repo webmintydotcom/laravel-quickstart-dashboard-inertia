@@ -31,7 +31,15 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
     );
 }
 
-export default function VehicleShow({ vehicle, backUrl }: { vehicle: Vehicle; backUrl: string }) {
+export default function VehicleShow({
+    vehicle,
+    backUrl,
+    listQuery,
+}: {
+    vehicle: Vehicle;
+    backUrl: string;
+    listQuery: Record<string, string | number>;
+}) {
     return (
         <AppLayout title={`${vehicle.make} ${vehicle.model}`}>
             <div className="max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -60,7 +68,9 @@ export default function VehicleShow({ vehicle, backUrl }: { vehicle: Vehicle; ba
                     </div>
 
                     <Button asChild>
-                        <Link href={route('vehicles.edit', vehicle.stock_number)}>Edit vehicle</Link>
+                        <Link href={route('vehicles.edit', { vehicle: vehicle.stock_number, ...listQuery })}>
+                            Edit vehicle
+                        </Link>
                     </Button>
                 </div>
 

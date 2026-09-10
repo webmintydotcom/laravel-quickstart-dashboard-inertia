@@ -79,6 +79,19 @@ test('the back link carries the filters the visitor arrived with', function (): 
         );
 });
 
+test('the listQuery prop carries the filters the visitor arrived with', function (): void {
+    // This is the prop Show.tsx spreads into the Edit link
+    // (route('vehicles.edit', { vehicle: ..., ...listQuery })). Every other test
+    // in this file exercises backUrl, which the edit hop never reads - so before
+    // this test existed, listQuery could regress to [] here with the suite still
+    // green, silently dropping filters on the Show -> Edit hop alone.
+    $this->get(route('vehicles.show', ['vehicle' => 'FL-1000', 'q' => 'Ford', 'page' => 2]))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('listQuery', ['q' => 'Ford', 'page' => 2])
+        );
+});
+
 test('the back link drops filters that are already the default', function (): void {
     $this->get(route('vehicles.show', ['vehicle' => 'FL-1000', 'sort' => 'stock_number', 'direction' => 'asc', 'page' => 1]))
         ->assertInertia(fn (AssertableInertia $page) => $page->where('backUrl', route('vehicles.index')));
