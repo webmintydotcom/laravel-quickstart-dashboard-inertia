@@ -96,10 +96,14 @@ test('an image with excessive pixel dimensions is rejected', function (): void {
     // PNG is only a few KB on disk but needs hundreds of MB once GD decodes it.
     // The dimensions rule reads the header via getimagesize() and rejects this
     // before Intervention ever touches the file. UploadedFile::fake()->image()
-    // itself calls imagecreatetruecolor() to build the fixture, which - unlike
-    // the app code under test - does need real memory for an 8000x8000 buffer,
-    // so the PHP memory limit is raised only around building the fixture.
-    $previousLimit = ini_set('memory_limit', '512M');
+    // calls imagecreatetruecolor() to build the fixture, which needs ~256MB for
+    // an 8000x8000 buffer - so the limit is lifted around the fixture and
+    // restored immediately after. It is set to -1 rather than a number: a
+    // hardcoded ceiling silently *lowers* the limit on any environment
+    // configured above it, which is what happened here, and the failure
+    // surfaces as an unrelated fatal in whichever test runs when the suite's
+    // cumulative heap crosses the cap.
+    $previousLimit = ini_set('memory_limit', '-1');
 
     try {
         $this->actingAs($user)
