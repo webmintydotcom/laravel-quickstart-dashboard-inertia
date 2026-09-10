@@ -52,7 +52,19 @@ final class VehicleController
                 $filters['q'] !== '',
                 fn (Builder $query) => $query->where(function (Builder $inner) use ($filters): void {
                     foreach (self::SEARCHABLE as $column) {
-                        $inner->orWhere($column, 'like', '%' . $filters['q'] . '%');
+                        // orWhereLike rather than orWhere(..., 'like', ...): with its default
+                        // $caseSensitive = false it compiles to `ilike` on PostgreSQL and to a
+                        // plain `like` everywhere else, so the search stays case-insensitive
+                        // whichever engine this starter is pointed at. A bare `like` is
+                        // case-SENSITIVE on PostgreSQL - a bug you only meet in production.
+                        //
+                        // The term is bound, so this is not injection. It is still a LIKE
+                        // *pattern*, so a literal % or _ typed into the search box is read as a
+                        // wildcard. Escaping that portably needs an `escape` clause - SQLite has
+                        // no default escape character, unlike MySQL and PostgreSQL - which means
+                        // raw SQL and losing the `ilike` above. If your users search text that
+                        // genuinely contains % or _, that trade is worth revisiting.
+                        $inner->orWhereLike($column, '%' . $filters['q'] . '%');
                     }
                 }),
             )

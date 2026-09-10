@@ -64,6 +64,78 @@ function scanForDemoReferences(): array
     return $offenders;
 }
 
+/**
+ * scanForDemoReferences() catches App\Demo, Pages/Demo and 'Demo/ - none of
+ * which appear in route('vehicles.show', ...) or its siblings. A route name is
+ * just a string, so a new reference to one - a Welcome page CTA, a breadcrumb
+ * helper, a command palette entry - could land in any file outside the demo
+ * and pass the scan above silently. This is that same style of scan, aimed at
+ * the vehicle demo's route-name surface instead of its class/component names,
+ * so the sabotage test below exercises the real guard rather than a
+ * reimplementation that could drift from it.
+ *
+ * @return list<string>
+ */
+function scanForVehicleRouteReferences(): array
+{
+    $offenders = [];
+
+    // routes/web.php declares the route names; navigation.ts links to
+    // 'vehicles.index' by name. Both are named explicitly, the same way
+    // scanForDemoReferences() names its own two exceptions.
+    $allowed = ['routes/web.php', 'resources/js/components/app-shell/navigation.ts'];
+
+    foreach (['app', 'resources/js', 'resources/views', 'config', 'database', 'bootstrap', 'routes', 'tests'] as $directory) {
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(base_path($directory), FilesystemIterator::SKIP_DOTS),
+        );
+
+        foreach ($files as $file) {
+            if (! $file->isFile()) {
+                continue;
+            }
+
+            $relative = str_replace(base_path() . '/', '', $file->getPathname());
+
+            if (
+                str_starts_with($relative, 'app/Demo')
+                || str_starts_with($relative, 'resources/js/Pages/Demo')
+                || str_starts_with($relative, 'tests/Feature/Demo')
+                || str_starts_with($relative, 'bootstrap/cache/')
+                || in_array($relative, $allowed, true)
+            ) {
+                continue;
+            }
+
+            $contents = (string) file_get_contents($file->getPathname());
+
+            if (preg_match('#vehicles\.(index|show|edit|update)#', $contents) === 1) {
+                $offenders[] = $relative;
+            }
+        }
+    }
+
+    return $offenders;
+}
+
+test('nothing outside the demo namespace references its route names', function (): void {
+    expect(scanForVehicleRouteReferences())->toBe([]);
+});
+
+test('a vehicles route-name reference outside the allow-list is caught', function (): void {
+    // Guards against the exact failure scenario this scan exists for: a CTA or
+    // helper elsewhere using route('vehicles.show', ...) directly, which the
+    // App\Demo / Pages/Demo / 'Demo/ scan above cannot see.
+    $path = base_path('resources/js/_demo_isolation_sabotage.ts');
+    file_put_contents($path, "route('vehicles.show', { vehicle: id })\n");
+
+    try {
+        expect(scanForVehicleRouteReferences())->toContain('resources/js/_demo_isolation_sabotage.ts');
+    } finally {
+        unlink($path);
+    }
+});
+
 test('nothing outside the demo namespace references it', function (): void {
     // Both files are permitted because they are the two steps of the demo's
     // documented removal contract: routes/web.php wires up the dashboard route,

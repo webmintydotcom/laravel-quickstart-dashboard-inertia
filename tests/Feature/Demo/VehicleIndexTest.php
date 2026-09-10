@@ -75,6 +75,16 @@ test('search matches across the columns a person would type into it', function (
     'driver'       => ['Priya', 6],
     'plate'        => ['FLT-4021', 1],
     'no matches'   => ['nothing here', 0],
+    // These two pass on SQLite both before and after orWhereLike, because
+    // SQLite's LIKE was already case-insensitive - this suite has no way to
+    // exercise the PostgreSQL case-sensitivity bug orWhereLike actually fixes,
+    // since it only ever runs on SQLite. What they do pin down is intent: if
+    // someone later "tightens" the search to
+    // orWhereLike(..., caseSensitive: true), that flag switches SQLite's
+    // comparison to GLOB, which is case-sensitive, and these two rows fail
+    // immediately.
+    'lowercase make'   => ['tesla', 3],
+    'uppercase driver' => ['PRIYA', 6],
 ]);
 
 test('the status filter narrows to one status', function (string $status, int $expected): void {
