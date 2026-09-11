@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "webmintydotcom/laravel-quickstart-inertia",
-    "version": "2.0.0",
+    "name": "webmintydotcom/laravel-quickstart-dashboard-inertia",
+    "version": "1.0.0",
     "type": "project",
-    "description": "Laravel starter kit with common addons.",
+    "description": "Laravel starter kit with common addons, including Intertia and a dashboard skeleton",
     "keywords": [
         "laravel",
         "framework",
