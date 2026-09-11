@@ -313,6 +313,21 @@ including tests that have nothing to do with vehicles.
 
 #### Removing both
 
+When you are ready to start building your own application, run the removal script from the project root:
+
+```bash
+./remove-demo.sh
+```
+
+It asks for confirmation (pass `--yes` to skip the prompt), then performs the entire contract below for you:
+it deletes the three demo directories, restores the `/dashboard` route to `DashboardController`, unregisters
+the demo service provider, removes the `Vehicles` navigation entry, drops the `demo_vehicles` table, and clears
+the cached config and routes. When it finishes it **deletes itself** - a starter kit with no demo has no use
+for a demo-removal script, so `remove-demo.sh` is not something you carry into your own project. The one thing
+it deliberately leaves behind is `chart.js` in `package.json`; remove that yourself if you want it gone.
+
+If you would rather do it by hand - or want to understand exactly what the script does - the contract is below.
+
 ```bash
 rm -rf app/Demo resources/js/Pages/Demo tests/Feature/Demo
 ```
