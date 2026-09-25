@@ -1,0 +1,17 @@
+name: laravel-quickstart-dashboard-inertia
+icon: null
+processes:
+  npm:dev:
+    command: npm run dev
+    working_dir: null
+    auto_start: true
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Queue:
+    command: php artisan queue:listen
+    working_dir: null
+    auto_start: false
+    auto_restart: true
+    restart_when_changed: []
+    env: {}
