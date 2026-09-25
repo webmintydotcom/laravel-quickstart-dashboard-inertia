@@ -1,19 +1,14 @@
+import { createListCollection } from '@ark-ui/react/collection';
 import { useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
+import { useMemo } from 'react';
 import { route } from 'ziggy-js';
 
 import AppLayout from '@/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { applyAppearance, type Appearance } from '@/lib/appearance';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +16,10 @@ interface TimezoneOption {
     value: string;
     label: string;
     offset: string;
+}
+
+interface TimezoneItem extends TimezoneOption {
+    region: string;
 }
 
 interface SettingsProps {
@@ -39,6 +38,20 @@ export default function Settings({ settings, timezones }: SettingsProps) {
         appearance: settings.appearance,
         timezone: settings.timezone,
     });
+
+    // Ark's Select is collection-driven: flatten the region map into one list
+    // and let the collection group it back by region for rendering.
+    const timezoneCollection = useMemo(
+        () =>
+            createListCollection<TimezoneItem>({
+                items: Object.entries(timezones).flatMap(([region, zones]) =>
+                    zones.map((zone) => ({ ...zone, region })),
+                ),
+                itemToString: (item) => `${item.label} (${item.offset})`,
+                groupBy: (item) => item.region,
+            }),
+        [timezones],
+    );
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -104,20 +117,28 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                         <CardContent>
                             <h2 className="text-base font-semibold">General</h2>
 
-                            <div className="mt-4 max-w-sm space-y-2">
-                                <label htmlFor="timezone" className="text-sm font-medium">
-                                    Timezone
-                                </label>
-                                <Select value={data.timezone} onValueChange={(value) => setData('timezone', value)}>
-                                    <SelectTrigger id="timezone" className="w-full">
+                            <Field id="timezone" invalid={Boolean(errors.timezone)} className="mt-4 max-w-sm">
+                                <FieldLabel>Timezone</FieldLabel>
+                                <Select
+                                    name="timezone"
+                                    collection={timezoneCollection}
+                                    value={[data.timezone]}
+                                    onValueChange={({ value }) => {
+                                        // Ark reports an empty array if the value is cleared; the
+                                        // timezone is required, so keep the last selection instead.
+                                        if (value[0]) {
+                                            setData('timezone', value[0]);
+                                        }
+                                    }}
+                                >
+                                    <SelectTrigger size="lg" className="w-full">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {Object.entries(timezones).map(([region, zones]) => (
-                                            <SelectGroup key={region}>
-                                                <SelectLabel>{region}</SelectLabel>
+                                        {timezoneCollection.group().map(([region, zones]) => (
+                                            <SelectGroup key={region} heading={region}>
                                                 {zones.map((zone) => (
-                                                    <SelectItem key={zone.value} value={zone.value}>
+                                                    <SelectItem key={zone.value} item={zone}>
                                                         {zone.label} ({zone.offset})
                                                     </SelectItem>
                                                 ))}
@@ -125,12 +146,12 @@ export default function Settings({ settings, timezones }: SettingsProps) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.timezone && <p className="text-destructive text-sm">{errors.timezone}</p>}
-                            </div>
+                                <FieldError>{errors.timezone}</FieldError>
+                            </Field>
                         </CardContent>
                     </Card>
 
-                    <Button type="submit" disabled={processing}>
+                    <Button type="submit" size="lg" isLoading={processing} disabled={processing}>
                         Save changes
                     </Button>
                 </form>

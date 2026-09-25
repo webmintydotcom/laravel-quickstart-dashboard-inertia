@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -90,20 +91,21 @@ export function BrowserSessions({ sessions }: Props) {
                 )}
 
                 {sessions.length > 0 && (
-                    <Dialog open={open} onOpenChange={setOpen}>
+                    <Dialog
+                        open={open}
+                        onOpenChange={(details) => setOpen(details.open)}
+                        // Start focus on Cancel so
+                        // the destructive action is never one keypress away.
+                        initialFocusEl={() => cancelRef.current}
+                    >
                         <DialogTrigger asChild>
-                            <Button type="button" variant="outline" className="mt-4 min-h-11">
+                            <Button type="button" variant="outline" size="lg" className="mt-4 min-h-11">
                                 Log out other devices
                             </Button>
                         </DialogTrigger>
 
-                        <DialogContent
-                            onOpenAutoFocus={(event) => {
-                                event.preventDefault();
-                                cancelRef.current?.focus();
-                            }}
-                        >
-                            <form onSubmit={submit}>
+                        <DialogContent>
+                            <form onSubmit={submit} className="flex min-h-0 flex-col">
                                 <DialogHeader>
                                     <DialogTitle>Log out of other browser sessions?</DialogTitle>
                                     <DialogDescription>
@@ -112,22 +114,24 @@ export function BrowserSessions({ sessions }: Props) {
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <FormField
-                                    id="logout-sessions-password"
-                                    label="Password"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    value={data.password}
-                                    error={errors.password}
-                                    onChange={(event) => setData('password', event.target.value)}
-                                    className="mt-4"
-                                />
+                                <DialogBody>
+                                    <FormField
+                                        id="logout-sessions-password"
+                                        label="Password"
+                                        type="password"
+                                        autoComplete="current-password"
+                                        value={data.password}
+                                        error={errors.password}
+                                        onChange={(event) => setData('password', event.target.value)}
+                                    />
+                                </DialogBody>
 
-                                <DialogFooter className="mt-6">
+                                <DialogFooter>
                                     <Button
                                         ref={cancelRef}
                                         type="button"
                                         variant="outline"
+                                        size="lg"
                                         className="min-h-11"
                                         onClick={() => {
                                             reset('password');
@@ -139,7 +143,9 @@ export function BrowserSessions({ sessions }: Props) {
                                     <Button
                                         type="submit"
                                         variant="destructive"
+                                        size="lg"
                                         className="min-h-11"
+                                        isLoading={processing}
                                         disabled={processing}
                                     >
                                         Log out other devices

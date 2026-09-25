@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -53,20 +54,21 @@ export function DeleteAccountForm() {
                     Permanently delete your account and everything associated with it. This cannot be undone.
                 </p>
 
-                <Dialog open={open} onOpenChange={setOpen}>
+                <Dialog
+                    open={open}
+                    onOpenChange={(details) => setOpen(details.open)}
+                    // Start focus on Cancel so
+                    // the destructive action is never one keypress away.
+                    initialFocusEl={() => cancelRef.current}
+                >
                     <DialogTrigger asChild>
-                        <Button type="button" variant="destructive" className="mt-4 min-h-11">
+                        <Button type="button" variant="destructive" size="lg" className="mt-4 min-h-11">
                             Delete account
                         </Button>
                     </DialogTrigger>
 
-                    <DialogContent
-                        onOpenAutoFocus={(event) => {
-                            event.preventDefault();
-                            cancelRef.current?.focus();
-                        }}
-                    >
-                        <form onSubmit={submit}>
+                    <DialogContent>
+                        <form onSubmit={submit} className="flex min-h-0 flex-col">
                             <DialogHeader>
                                 <DialogTitle>Delete your account?</DialogTitle>
                                 <DialogDescription>
@@ -75,22 +77,24 @@ export function DeleteAccountForm() {
                                 </DialogDescription>
                             </DialogHeader>
 
-                            <FormField
-                                id="delete-account-password"
-                                label="Password"
-                                type="password"
-                                autoComplete="current-password"
-                                value={data.password}
-                                error={errors.password}
-                                onChange={(event) => setData('password', event.target.value)}
-                                className="mt-4"
-                            />
+                            <DialogBody>
+                                <FormField
+                                    id="delete-account-password"
+                                    label="Password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    value={data.password}
+                                    error={errors.password}
+                                    onChange={(event) => setData('password', event.target.value)}
+                                />
+                            </DialogBody>
 
-                            <DialogFooter className="mt-6">
+                            <DialogFooter>
                                 <Button
                                     ref={cancelRef}
                                     type="button"
                                     variant="outline"
+                                    size="lg"
                                     className="min-h-11"
                                     onClick={() => {
                                         reset('password');
@@ -99,7 +103,14 @@ export function DeleteAccountForm() {
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" variant="destructive" className="min-h-11" disabled={processing}>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    size="lg"
+                                    className="min-h-11"
+                                    isLoading={processing}
+                                    disabled={processing}
+                                >
                                     Delete account
                                 </Button>
                             </DialogFooter>

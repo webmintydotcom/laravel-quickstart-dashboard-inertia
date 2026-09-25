@@ -61,7 +61,7 @@ export function UpdateProfileInformationForm({ profile }: Props) {
                         onChange={(event) => setData('email', event.target.value)}
                     />
 
-                    <Button type="submit" className="min-h-11" disabled={processing}>
+                    <Button type="submit" size="lg" className="min-h-11" isLoading={processing} disabled={processing}>
                         Save
                     </Button>
                 </form>

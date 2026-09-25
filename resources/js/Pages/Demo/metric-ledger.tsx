@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import type { Metrics } from './Dashboard';
@@ -14,43 +15,41 @@ const NUMERIC_VALUE = /^\d+$/;
 
 export function MetricLedger({ metrics }: { metrics: Metrics }) {
     return (
-        <section
-            aria-label="Key metrics"
-            aria-busy={metrics.status === 'loading'}
-            className="bg-card overflow-hidden rounded-lg border"
-        >
-            {metrics.status === 'loading' && <span className="sr-only">Loading key metrics…</span>}
+        <Card asChild className="gap-0 overflow-hidden rounded-lg py-0">
+            <section aria-label="Key metrics" aria-busy={metrics.status === 'loading'}>
+                {metrics.status === 'loading' && <span className="sr-only">Loading key metrics…</span>}
 
-            <div className="grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
-                {metrics.cells.map((cell) => (
-                    <div key={cell.label} className="p-4 sm:p-5">
-                        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                            <span className="bg-primary h-3 w-[3px] rounded-full" aria-hidden="true" />
-                            {cell.label}
-                        </div>
+                <div className="grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+                    {metrics.cells.map((cell) => (
+                        <div key={cell.label} className="p-4 sm:p-5">
+                            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                                <span className="bg-primary h-3 w-[3px] rounded-full" aria-hidden="true" />
+                                {cell.label}
+                            </div>
 
-                        {metrics.status === 'loading' ? (
-                            <Skeleton className="mt-2 h-8 w-20" />
-                        ) : (
-                            <p className="mt-2 text-2xl font-semibold tracking-tight tabular-nums lg:text-3xl">
-                                {metrics.status === 'empty'
-                                    ? NUMERIC_VALUE.test(cell.value)
-                                        ? '0'
-                                        : '—'
-                                    : metrics.status === 'error'
-                                      ? '—'
-                                      : cell.value}
+                            {metrics.status === 'loading' ? (
+                                <Skeleton className="mt-2 h-8 w-20" />
+                            ) : (
+                                <p className="mt-2 text-2xl font-semibold tracking-tight tabular-nums lg:text-3xl">
+                                    {metrics.status === 'empty'
+                                        ? NUMERIC_VALUE.test(cell.value)
+                                            ? '0'
+                                            : '—'
+                                        : metrics.status === 'error'
+                                          ? '—'
+                                          : cell.value}
+                                </p>
+                            )}
+
+                            <p className="text-muted-foreground mt-1 text-xs">
+                                {metrics.status === 'ready' && cell.detail}
+                                {metrics.status === 'empty' && EMPTY_DETAIL}
+                                {metrics.status === 'error' && ERROR_DETAIL}
                             </p>
-                        )}
-
-                        <p className="text-muted-foreground mt-1 text-xs">
-                            {metrics.status === 'ready' && cell.detail}
-                            {metrics.status === 'empty' && EMPTY_DETAIL}
-                            {metrics.status === 'error' && ERROR_DETAIL}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        </section>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        </Card>
     );
 }

@@ -82,7 +82,13 @@ export default function Register() {
                     onChange={(event) => form.setData('password_confirmation', event.target.value)}
                 />
 
-                <Button type="submit" className="w-full" disabled={form.processing} aria-busy={form.processing}>
+                <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full"
+                    isLoading={form.processing}
+                    disabled={form.processing}
+                >
                     Create account
                 </Button>
 

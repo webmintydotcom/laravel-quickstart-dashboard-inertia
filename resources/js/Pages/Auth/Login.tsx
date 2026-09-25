@@ -6,6 +6,7 @@ import { FormField } from '@/components/form-field';
 import { StatusAlert } from '@/components/status-alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Field, FieldLabel } from '@/components/ui/field';
 import AuthLayout from '@/layouts/AuthLayout';
 import type { SharedProps } from '@/types';
 
@@ -62,15 +63,22 @@ export default function Login() {
                     onChange={(event) => form.setData('password', event.target.value)}
                 />
 
-                <label className="flex items-center gap-2 text-sm">
+                <Field id="remember" orientation="horizontal">
                     <Checkbox
+                        name="remember"
                         checked={form.data.remember}
-                        onCheckedChange={(checked) => form.setData('remember', checked === true)}
+                        onCheckedChange={({ checked }) => form.setData('remember', checked === true)}
                     />
-                    Remember me
-                </label>
+                    <FieldLabel className="font-normal">Remember me</FieldLabel>
+                </Field>
 
-                <Button type="submit" className="w-full" disabled={form.processing} aria-busy={form.processing}>
+                <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full"
+                    isLoading={form.processing}
+                    disabled={form.processing}
+                >
                     Log in
                 </Button>
 

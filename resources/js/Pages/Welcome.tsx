@@ -21,15 +21,18 @@ import {
     Zap,
 } from 'lucide-react';
 
+import { createListCollection } from '@ark-ui/react/select';
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -37,6 +40,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Field, FieldContent, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -45,7 +49,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const techStack = [
     {
@@ -79,9 +83,9 @@ const techStack = [
     {
         icon: Layout,
         label: 'Interface',
-        title: 'shadcn/ui',
-        description: 'Seventeen primitives you own outright, themed for light and dark before you start.',
-        href: 'https://ui.shadcn.com',
+        title: 'Shark UI',
+        description: 'Twenty-five Ark UI components you own outright, themed for light and dark before you start.',
+        href: 'https://shark.vini.one',
     },
     {
         icon: Type,
@@ -92,10 +96,19 @@ const techStack = [
     },
 ];
 
+const frameworks = createListCollection({
+    items: [
+        { label: 'Laravel', value: 'laravel' },
+        { label: 'Ruby on Rails', value: 'rails' },
+        { label: 'Django', value: 'django' },
+        { label: 'Next.js', value: 'nextjs' },
+    ],
+});
+
 const faqItems = [
     {
-        question: 'How do I add new shadcn/ui components?',
-        answer: 'Run npx shadcn@latest add [component-name] to install any component. They are copied directly into your project so you can customize them however you like.',
+        question: 'How do I add new Shark UI components?',
+        answer: 'Run npx shadcn@latest add @shark/[component-name] to install any component. They are copied directly into your project so you can customize them however you like.',
     },
     {
         question: 'How does Inertia.js routing work?',
@@ -165,7 +178,7 @@ export default function Welcome() {
     }
 
     return (
-        <TooltipProvider>
+        <>
             <Head title="Welcome" />
             <div className="bg-background min-h-screen">
                 {/* ── Console Hero ────────────────────────────────────────
@@ -203,7 +216,7 @@ export default function Welcome() {
                                     <TooltipTrigger asChild>
                                         <Button
                                             variant="ghost"
-                                            size="icon"
+                                            size="icon-md"
                                             className="text-stone-400 hover:bg-stone-900 hover:text-stone-100"
                                             asChild
                                         >
@@ -223,7 +236,7 @@ export default function Welcome() {
                                     <TooltipTrigger asChild>
                                         <Button
                                             variant="ghost"
-                                            size="icon"
+                                            size="icon-md"
                                             className="text-stone-400 hover:bg-stone-900 hover:text-stone-100"
                                             onClick={toggleDarkMode}
                                             aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -249,7 +262,7 @@ export default function Welcome() {
                                 Skip the first two days. <span className="text-mint-400">Start on day three.</span>
                             </h1>
                             <p className="mt-5 max-w-md text-base leading-relaxed text-stone-400">
-                                Laravel 13, Inertia, React 19, Tailwind v4 and a full shadcn/ui kit — wired together,
+                                Laravel 13, Inertia, React 19, Tailwind v4 and a full Shark UI kit — wired together,
                                 themed in Webminty mint, and already passing tests.
                             </p>
 
@@ -257,7 +270,7 @@ export default function Welcome() {
                                 <Button size="lg" asChild>
                                     <a href="https://laravel.com/docs">
                                         Read the docs
-                                        <ChevronRight className="ml-1 h-4 w-4" />
+                                        <ChevronRight className="h-4 w-4" />
                                     </a>
                                 </Button>
                                 <Button
@@ -271,7 +284,7 @@ export default function Welcome() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <GithubIcon className="mr-2 h-4 w-4" />
+                                        <GithubIcon className="h-4 w-4" />
                                         View source
                                     </a>
                                 </Button>
@@ -373,14 +386,14 @@ export default function Welcome() {
                 <section id="components" className="mx-auto max-w-6xl scroll-mt-6 px-6 py-20">
                     <div className="mb-10 text-center">
                         <Badge variant="outline" className="mb-4">
-                            <Code2 className="mr-1.5 h-3 w-3" />
+                            <Code2 className="h-3 w-3" />
                             Component Showcase
                         </Badge>
                         <h2 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
                             Beautiful, accessible components
                         </h2>
                         <p className="text-muted-foreground mt-2">
-                            Explore the shadcn/ui components included in this template.
+                            Explore the Shark UI components included in this template.
                         </p>
                     </div>
 
@@ -410,16 +423,17 @@ export default function Welcome() {
                                         </div>
                                         <div className="flex flex-wrap items-center gap-2">
                                             <Button size="sm">Small</Button>
-                                            <Button size="default">Default</Button>
+                                            <Button size="md">Default</Button>
                                             <Button size="lg">Large</Button>
-                                            <Button size="icon" aria-label="Settings">
+                                            <Button size="icon-md" aria-label="Settings">
                                                 <Settings className="h-4 w-4" />
                                             </Button>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             <Button disabled>Disabled</Button>
+                                            <Button isLoading>Loading</Button>
                                             <Button>
-                                                <Rocket className="mr-2 h-4 w-4" />
+                                                <Rocket className="h-4 w-4" />
                                                 With Icon
                                             </Button>
                                         </div>
@@ -433,40 +447,29 @@ export default function Welcome() {
                                         <CardDescription>Inputs, selects, checkboxes, and more.</CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                        <div className="space-y-2">
-                                            <label htmlFor="demo-email" className="text-foreground text-sm font-medium">
-                                                Email
-                                            </label>
-                                            <Input id="demo-email" type="email" placeholder="you@example.com" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label
-                                                htmlFor="demo-select"
-                                                className="text-foreground text-sm font-medium"
-                                            >
-                                                Framework
-                                            </label>
-                                            <Select>
-                                                <SelectTrigger id="demo-select">
+                                        <Field>
+                                            <FieldLabel>Email</FieldLabel>
+                                            <Input type="email" placeholder="you@example.com" />
+                                        </Field>
+                                        <Field>
+                                            <FieldLabel>Framework</FieldLabel>
+                                            <Select collection={frameworks}>
+                                                <SelectTrigger>
                                                     <SelectValue placeholder="Select a framework" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="laravel">Laravel</SelectItem>
-                                                    <SelectItem value="rails">Ruby on Rails</SelectItem>
-                                                    <SelectItem value="django">Django</SelectItem>
-                                                    <SelectItem value="nextjs">Next.js</SelectItem>
+                                                    {frameworks.items.map((framework) => (
+                                                        <SelectItem key={framework.value} item={framework}>
+                                                            {framework.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label
-                                                htmlFor="demo-message"
-                                                className="text-foreground text-sm font-medium"
-                                            >
-                                                Message
-                                            </label>
-                                            <Textarea id="demo-message" placeholder="Type your message..." rows={3} />
-                                        </div>
+                                        </Field>
+                                        <Field>
+                                            <FieldLabel>Message</FieldLabel>
+                                            <Textarea placeholder="Type your message..." rows={3} />
+                                        </Field>
                                     </CardContent>
                                 </Card>
 
@@ -477,41 +480,30 @@ export default function Welcome() {
                                         <CardDescription>Interactive controls with live state.</CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-6">
-                                        <div className="flex items-center justify-between">
-                                            <div className="space-y-0.5">
-                                                <label
-                                                    htmlFor="notifications-switch"
-                                                    className="text-foreground text-sm font-medium"
-                                                >
-                                                    Enable notifications
-                                                </label>
-                                                <p className="text-muted-foreground text-xs">
+                                        <Field orientation="horizontal" className="justify-between">
+                                            <FieldContent className="gap-0.5">
+                                                <FieldLabel>Enable notifications</FieldLabel>
+                                                <FieldDescription className="text-xs">
                                                     Receive email updates about your account.
-                                                </p>
-                                            </div>
+                                                </FieldDescription>
+                                            </FieldContent>
                                             <Switch
-                                                id="notifications-switch"
                                                 checked={switchChecked}
-                                                onCheckedChange={setSwitchChecked}
+                                                onCheckedChange={(details) => setSwitchChecked(details.checked)}
                                             />
-                                        </div>
+                                        </Field>
                                         <Separator />
                                         <div className="space-y-3">
                                             <div className="flex items-center justify-between">
-                                                <label
-                                                    htmlFor="volume-slider"
-                                                    className="text-foreground text-sm font-medium"
-                                                >
-                                                    Volume
-                                                </label>
+                                                <span className="text-foreground text-sm font-medium">Volume</span>
                                                 <span className="text-muted-foreground text-sm tabular-nums">
                                                     {sliderValue[0]}%
                                                 </span>
                                             </div>
                                             <Slider
-                                                id="volume-slider"
+                                                aria-label={['Volume']}
                                                 value={sliderValue}
-                                                onValueChange={setSliderValue}
+                                                onValueChange={(details) => setSliderValue(details.value)}
                                                 max={100}
                                                 step={1}
                                             />
@@ -520,22 +512,16 @@ export default function Welcome() {
                                         <div className="space-y-3">
                                             <span className="text-foreground text-sm font-medium">Preferences</span>
                                             <div className="flex flex-col gap-3">
-                                                <label className="flex items-center gap-2">
-                                                    <Checkbox defaultChecked id="pref-1" />
-                                                    <span className="text-foreground text-sm">
-                                                        Receive marketing emails
-                                                    </span>
-                                                </label>
-                                                <label className="flex items-center gap-2">
-                                                    <Checkbox id="pref-2" />
-                                                    <span className="text-foreground text-sm">
-                                                        Enable two-factor auth
-                                                    </span>
-                                                </label>
-                                                <label className="flex items-center gap-2">
-                                                    <Checkbox defaultChecked id="pref-3" />
-                                                    <span className="text-foreground text-sm">Show online status</span>
-                                                </label>
+                                                {[
+                                                    { label: 'Receive marketing emails', checked: true },
+                                                    { label: 'Enable two-factor auth', checked: false },
+                                                    { label: 'Show online status', checked: true },
+                                                ].map((pref) => (
+                                                    <Field key={pref.label} orientation="horizontal">
+                                                        <Checkbox defaultChecked={pref.checked} />
+                                                        <FieldLabel className="font-normal">{pref.label}</FieldLabel>
+                                                    </Field>
+                                                ))}
                                             </div>
                                         </div>
                                     </CardContent>
@@ -551,48 +537,34 @@ export default function Welcome() {
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button variant="outline">
-                                                    <Mail className="mr-2 h-4 w-4" />
+                                                    <Mail className="h-4 w-4" />
                                                     Open Contact Form
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="sm:max-w-md">
+                                            <DialogContent size="sm">
                                                 <DialogHeader>
                                                     <DialogTitle>Get in touch</DialogTitle>
                                                     <DialogDescription>
                                                         Send us a message and we&apos;ll get back to you soon.
                                                     </DialogDescription>
                                                 </DialogHeader>
-                                                <div className="space-y-4 py-4">
-                                                    <div className="space-y-2">
-                                                        <label htmlFor="dialog-name" className="text-sm font-medium">
-                                                            Name
-                                                        </label>
-                                                        <Input id="dialog-name" placeholder="Your name" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label htmlFor="dialog-email" className="text-sm font-medium">
-                                                            Email
-                                                        </label>
-                                                        <Input
-                                                            id="dialog-email"
-                                                            type="email"
-                                                            placeholder="you@example.com"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label htmlFor="dialog-message" className="text-sm font-medium">
-                                                            Message
-                                                        </label>
-                                                        <Textarea
-                                                            id="dialog-message"
-                                                            placeholder="How can we help?"
-                                                            rows={4}
-                                                        />
-                                                    </div>
-                                                </div>
+                                                <DialogBody className="space-y-4">
+                                                    <Field>
+                                                        <FieldLabel>Name</FieldLabel>
+                                                        <Input placeholder="Your name" />
+                                                    </Field>
+                                                    <Field>
+                                                        <FieldLabel>Email</FieldLabel>
+                                                        <Input type="email" placeholder="you@example.com" />
+                                                    </Field>
+                                                    <Field>
+                                                        <FieldLabel>Message</FieldLabel>
+                                                        <Textarea placeholder="How can we help?" rows={4} />
+                                                    </Field>
+                                                </DialogBody>
                                                 <DialogFooter>
                                                     <Button type="submit">
-                                                        <Send className="mr-2 h-4 w-4" />
+                                                        <Send className="h-4 w-4" />
                                                         Send Message
                                                     </Button>
                                                 </DialogFooter>
@@ -621,14 +593,15 @@ export default function Welcome() {
                                             <Badge variant="secondary">Secondary</Badge>
                                             <Badge variant="outline">Outline</Badge>
                                             <Badge variant="destructive">Destructive</Badge>
-                                            <Badge variant="secondary" className="gap-1">
-                                                <Check className="h-3 w-3" />
+                                            <Badge variant="success">
+                                                <Check />
                                                 Success
                                             </Badge>
-                                            <Badge variant="outline" className="gap-1">
-                                                <Sparkles className="h-3 w-3" />
+                                            <Badge variant="info">
+                                                <Sparkles />
                                                 New
                                             </Badge>
+                                            <Badge variant="warning">Warning</Badge>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -641,28 +614,28 @@ export default function Welcome() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="flex items-center gap-4">
-                                            <Avatar className="h-12 w-12">
+                                            <Avatar size="lg" className="size-12">
                                                 <AvatarImage
                                                     src="https://api.dicebear.com/9.x/initials/svg?seed=JD&backgroundType=gradientLinear"
                                                     alt="John Doe"
                                                 />
                                                 <AvatarFallback>JD</AvatarFallback>
                                             </Avatar>
-                                            <Avatar className="h-12 w-12">
+                                            <Avatar size="lg" className="size-12">
                                                 <AvatarImage
                                                     src="https://api.dicebear.com/9.x/initials/svg?seed=AS&backgroundType=gradientLinear"
                                                     alt="Alice Smith"
                                                 />
                                                 <AvatarFallback>AS</AvatarFallback>
                                             </Avatar>
-                                            <Avatar className="h-12 w-12">
+                                            <Avatar size="lg" className="size-12">
                                                 <AvatarImage
                                                     src="https://api.dicebear.com/9.x/initials/svg?seed=MJ&backgroundType=gradientLinear"
                                                     alt="Michael Johnson"
                                                 />
                                                 <AvatarFallback>MJ</AvatarFallback>
                                             </Avatar>
-                                            <Avatar className="h-12 w-12">
+                                            <Avatar size="lg" className="size-12">
                                                 <AvatarFallback>
                                                     <User className="h-5 w-5" />
                                                 </AvatarFallback>
@@ -684,13 +657,13 @@ export default function Welcome() {
                                                     name: 'Design System',
                                                     desc: 'Create tokens and components',
                                                     badge: 'In Progress',
-                                                    variant: 'secondary' as const,
+                                                    variant: 'info' as const,
                                                 },
                                                 {
                                                     name: 'API Integration',
                                                     desc: 'Connect backend services',
                                                     badge: 'Complete',
-                                                    variant: 'default' as const,
+                                                    variant: 'success' as const,
                                                 },
                                                 {
                                                     name: 'Performance Audit',
@@ -755,7 +728,7 @@ export default function Welcome() {
                                                         </p>
                                                         <p className="text-muted-foreground text-xs">{member.role}</p>
                                                     </div>
-                                                    <Badge variant="secondary">Active</Badge>
+                                                    <Badge variant="success">Active</Badge>
                                                 </div>
                                             ))}
                                         </div>
@@ -889,7 +862,7 @@ export default function Welcome() {
                                 Quick answers to help you get started with this template.
                             </p>
                         </div>
-                        <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
+                        <Accordion defaultValue={['item-0']} className="w-full">
                             {faqItems.map((item, index) => (
                                 <AccordionItem key={index} value={`item-${index}`}>
                                     <AccordionTrigger>{item.question}</AccordionTrigger>
@@ -905,9 +878,7 @@ export default function Welcome() {
                     <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
                         <div className="text-muted-foreground flex items-center gap-2.5 text-sm">
                             <WebmintyMark className="text-mint-600 dark:text-mint-400 h-5 w-5" />
-                            <span>
-                                Built by Webminty · Laravel 13 · Inertia.js · React 19 · Tailwind v4 · shadcn/ui
-                            </span>
+                            <span>Built by Webminty · Laravel 13 · Inertia.js · React 19 · Tailwind v4 · Shark UI</span>
                         </div>
                         <div className="flex gap-2">
                             <Button size="sm" variant="ghost" asChild>
@@ -928,6 +899,6 @@ export default function Welcome() {
                     </div>
                 </footer>
             </div>
-        </TooltipProvider>
+        </>
     );
 }

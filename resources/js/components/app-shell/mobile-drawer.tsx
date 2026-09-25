@@ -11,19 +11,16 @@ interface MobileDrawerProps {
 
 export function MobileDrawer({ open, onOpenChange, triggerRef }: MobileDrawerProps) {
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
+        <Sheet
+            open={open}
+            onOpenChange={(details) => onOpenChange(details.open)}
+            // Ark restores focus to whatever held it when the sheet opened. Safari does
+            // not focus a button on tap, so on the drawer's primary platform that would be
+            // <body>. Restore to the trigger explicitly instead.
+            finalFocusEl={() => triggerRef.current}
+        >
             {/* Always full labelled width - desktop collapse must never reach the drawer. */}
-            <SheetContent
-                side="left"
-                className="bg-shell text-shell-foreground w-64 border-none p-0"
-                onCloseAutoFocus={(event) => {
-                    // Radix restores focus to whatever held it when the sheet opened. Safari does
-                    // not focus a button on tap, so on the drawer's primary platform that would be
-                    // <body>. Restore explicitly instead.
-                    event.preventDefault();
-                    triggerRef.current?.focus();
-                }}
-            >
+            <SheetContent placement="left" className="bg-shell text-shell-foreground w-64 max-w-none border-none p-0">
                 <SheetTitle className="sr-only">Navigation</SheetTitle>
                 <Sidebar collapsed={false} onNavigate={() => onOpenChange(false)} />
             </SheetContent>

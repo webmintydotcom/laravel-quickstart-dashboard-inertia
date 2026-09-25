@@ -1,9 +1,11 @@
-import { Badge } from '@/components/ui/badge';
+import { Badge, type BadgeVariant } from '@/components/ui/badge';
 
-const VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-    available: 'default',
-    in_service: 'secondary',
-    in_maintenance: 'outline',
+// Shark's tinted status variants read as a traffic light: ready, busy, needs
+// attention, gone.
+const VARIANTS: Record<string, BadgeVariant> = {
+    available: 'success',
+    in_service: 'info',
+    in_maintenance: 'warning',
     retired: 'destructive',
 };
 

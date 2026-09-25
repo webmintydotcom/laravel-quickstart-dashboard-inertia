@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A starter kit for Laravel applications with React, Inertia.js, Shadcn UI, and Tailwind CSS v4.
+A starter kit for Laravel applications with React, Inertia.js, Shark UI, and Tailwind CSS v4.
 Designed to help you quickly set up a new full-stack Laravel project with a modern development environment.
 
 Out of the box it ships Fortify-backed authentication screens, an authenticated app shell (sidebar, top bar,
@@ -24,7 +24,7 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
 | Frontend | React 19, TypeScript |
 | Routing | Inertia.js           |
 | Auth | Laravel Fortify      |
-| UI Components | Shadcn UI            |
+| UI Components | Shark UI (Ark UI)    |
 | Styling | Tailwind CSS v4      |
 | Build | Vite 8               |
 | Testing | Pest, Larastan       |
@@ -41,7 +41,7 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
   - [Hashids](#hashids)
 - [Frontend](#frontend)
   - [React](#react)
-  - [Shadcn UI](#shadcn-ui)
+  - [Shark UI](#shark-ui)
   - [Tailwind CSS](#tailwind-css)
   - [Toast Notifications](#toast-notifications)
 - [Debugging](#debugging)
@@ -122,15 +122,41 @@ React 19 with TypeScript. Entry point is `resources/js/app.tsx` with SSR support
 
 [Docs](https://react.dev/)
 
-#### Shadcn UI
+#### Shark UI
 
-Pre-configured with `components.json` pointing to `resources/js/components/ui/`. Includes all required dependencies (Radix UI, class-variance-authority, clsx, tailwind-merge, Lucide icons).
+Components come from [Shark UI](https://shark.vini.one): shadcn/ui-style components built on
+[Ark UI](https://ark-ui.com) and styled with Tailwind CSS and `tailwind-variants`. Like shadcn/ui, the source is
+copied into `resources/js/components/ui/` and is yours to edit. Behavior and accessibility (keyboard handling,
+focus management, ARIA) come from Ark UI.
 
-[Homepage](https://ui.shadcn.com/) | [Docs](https://ui.shadcn.com/docs)
+`components.json` registers the `@shark` registry, so new components install with the shadcn CLI:
+
+```bash
+npx shadcn@latest add @shark/<component>
+```
+
+Dependencies: `@ark-ui/react`, `tailwind-variants`, `tailwind-merge`, `clsx` and Lucide icons.
+
+A few things differ from shadcn/ui and Radix:
+
+- **Ark APIs.** `Select` takes a collection built with `createListCollection` and a `string[]` value. Change
+  handlers receive a details object: `onValueChange={({ value }) => …}`, `onCheckedChange={({ checked }) => …}`,
+  `onOpenChange={({ open }) => …}`.
+- **Sizes.** `Button` sizes are `xs`/`sm`/`md`/`lg`/`xl` plus `icon-xs` … `icon-xl`; `md` is the default and
+  `lg` matches shadcn's default height. `Button` also takes `isLoading`, which swaps the label for a spinner.
+- **Fields.** Wrap a control in `Field` with `FieldLabel` and `FieldError` so Ark wires up the label, `aria-*`
+  attributes and invalid styling. `components/form-field.tsx` does this for text inputs.
+- **Status colors.** `Badge`, `Button` and `Alert` use the `success`, `info` and `warning` tokens in
+  `resources/css/app.css`. `--destructive-foreground` is the red text tone for tinted surfaces, not white.
+
+Local fix: `SelectGroup` in `components/ui/select.tsx` rendered its `heading` only when none was passed. It has
+been corrected in this copy, so re-check it if you re-install `select` from the registry.
+
+[Homepage](https://shark.vini.one) | [Docs](https://shark.vini.one/docs) | [GitHub](https://github.com/sharkui-inc/shark-ui)
 
 #### Tailwind CSS
 
-Tailwind CSS v4 with the Vite plugin. Configured with Shadcn's full oklch color palette and dark mode support.
+Tailwind CSS v4 with the Vite plugin. Brand palette, semantic color tokens and dark mode support live in `resources/css/app.css`.
 
 [Homepage](https://tailwindcss.com/) | [Docs](https://tailwindcss.com/docs/installation)
 
@@ -369,12 +395,12 @@ suite and production build run - as part of building this work, to prove it rath
 
 #### What is not part of the demo
 
-`badge`, `select`, `switch` and `textarea` in `components/ui/` are general-purpose primitives the rest of the
+`badge`, `field`, `input`, `select`, `switch` and `textarea` in `components/ui/` are general-purpose primitives the rest of the
 application uses too, and are not part of the removal. `table` and `skeleton` are the same kind of stock
 primitive, but the demo currently happens to be their only consumer - they stay for the same reason every
 other unused primitive does: an application built on this starter will want a table and a loading skeleton,
 and re-adding them by hand is worse than leaving them. Neither is `components/form-field.tsx`, which the
-vehicle form uses and the profile and auth pages use too.
+profile and auth pages use.
 
 The demo's own components live under its page directory rather than the shared `components/` tree - a
 deliberate deviation - specifically so that deleting the demo never means picking components back out of a

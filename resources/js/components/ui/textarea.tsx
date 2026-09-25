@@ -1,18 +1,34 @@
-import * as React from 'react';
+'use client';
 
+import { Field as ArkField } from '@ark-ui/react/field';
+import type React from 'react';
 import { cn } from '@/lib/utils';
 
-function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
+export const Textarea = (props: React.ComponentProps<typeof ArkField.Textarea>) => {
+    const { className, ...rest } = props;
+
     return (
-        <textarea
-            data-slot="textarea"
+        <ArkField.Textarea
             className={cn(
-                'border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+                'field-sizing-content min-h-16 w-full',
+                'flex',
+                'px-3 py-2',
+                'dark:bg-input/30 bg-transparent',
+                'text-base md:text-sm',
+                'border-input rounded-lg border shadow-xs/5',
+                'placeholder:text-muted-foreground/64',
+                'transition-[color,box-shadow]',
+                'focus-visible:border-primary focus-visible:ring-ring/32 outline-none focus-visible:ring-[3px]',
+                'aria-invalid:border-destructive aria-invalid:text-destructive aria-invalid:ring-destructive/24 aria-invalid:ring-[3px]',
+                'data-invalid:border-destructive data-invalid:text-destructive data-invalid:ring-destructive/24 data-invalid:ring-[3px]',
+                'dark:aria-invalid:border-destructive-foreground dark:aria-invalid:text-destructive-foreground dark:aria-invalid:ring-destructive-foreground/40',
+                'dark:data-invalid:border-destructive-foreground dark:data-invalid:text-destructive-foreground dark:data-invalid:ring-destructive-foreground/40',
+                'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-64',
+                'motion-reduce:transition-none!',
                 className,
             )}
-            {...props}
+            data-slot="textarea"
+            {...rest}
         />
     );
-}
-
-export { Textarea };
+};

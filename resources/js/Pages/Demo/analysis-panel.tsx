@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { route } from 'ziggy-js';
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { Chart, CHART_TOKEN_COUNT } from './chart';
@@ -123,64 +124,66 @@ function buildChartAriaLabel(chart: ChartData): string {
 
 export function AnalysisPanel({ chart }: { chart: ChartData }) {
     return (
-        <section
-            aria-labelledby="analysis-panel-heading"
-            aria-busy={chart.status === 'loading'}
-            className="bg-card overflow-hidden rounded-lg border"
-        >
-            <div className="border-b px-4 py-4 sm:px-5">
-                <h2 id="analysis-panel-heading" className="text-base font-semibold">
-                    {chart.question}
-                </h2>
-            </div>
+        <Card asChild className="gap-0 overflow-hidden rounded-lg py-0">
+            <section aria-labelledby="analysis-panel-heading" aria-busy={chart.status === 'loading'}>
+                <CardHeader className="border-b px-4 py-4 sm:px-5">
+                    <CardTitle asChild className="text-base">
+                        <h2 id="analysis-panel-heading">{chart.question}</h2>
+                    </CardTitle>
+                </CardHeader>
 
-            <div className="px-4 py-4 sm:px-5">
-                {chart.status === 'loading' && (
-                    <>
-                        <span className="sr-only">Loading chart…</span>
-                        <Skeleton className={`${CHART_HEIGHT} w-full`} />
-                    </>
-                )}
+                <CardContent className="px-4 py-4 sm:px-5">
+                    {chart.status === 'loading' && (
+                        <>
+                            <span className="sr-only">Loading chart…</span>
+                            <Skeleton className={`${CHART_HEIGHT} w-full`} />
+                        </>
+                    )}
 
-                {chart.status === 'empty' && (
-                    <PanelEmpty title={EMPTY_TITLE} detail={EMPTY_DETAIL} className={CHART_HEIGHT} />
-                )}
+                    {chart.status === 'empty' && (
+                        <PanelEmpty title={EMPTY_TITLE} detail={EMPTY_DETAIL} className={CHART_HEIGHT} />
+                    )}
 
-                {chart.status === 'unavailable' && (
-                    <PanelEmpty title={UNAVAILABLE_TITLE} detail={UNAVAILABLE_DETAIL} className={CHART_HEIGHT} />
-                )}
+                    {chart.status === 'unavailable' && (
+                        <PanelEmpty title={UNAVAILABLE_TITLE} detail={UNAVAILABLE_DETAIL} className={CHART_HEIGHT} />
+                    )}
 
-                {chart.status === 'error' && (
-                    <PanelError
-                        detail={ERROR_DETAIL}
-                        // router.reload() preserves the query string, which would land
-                        // straight back on ?state=error. The bare route demonstrates an
-                        // actual recovery instead of reloading the same failure.
-                        onRetry={() => router.get(route('dashboard'))}
-                        className={CHART_HEIGHT}
-                    />
-                )}
+                    {chart.status === 'error' && (
+                        <PanelError
+                            detail={ERROR_DETAIL}
+                            // router.reload() preserves the query string, which would land
+                            // straight back on ?state=error. The bare route demonstrates an
+                            // actual recovery instead of reloading the same failure.
+                            onRetry={() => router.get(route('dashboard'))}
+                            className={CHART_HEIGHT}
+                        />
+                    )}
 
-                {chart.status === 'ready' && (
-                    <>
-                        <div className={`${CHART_HEIGHT} w-full`}>
-                            <Chart labels={chart.labels} series={chart.series} ariaLabel={buildChartAriaLabel(chart)} />
-                        </div>
+                    {chart.status === 'ready' && (
+                        <>
+                            <div className={`${CHART_HEIGHT} w-full`}>
+                                <Chart
+                                    labels={chart.labels}
+                                    series={chart.series}
+                                    ariaLabel={buildChartAriaLabel(chart)}
+                                />
+                            </div>
 
-                        <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-                            {chart.series.map((s, index) => (
-                                <li key={s.label} className="text-muted-foreground flex items-center gap-2 text-sm">
-                                    <span
-                                        className={`h-2.5 w-2.5 shrink-0 rounded-full ${LEGEND_SWATCH_CLASSES[index % CHART_TOKEN_COUNT]}`}
-                                        aria-hidden="true"
-                                    />
-                                    {s.label}
-                                </li>
-                            ))}
-                        </ul>
-                    </>
-                )}
-            </div>
-        </section>
+                            <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                                {chart.series.map((s, index) => (
+                                    <li key={s.label} className="text-muted-foreground flex items-center gap-2 text-sm">
+                                        <span
+                                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${LEGEND_SWATCH_CLASSES[index % CHART_TOKEN_COUNT]}`}
+                                            aria-hidden="true"
+                                        />
+                                        {s.label}
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    )}
+                </CardContent>
+            </section>
+        </Card>
     );
 }

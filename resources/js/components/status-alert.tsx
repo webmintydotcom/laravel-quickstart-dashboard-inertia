@@ -1,3 +1,5 @@
+import { CircleCheckIcon } from 'lucide-react';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 
@@ -8,8 +10,9 @@ interface StatusAlertProps {
 }
 
 /**
- * Announces a flashed status message. Alert already carries role="alert", so the
- * message reaches assistive technology instead of only appearing on screen.
+ * Announces a flashed status message. Shark's Alert is a plain div, so
+ * role="alert" is set here to make the message reach assistive technology
+ * instead of only appearing on screen.
  */
 function StatusAlert({ status, className }: StatusAlertProps) {
     if (!status) {
@@ -17,8 +20,9 @@ function StatusAlert({ status, className }: StatusAlertProps) {
     }
 
     return (
-        <Alert className={cn('bg-accent text-accent-foreground mb-4', className)}>
-            <AlertDescription className="text-accent-foreground">{status}</AlertDescription>
+        <Alert role="alert" variant="success" className={cn('mb-4', className)}>
+            <CircleCheckIcon aria-hidden />
+            <AlertDescription className="text-foreground">{status}</AlertDescription>
         </Alert>
     );
 }

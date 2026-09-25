@@ -34,7 +34,13 @@ export default function ConfirmPassword() {
                     onChange={(event) => form.setData('password', event.target.value)}
                 />
 
-                <Button type="submit" className="w-full" disabled={form.processing} aria-busy={form.processing}>
+                <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full"
+                    isLoading={form.processing}
+                    disabled={form.processing}
+                >
                     Confirm password
                 </Button>
             </form>

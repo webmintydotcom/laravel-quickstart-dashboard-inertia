@@ -1,9 +1,12 @@
 import * as React from 'react';
 
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 
-type FormFieldProps = Omit<React.ComponentProps<'input'>, 'id' | 'aria-invalid' | 'aria-describedby' | 'className'> & {
+type FormFieldProps = Omit<
+    React.ComponentProps<'input'>,
+    'id' | 'aria-invalid' | 'aria-describedby' | 'className' | 'size'
+> & {
     /** Also used to derive the id of the error message the input points at. */
     id: string;
     label: React.ReactNode;
@@ -15,17 +18,27 @@ type FormFieldProps = Omit<React.ComponentProps<'input'>, 'id' | 'aria-invalid' 
     className?: string;
 };
 
-function FormField({ id, label, error, labelSuffix, className, ...props }: FormFieldProps) {
+/**
+ * A labelled text input built on Shark's Field. Field (Ark UI) wires the
+ * label's `for`, the input's `aria-invalid`/`aria-errormessage`, and the
+ * error text's id from the ids given here, so they stay the same as before
+ * (`{id}` and `{id}-error`).
+ */
+function FormField({ id, label, error, labelSuffix, className, required, disabled, ...props }: FormFieldProps) {
     const errorId = `${id}-error`;
+    const invalid = Boolean(error);
 
-    const labelElement = (
-        <label htmlFor={id} className="text-sm font-medium">
-            {label}
-        </label>
-    );
+    const labelElement = <FieldLabel>{label}</FieldLabel>;
 
     return (
-        <div className={cn('space-y-2', className)}>
+        <Field
+            id={id}
+            ids={{ errorText: errorId }}
+            invalid={invalid}
+            required={required}
+            disabled={disabled}
+            className={className}
+        >
             {labelSuffix ? (
                 <div className="flex items-center justify-between">
                     {labelElement}
@@ -35,14 +48,10 @@ function FormField({ id, label, error, labelSuffix, className, ...props }: FormF
                 labelElement
             )}
 
-            <Input id={id} aria-invalid={Boolean(error)} aria-describedby={error ? errorId : undefined} {...props} />
+            <Input size="lg" aria-describedby={invalid ? errorId : undefined} {...props} />
 
-            {error && (
-                <p id={errorId} className="text-destructive text-sm">
-                    {error}
-                </p>
-            )}
-        </div>
+            <FieldError>{error}</FieldError>
+        </Field>
     );
 }
 

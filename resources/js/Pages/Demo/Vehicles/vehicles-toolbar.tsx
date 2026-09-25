@@ -1,7 +1,8 @@
 import { router } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { Search } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { createListCollection } from '@ark-ui/react/select';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { route } from 'ziggy-js';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,12 @@ export function VehiclesToolbar({
     // The first render must not fire a visit - it would replay the search the
     // server has already run and answered.
     const isFirstRender = useRef(true);
+    // Ark's select is collection-driven: the items it can pick from are data,
+    // not just the children that happen to be rendered.
+    const statusCollection = useMemo(
+        () => createListCollection({ items: [{ value: ALL_STATUSES, label: 'All statuses' }, ...statusOptions] }),
+        [statusOptions],
+    );
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -67,22 +74,30 @@ export function VehiclesToolbar({
             </div>
 
             <Select
-                value={filters.status === '' ? ALL_STATUSES : filters.status}
-                onValueChange={(value) =>
+                collection={statusCollection}
+                ids={{ trigger: 'vehicle-status' }}
+                value={[filters.status === '' ? ALL_STATUSES : filters.status]}
+                onValueChange={({ value }) => {
+                    const [next] = value;
+
+                    // Ark allows an empty selection; the filter always has one.
+                    if (next === undefined) {
+                        return;
+                    }
+
                     router.get(
-                        listUrl(filters, { status: value === ALL_STATUSES ? '' : value, page: 1 }),
+                        listUrl(filters, { status: next === ALL_STATUSES ? '' : next, page: 1 }),
                         {},
                         { preserveState: true, preserveScroll: true },
-                    )
-                }
+                    );
+                }}
             >
-                <SelectTrigger id="vehicle-status" className="sm:w-48" aria-label="Filter by status">
+                <SelectTrigger className="w-full sm:w-48" aria-label="Filter by status">
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value={ALL_STATUSES}>All statuses</SelectItem>
-                    {statusOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
+                    {statusCollection.items.map((option) => (
+                        <SelectItem key={option.value} item={option}>
                             {option.label}
                         </SelectItem>
                     ))}

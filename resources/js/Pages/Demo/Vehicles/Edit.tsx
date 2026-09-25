@@ -1,10 +1,12 @@
+import { createListCollection } from '@ark-ui/react/select';
 import { Link, useForm } from '@inertiajs/react';
-import type { FormEvent, ReactNode } from 'react';
+import { useMemo, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { route } from 'ziggy-js';
 
-import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,6 +34,46 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
     );
 }
 
+/**
+ * A Shark Field wires the label, control and error message together itself:
+ * `id` becomes the control's id, `invalid` flips aria-invalid on the control
+ * and reveals FieldError. The explicit error id and aria-describedby keep the
+ * markup the old FormField rendered.
+ */
+function TextField({
+    id,
+    label,
+    error,
+    type = 'text',
+    step,
+    value,
+    onChange,
+}: {
+    id: string;
+    label: string;
+    error?: string;
+    type?: string;
+    step?: string;
+    value: string | number;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}) {
+    const errorId = `${id}-error`;
+
+    return (
+        <Field id={id} invalid={Boolean(error)} ids={{ errorText: errorId }}>
+            <FieldLabel>{label}</FieldLabel>
+            <Input
+                type={type}
+                step={step}
+                value={value}
+                onChange={onChange}
+                aria-describedby={error ? errorId : undefined}
+            />
+            <FieldError>{error}</FieldError>
+        </Field>
+    );
+}
+
 function SelectField({
     id,
     label,
@@ -48,35 +90,37 @@ function SelectField({
     onChange: (value: string) => void;
 }) {
     const errorId = `${id}-error`;
+    const collection = useMemo(() => createListCollection({ items: options }), [options]);
 
+    // Inside a Field, Ark's select takes the field's label and invalid state:
+    // the trigger is labelled by FieldLabel and marked aria-invalid.
     return (
-        <div className="space-y-2">
-            <label htmlFor={id} className="text-sm font-medium">
-                {label}
-            </label>
-            <Select value={value} onValueChange={onChange}>
-                <SelectTrigger
-                    id={id}
-                    aria-invalid={Boolean(error)}
-                    aria-describedby={error ? errorId : undefined}
-                    className="w-full"
-                >
+        <Field id={id} invalid={Boolean(error)} ids={{ errorText: errorId }}>
+            <FieldLabel>{label}</FieldLabel>
+            <Select
+                collection={collection}
+                value={[value]}
+                onValueChange={({ value: next }) => {
+                    // Ark allows an empty selection; every one of these fields
+                    // is required, so ignore a deselect rather than post ''.
+                    if (next[0] !== undefined) {
+                        onChange(next[0]);
+                    }
+                }}
+            >
+                <SelectTrigger className="w-full" aria-describedby={error ? errorId : undefined}>
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                    {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
+                    {collection.items.map((option) => (
+                        <SelectItem key={option.value} item={option}>
                             {option.label}
                         </SelectItem>
                     ))}
                 </SelectContent>
             </Select>
-            {error && (
-                <p id={errorId} className="text-destructive text-sm">
-                    {error}
-                </p>
-            )}
-        </div>
+            <FieldError>{error}</FieldError>
+        </Field>
     );
 }
 
@@ -135,7 +179,7 @@ export default function VehicleEdit({
                             A VIN doesn't change, and the stock number is this vehicle's address — editing either one
                             would break every link to this record.
                         </p>
-                        <FormField
+                        <TextField
                             id="license_plate"
                             label="License plate"
                             value={data.license_plate}
@@ -145,21 +189,21 @@ export default function VehicleEdit({
                     </Group>
 
                     <Group title="Specification">
-                        <FormField
+                        <TextField
                             id="make"
                             label="Make"
                             value={data.make}
                             error={errors.make}
                             onChange={(event) => setData('make', event.target.value)}
                         />
-                        <FormField
+                        <TextField
                             id="model"
                             label="Model"
                             value={data.model}
                             error={errors.model}
                             onChange={(event) => setData('model', event.target.value)}
                         />
-                        <FormField
+                        <TextField
                             id="year"
                             label="Year"
                             type="number"
@@ -167,7 +211,7 @@ export default function VehicleEdit({
                             error={errors.year}
                             onChange={(event) => setData('year', Number(event.target.value))}
                         />
-                        <FormField
+                        <TextField
                             id="color"
                             label="Color"
                             value={data.color}
@@ -190,7 +234,7 @@ export default function VehicleEdit({
                             error={errors.fuel_type}
                             onChange={(value) => setData('fuel_type', value)}
                         />
-                        <FormField
+                        <TextField
                             id="odometer"
                             label="Odometer (miles)"
                             type="number"
@@ -209,14 +253,14 @@ export default function VehicleEdit({
                             error={errors.status}
                             onChange={(value) => setData('status', value)}
                         />
-                        <FormField
+                        <TextField
                             id="assigned_driver"
                             label="Assigned driver"
                             value={data.assigned_driver}
                             error={errors.assigned_driver}
                             onChange={(event) => setData('assigned_driver', event.target.value)}
                         />
-                        <FormField
+                        <TextField
                             id="purchased_on"
                             label="Purchased"
                             type="date"
@@ -224,7 +268,7 @@ export default function VehicleEdit({
                             error={errors.purchased_on}
                             onChange={(event) => setData('purchased_on', event.target.value)}
                         />
-                        <FormField
+                        <TextField
                             id="last_serviced_on"
                             label="Last serviced"
                             type="date"
@@ -232,7 +276,7 @@ export default function VehicleEdit({
                             error={errors.last_serviced_on}
                             onChange={(event) => setData('last_serviced_on', event.target.value)}
                         />
-                        <FormField
+                        <TextField
                             id="purchase_price"
                             label="Purchase price (USD)"
                             type="number"
@@ -248,37 +292,36 @@ export default function VehicleEdit({
                                     Off means nobody can reserve this vehicle, whatever its status.
                                 </span>
                             </label>
+                            {/* Ark's focusable part is a visually hidden checkbox; give
+                                it the id the label already points at. */}
                             <Switch
-                                id="bookable"
+                                ids={{ hiddenInput: 'bookable' }}
                                 checked={data.bookable}
-                                onCheckedChange={(checked) => setData('bookable', checked)}
+                                onCheckedChange={({ checked }) => setData('bookable', checked)}
                             />
                         </div>
                     </Group>
 
                     <Group title="Notes">
-                        <div className="space-y-2 sm:col-span-2">
-                            <label htmlFor="notes" className="text-sm font-medium">
-                                Notes
-                            </label>
+                        <Field
+                            id="notes"
+                            invalid={Boolean(errors.notes)}
+                            ids={{ errorText: 'notes-error' }}
+                            className="sm:col-span-2"
+                        >
+                            <FieldLabel>Notes</FieldLabel>
                             <Textarea
-                                id="notes"
                                 rows={4}
                                 value={data.notes}
-                                aria-invalid={Boolean(errors.notes)}
                                 aria-describedby={errors.notes ? 'notes-error' : undefined}
                                 onChange={(event) => setData('notes', event.target.value)}
                             />
-                            {errors.notes && (
-                                <p id="notes-error" className="text-destructive text-sm">
-                                    {errors.notes}
-                                </p>
-                            )}
-                        </div>
+                            <FieldError>{errors.notes}</FieldError>
+                        </Field>
                     </Group>
 
                     <div className="flex items-center gap-3">
-                        <Button type="submit" disabled={processing}>
+                        <Button type="submit" disabled={processing} isLoading={processing}>
                             Save changes
                         </Button>
                         <Button asChild variant="ghost">

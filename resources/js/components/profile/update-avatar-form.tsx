@@ -3,8 +3,9 @@ import type { ChangeEvent } from 'react';
 import { useRef } from 'react';
 import { route } from 'ziggy-js';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import type { User } from '@/types';
 
 interface Props {
@@ -72,7 +73,14 @@ export function UpdateAvatarForm({ profile }: Props) {
                     <div className="flex flex-wrap items-center gap-2">
                         <label
                             htmlFor="avatar"
-                            className="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex min-h-11 cursor-pointer items-center rounded-md border px-4 text-sm font-medium shadow-xs"
+                            // Styled as a Shark outline button. Focus lands on the sr-only file
+                            // input that follows, so its focus ring is mirrored onto this label.
+                            className={cn(
+                                buttonVariants({ variant: 'outline', size: 'lg' }),
+                                'min-h-11 cursor-pointer',
+                                'has-[+input:focus-visible]:border-primary has-[+input:focus-visible]:ring-ring/32 has-[+input:focus-visible]:ring-[3px]',
+                                processing && 'pointer-events-none opacity-64',
+                            )}
                         >
                             Choose photo
                         </label>
@@ -92,6 +100,7 @@ export function UpdateAvatarForm({ profile }: Props) {
                             <Button
                                 type="button"
                                 variant="outline"
+                                size="lg"
                                 className="min-h-11"
                                 disabled={processing}
                                 onClick={handleRemove}
