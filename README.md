@@ -63,6 +63,7 @@ laravel new my-app --pest --npm --using=webmintydotcom/laravel-quickstart-dashbo
     - [Prettier Plugin - Blade](#prettier-plugin---blade)
 - [AI Tooling](#ai-tooling)
   - [Laravel Boost Guidelines](#laravel-boost-guidelines)
+  - [Claude Code Agents](#claude-code-agents)
 
 ### Laravel
 
@@ -252,9 +253,26 @@ Prettier is included to help you format your code consistently across your proje
 
 #### Laravel Boost Guidelines
 
-Webminty's Laravel and PHP coding guidelines, packaged for [Laravel Boost](https://github.com/laravel/boost) so AI coding agents working in this repository follow the same conventions the human contributors do.
+Webminty's Laravel and PHP coding guidelines, packaged for [Laravel Boost](https://github.com/laravel/boost) so AI coding agents working in this repository follow the same conventions the human contributors do. This kit uses version 4 (PHP 8.4+, Laravel 13+); Pint, Rector and PHPStan are configured to match.
 
 [Docs](https://webminty.com)
+
+#### Claude Code Agents
+
+Project agents live in `.claude/agents`. Ask Claude Code to use one by name, or let it pick the right one:
+
+| Agent | Purpose |
+|-------|---------|
+| `standards-reviewer` | Runs Pint, Rector and PHPStan, then checks the branch against the Webminty standards |
+| `security-reviewer` | Reviews the branch for authorization, mass assignment, data exposure and injection problems |
+| `test-gap-finder` | Lists new or changed behaviour that has no test coverage |
+| `pest-test-writer` | Writes non-browser Pest tests, skipping redundant and framework-level cases |
+| `pest-test-runner` | Runs the non-browser suite and sorts failures into test bug, code bug or environment |
+| `pest-browser-writer` | Writes Pest browser tests for journeys and JavaScript behaviour that Feature tests cannot prove |
+| `pest-browser-runner` | Runs the browser tests, checks Playwright and the build first, and reads failure screenshots |
+| `project-docs-keeper` | Updates `features.md`, `DECISIONS.md` and `CHANGELOG.md` for the branch |
+
+The reviewers and runners are read-only. The writers edit only `tests/`, and `project-docs-keeper` edits only `features.md`, `DECISIONS.md` and `CHANGELOG.md`. None of them commit.
 
 ## Development
 
