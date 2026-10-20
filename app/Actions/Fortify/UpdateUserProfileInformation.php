@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 use Webminty\PersonName\Rules\ValidPersonName;
 
-final class UpdateUserProfileInformation implements UpdatesUserProfileInformation
+class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
     /**
      * Fortify's own action assumes a single `name` column and a Jetstream-style

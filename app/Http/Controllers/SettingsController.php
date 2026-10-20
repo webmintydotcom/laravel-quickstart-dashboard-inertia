@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class SettingsController extends Controller
+class SettingsController extends Controller
 {
     public function edit(Request $request): Response
     {

@@ -10,7 +10,7 @@ use Spatie\LaravelData\Data;
  * One row of the index table - and only what that table renders. The full
  * record is VehicleData, used by the detail and edit screens.
  */
-final class VehicleSummaryData extends Data
+class VehicleSummaryData extends Data
 {
     public function __construct(
         public string $stock_number,

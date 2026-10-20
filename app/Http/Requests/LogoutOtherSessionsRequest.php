@@ -17,7 +17,7 @@ use Illuminate\Foundation\Http\FormRequest;
 // ProfileDestroyRequest: two small explicit requests read better than an
 // inheritance hop, and they will diverge if either grows a rule.
 #[ErrorBag('logoutOtherSessions')]
-final class LogoutOtherSessionsRequest extends FormRequest
+class LogoutOtherSessionsRequest extends FormRequest
 {
     /**
      * @return array<string, mixed>

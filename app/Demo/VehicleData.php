@@ -15,7 +15,7 @@ use Spatie\LaravelData\Data;
  * shipping a date library to the browser, and keeps every display string
  * formatted in one place, on the server.
  */
-final class VehicleData extends Data
+class VehicleData extends Data
 {
     public function __construct(
         public string $stock_number,

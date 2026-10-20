@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-final class UserAgent
+class UserAgent
 {
     private const MAX_LENGTH = 120;
 

@@ -7,7 +7,7 @@ namespace App\Data;
 use App\Models\User;
 use Spatie\LaravelData\Data;
 
-final class SettingsData extends Data
+class SettingsData extends Data
 {
     public function __construct(
         public string $appearance,

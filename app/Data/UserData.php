@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelData\Data;
 
-final class UserData extends Data
+class UserData extends Data
 {
     public function __construct(
         public int $id,

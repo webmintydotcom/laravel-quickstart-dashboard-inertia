@@ -31,7 +31,7 @@ use Illuminate\Database\Eloquent\Model;
     'purchase_price',
     'notes',
 ])]
-final class Vehicle extends Model
+class Vehicle extends Model
 {
     protected $table = 'demo_vehicles';
 

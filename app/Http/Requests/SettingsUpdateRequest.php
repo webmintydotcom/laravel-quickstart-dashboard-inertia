@@ -8,7 +8,7 @@ use App\Enums\Appearance;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class SettingsUpdateRequest extends FormRequest
+class SettingsUpdateRequest extends FormRequest
 {
     /**
      * @return array<string, mixed>

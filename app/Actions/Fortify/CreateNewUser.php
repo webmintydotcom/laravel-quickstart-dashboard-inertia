@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Webminty\PersonName\Rules\ValidPersonName;
 
-final class CreateNewUser implements CreatesNewUsers
+class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;
 

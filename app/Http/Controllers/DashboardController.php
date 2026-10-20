@@ -12,7 +12,7 @@ use Inertia\Response;
  * fallback that removing the demo dashboard's code restores: point the
  * /dashboard route back at this class and it renders again unmodified.
  */
-final class DashboardController extends Controller
+class DashboardController extends Controller
 {
     public function __invoke(): Response
     {

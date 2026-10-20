@@ -25,7 +25,7 @@ use Illuminate\Notifications\Notifiable;
     'password',
     'remember_token',
 ])]
-final class User extends Authenticatable
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;

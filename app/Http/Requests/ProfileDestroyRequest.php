@@ -13,7 +13,7 @@ use Illuminate\Foundation\Http\FormRequest;
 // which only reads the #[ErrorBag] attribute (or the $errorBag property), never a
 // method of that name.
 #[ErrorBag('deleteAccount')]
-final class ProfileDestroyRequest extends FormRequest
+class ProfileDestroyRequest extends FormRequest
 {
     /**
      * @return array<string, mixed>

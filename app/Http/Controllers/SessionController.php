@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-final class SessionController extends Controller
+class SessionController extends Controller
 {
     public function destroy(LogoutOtherSessionsRequest $request): RedirectResponse
     {

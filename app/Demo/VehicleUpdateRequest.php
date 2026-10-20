@@ -7,7 +7,7 @@ namespace App\Demo;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class VehicleUpdateRequest extends FormRequest
+class VehicleUpdateRequest extends FormRequest
 {
     /**
      * stock_number and vin are deliberately absent. They are the two fields the

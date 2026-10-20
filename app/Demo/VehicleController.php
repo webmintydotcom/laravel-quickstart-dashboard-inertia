@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class VehicleController
+class VehicleController
 {
     private const PER_PAGE = 10;
 

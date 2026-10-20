@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-final class AvatarController extends Controller
+class AvatarController extends Controller
 {
     public function store(AvatarUpdateRequest $request, StoreAvatar $storeAvatar): RedirectResponse
     {

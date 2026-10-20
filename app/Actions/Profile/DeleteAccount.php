@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-final class DeleteAccount
+class DeleteAccount
 {
     /**
      * The starter has no other models, so nothing cascades today. An application

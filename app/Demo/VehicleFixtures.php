@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Demo;
 
-final class VehicleFixtures
+class VehicleFixtures
 {
     /**
      * Deterministic by design - no randomness and no clock, for the same reason

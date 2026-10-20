@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Demo;
 
-final class DemoDashboard
+class DemoDashboard
 {
     /**
      * Deterministic by design - no randomness and no clock. Tests assert on these

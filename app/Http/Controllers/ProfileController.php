@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class ProfileController extends Controller
+class ProfileController extends Controller
 {
     public function edit(Request $request): Response
     {

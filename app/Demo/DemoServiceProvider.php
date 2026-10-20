@@ -13,7 +13,7 @@ use Illuminate\Support\ServiceProvider;
  * edits. Deleting this provider's registration from bootstrap/providers.php is
  * step 2 of that contract - see the README.
  */
-final class DemoServiceProvider extends ServiceProvider
+class DemoServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {

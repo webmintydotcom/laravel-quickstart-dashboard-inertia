@@ -14,7 +14,7 @@ use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\Exceptions\DecoderException;
 use Intervention\Image\ImageManager;
 
-final class StoreAvatar
+class StoreAvatar
 {
     /**
      * Resizes to a 256px square WebP. A starter that stored the upload as-is would

@@ -9,7 +9,7 @@ use Carbon\CarbonImmutable;
 use Spatie\LaravelData\Data;
 use stdClass;
 
-final class SessionData extends Data
+class SessionData extends Data
 {
     /**
      * Deliberately has no id field. A session id is a credential and must never

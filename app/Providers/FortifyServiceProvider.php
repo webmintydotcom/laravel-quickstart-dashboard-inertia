@@ -21,7 +21,7 @@ use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Responses\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Http\Responses\SuccessfulPasswordResetLinkRequestResponse;
 
-final class FortifyServiceProvider extends ServiceProvider
+class FortifyServiceProvider extends ServiceProvider
 {
     public function register(): void
     {

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
-final class HandleAppearance
+class HandleAppearance
 {
     /**
      * Resolves the appearance for any context that needs it (the shared view
