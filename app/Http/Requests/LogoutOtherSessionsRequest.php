@@ -19,9 +19,7 @@ use Illuminate\Foundation\Http\FormRequest;
 #[ErrorBag('logoutOtherSessions')]
 class LogoutOtherSessionsRequest extends FormRequest
 {
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -29,9 +27,7 @@ class LogoutOtherSessionsRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function messages(): array
     {
         return [

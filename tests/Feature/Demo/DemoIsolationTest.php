@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use App\Demo\DemoDashboardController;
+use App\Demo\DemoServiceProvider;
 
 /**
  * The removal contract is this cycle's whole point: deleting app/Demo,
@@ -150,7 +152,7 @@ test('nothing outside the demo namespace references it', function (): void {
 
 test('routes/web.php is the only permitted reference', function (): void {
     // Named explicitly so that if the route binding moves, this test says where to look.
-    expect(file_get_contents(base_path('routes/web.php')))->toContain('App\Demo\DemoDashboardController');
+    expect(file_get_contents(base_path('routes/web.php')))->toContain(DemoDashboardController::class);
 });
 
 test('a demo reference under tests/ outside tests/Feature/Demo is caught', function (): void {
@@ -196,7 +198,7 @@ test('an escaped FQCN with doubled backslashes is caught', function (): void {
 test('bootstrap/providers.php is the only other permitted reference', function (): void {
     // Named explicitly so that if the registration moves, this test says where to look.
     expect(file_get_contents(base_path('bootstrap/providers.php')))
-        ->toContain('App\Demo\DemoServiceProvider');
+        ->toContain(DemoServiceProvider::class);
 });
 
 test('a demo reference under bootstrap outside the provider list is caught', function (): void {

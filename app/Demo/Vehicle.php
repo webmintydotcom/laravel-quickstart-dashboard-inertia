@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Demo;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -31,19 +33,11 @@ use Illuminate\Database\Eloquent\Model;
     'purchase_price',
     'notes',
 ])]
+#[RouteKey('stock_number')]
+#[Table(name: 'demo_vehicles')]
 class Vehicle extends Model
 {
-    protected $table = 'demo_vehicles';
-
-    /** Vehicles are addressed by stock number: /vehicles/FL-1042. */
-    public function getRouteKeyName(): string
-    {
-        return 'stock_number';
-    }
-
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     protected function casts(): array
     {
         return [

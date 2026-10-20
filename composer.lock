@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a1c510cbb04282ac3889954814a38a9",
+    "content-hash": "696475df9f3b649a0c36696c8c69b466",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1634,16 +1634,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v13.37.0",
+            "version": "v13.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "685f8d6c2ab4547287500bc80ccdf2ca12635109"
+                "reference": "c42f9abd4a3d2f9a3cd6be109255ddce8092ceb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/685f8d6c2ab4547287500bc80ccdf2ca12635109",
-                "reference": "685f8d6c2ab4547287500bc80ccdf2ca12635109",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/c42f9abd4a3d2f9a3cd6be109255ddce8092ceb8",
+                "reference": "c42f9abd4a3d2f9a3cd6be109255ddce8092ceb8",
                 "shasum": ""
             },
             "require": {
@@ -1861,7 +1861,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-10-16T04:59:27+00:00"
+            "time": "2026-10-20T10:45:58+00:00"
         },
         {
             "name": "laravel/passkeys",
@@ -10592,26 +10592,27 @@
         },
         {
             "name": "driftingly/rector-laravel",
-            "version": "2.6.2",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/driftingly/rector-laravel.git",
-                "reference": "c0f9a2ff7365cec45d4dc64223608e7cec74604a"
+                "reference": "64d0c56d948f81e80c40b813e33fc7a7d38bc74e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driftingly/rector-laravel/zipball/c0f9a2ff7365cec45d4dc64223608e7cec74604a",
-                "reference": "c0f9a2ff7365cec45d4dc64223608e7cec74604a",
+                "url": "https://api.github.com/repos/driftingly/rector-laravel/zipball/64d0c56d948f81e80c40b813e33fc7a7d38bc74e",
+                "reference": "64d0c56d948f81e80c40b813e33fc7a7d38bc74e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.3",
-                "rector/rector": "^2.6.4",
+                "rector/rector": "^2.7",
                 "symplify/rule-doc-generator-contracts": "^11.2",
                 "webmozart/assert": "^1.11 || ^2.0"
             },
             "require-dev": {
-                "boundwize/structarmed": "^0.16",
+                "boundwize/structarmed": "^0.19",
+                "illuminate/support": "^13.0",
                 "nette/utils": "^4.0",
                 "nikic/php-parser": "^5.6",
                 "phpstan/extension-installer": "^1.3",
@@ -10623,6 +10624,9 @@
                 "symplify/rule-doc-generator": "^12.2",
                 "tightenco/duster": "^3.1",
                 "tracy/tracy": "^2.10"
+            },
+            "suggest": {
+                "illuminate/support": "Required by RelationTableStringToPivotClassRector, which uses Illuminate\\Support\\Str at runtime to resolve pivot models from table names (^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0)."
             },
             "type": "rector-extension",
             "extra": {
@@ -10642,11 +10646,18 @@
                 "MIT"
             ],
             "description": "Rector upgrades rules for Laravel Framework",
+            "keywords": [
+                "dev",
+                "laravel",
+                "rector",
+                "refactoring",
+                "upgrade"
+            ],
             "support": {
                 "issues": "https://github.com/driftingly/rector-laravel/issues",
-                "source": "https://github.com/driftingly/rector-laravel/tree/2.6.2"
+                "source": "https://github.com/driftingly/rector-laravel/tree/2.7.0"
             },
-            "time": "2026-08-29T21:42:57+00:00"
+            "time": "2026-10-20T13:43:25+00:00"
         },
         {
             "name": "entropy/entropy",
@@ -14927,21 +14938,21 @@
         },
         {
             "name": "webminty/boost-webminty-guidelines",
-            "version": "3.4.1",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmintydotcom/boost-webminty-guidelines.git",
-                "reference": "a318c17c94a95664014643cf8c41fb5f84e89be3"
+                "reference": "6f1714622ef234aecc8c866fb7a01d301aa7320a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmintydotcom/boost-webminty-guidelines/zipball/a318c17c94a95664014643cf8c41fb5f84e89be3",
-                "reference": "a318c17c94a95664014643cf8c41fb5f84e89be3",
+                "url": "https://api.github.com/repos/webmintydotcom/boost-webminty-guidelines/zipball/6f1714622ef234aecc8c866fb7a01d301aa7320a",
+                "reference": "6f1714622ef234aecc8c866fb7a01d301aa7320a",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^11.0|^12.0|^13.0",
-                "php": "^8.2"
+                "illuminate/support": "^13.0",
+                "php": "^8.4"
             },
             "suggest": {
                 "laravel/boost": "Required for AI skill discovery and activation"
@@ -14980,9 +14991,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmintydotcom/boost-webminty-guidelines/issues",
-                "source": "https://github.com/webmintydotcom/boost-webminty-guidelines/tree/3.4.1"
+                "source": "https://github.com/webmintydotcom/boost-webminty-guidelines/tree/v4.0.0"
             },
-            "time": "2026-10-09T00:29:45+00:00"
+            "time": "2026-10-20T15:22:34+00:00"
         }
     ],
     "aliases": [],

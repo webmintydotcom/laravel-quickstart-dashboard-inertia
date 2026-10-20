@@ -6,7 +6,7 @@ namespace App\Support;
 
 class UserAgent
 {
-    private const MAX_LENGTH = 120;
+    private const int MAX_LENGTH = 120;
 
     /**
      * Order matters. Edge's user agent contains "Chrome", and Chrome's contains
@@ -14,7 +14,7 @@ class UserAgent
      *
      * @var array<string, string>
      */
-    private const BROWSERS = [
+    private const array BROWSERS = [
         'Edg/'     => 'Edge',
         'OPR/'     => 'Opera',
         'Firefox/' => 'Firefox',
@@ -30,7 +30,7 @@ class UserAgent
      *
      * @var array<string, string>
      */
-    private const PLATFORMS = [
+    private const array PLATFORMS = [
         'iPhone'      => 'iOS',
         'iPad'        => 'iPadOS',
         'Android'     => 'Android',
@@ -55,9 +55,7 @@ class UserAgent
         return mb_substr($browser ?? $platform ?? $userAgent, 0, self::MAX_LENGTH);
     }
 
-    /**
-     * @param  array<string, string>  $candidates
-     */
+    /** @param array<string, string> $candidates */
     private static function match(string $userAgent, array $candidates): ?string
     {
         foreach ($candidates as $needle => $label) {

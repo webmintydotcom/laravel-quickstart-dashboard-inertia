@@ -24,7 +24,7 @@ class StoreAvatar
     public function __invoke(User $user, UploadedFile $file): void
     {
         try {
-            $encoded = (new ImageManager(new Driver()))
+            $encoded = new ImageManager(new Driver())
                 ->decode($file->getRealPath())
                 ->cover(256, 256)
                 ->encode(new WebpEncoder(quality: 82));

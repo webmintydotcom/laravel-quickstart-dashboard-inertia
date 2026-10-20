@@ -15,9 +15,7 @@ use Illuminate\Foundation\Http\FormRequest;
 #[ErrorBag('updateAvatar')]
 class AvatarUpdateRequest extends FormRequest
 {
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [

@@ -35,9 +35,7 @@ class SettingsController extends Controller
             ->withCookie(cookie()->forever('appearance', $request->string('appearance')->value()));
     }
 
-    /**
-     * @return array<string, list<array{value: string, label: string, offset: string}>>
-     */
+    /** @return array<string, list<array{value: string, label: string, offset: string}>> */
     private function groupedTimezones(): array
     {
         // Offsets are DST-dependent, so this is cached for a day rather than
@@ -51,7 +49,7 @@ class SettingsController extends Controller
             foreach (timezone_identifiers_list() as $identifier) {
                 $parts = explode('/', $identifier, 2);
 
-                $offset = (new DateTimeZone($identifier))->getOffset($now);
+                $offset = new DateTimeZone($identifier)->getOffset($now);
                 $hours = intdiv($offset, 3600);
                 $minutes = abs($offset % 3600) / 60;
 

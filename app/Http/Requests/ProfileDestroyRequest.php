@@ -15,9 +15,7 @@ use Illuminate\Foundation\Http\FormRequest;
 #[ErrorBag('deleteAccount')]
 class ProfileDestroyRequest extends FormRequest
 {
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -25,9 +23,7 @@ class ProfileDestroyRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function messages(): array
     {
         return [

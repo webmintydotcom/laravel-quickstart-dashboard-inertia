@@ -12,6 +12,9 @@ parameters:
     treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: true
     parseModelCastsMethod: true
+    databaseMigrationsPath:
+        - database/migrations
+        - app/Demo/database/migrations
 
 #    ignoreErrors:
 #        - '#PHPDoc tag @var#'

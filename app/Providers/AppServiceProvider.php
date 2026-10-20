@@ -9,20 +9,14 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //https://planetscale.com/blog/laravels-safety-mechanisms
+        // https://planetscale.com/blog/laravels-safety-mechanisms
 
         // Prevent lazy loading of relationships in development to avoid N+1 query issues.
         Model::preventLazyLoading();

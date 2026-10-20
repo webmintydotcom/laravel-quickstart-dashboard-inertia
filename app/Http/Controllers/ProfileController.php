@@ -39,9 +39,7 @@ class ProfileController extends Controller
         return redirect('/');
     }
 
-    /**
-     * @return array<int, SessionData>
-     */
+    /** @return array<int, SessionData> */
     private function sessions(Request $request): array
     {
         $currentSessionId = $request->session()->getId();

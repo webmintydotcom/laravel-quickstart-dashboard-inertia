@@ -13,7 +13,7 @@ use Inertia\Response;
 
 class VehicleController
 {
-    private const PER_PAGE = 10;
+    private const int PER_PAGE = 10;
 
     /**
      * The columns a visitor may sort by, mapped to the columns actually ordered.
@@ -23,7 +23,7 @@ class VehicleController
      *
      * @var array<string, list<string>>
      */
-    private const SORTS = [
+    private const array SORTS = [
         'stock_number' => ['stock_number'],
         'make'         => ['make', 'model'],
         'year'         => ['year'],
@@ -37,13 +37,13 @@ class VehicleController
 
     /** The columns the index table reads. Selecting less would throw under
      *  Model::preventAccessingMissingAttributes(); selecting more is dead weight. */
-    private const ROW_COLUMNS = [
+    private const array ROW_COLUMNS = [
         'stock_number', 'make', 'model', 'year', 'color',
         'status', 'odometer', 'assigned_driver', 'purchased_on',
     ];
 
     /** Columns a search term is matched against. */
-    private const SEARCHABLE = ['stock_number', 'vin', 'license_plate', 'make', 'model', 'assigned_driver'];
+    private const array SEARCHABLE = ['stock_number', 'vin', 'license_plate', 'make', 'model', 'assigned_driver'];
 
     public function index(Request $request): Response
     {
@@ -167,7 +167,7 @@ class VehicleController
         $status = $this->queryParameter($request, 'status');
 
         return [
-            'q'         => trim($this->queryParameter($request, 'q')),
+            'q'         => mb_trim($this->queryParameter($request, 'q')),
             'status'    => VehicleStatus::tryFrom($status) !== null ? $status : '',
             'sort'      => array_key_exists($sort, self::SORTS) ? $sort : 'stock_number',
             'direction' => in_array($direction, ['asc', 'desc'], true) ? $direction : 'asc',
@@ -222,6 +222,6 @@ class VehicleController
             'sort'      => $filters['sort'] === 'stock_number' ? '' : $filters['sort'],
             'direction' => $filters['direction'] === 'asc' ? '' : $filters['direction'],
             'page'      => $page > 1 ? $page : '',
-        ], fn (string|int $value): bool => $value !== '');
+        ], fn (string | int $value): bool => $value !== '');
     }
 }

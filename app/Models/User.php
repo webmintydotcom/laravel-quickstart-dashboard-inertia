@@ -6,6 +6,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Appearance;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -27,7 +28,7 @@ use Illuminate\Notifications\Notifiable;
 ])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -53,11 +54,7 @@ class User extends Authenticatable
         'avatar_path'  => null,
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     protected function casts(): array
     {
         return [
@@ -67,9 +64,7 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * @return Attribute<string, never>
-     */
+    /** @return Attribute<string, never> */
     protected function name(): Attribute
     {
         return Attribute::make(

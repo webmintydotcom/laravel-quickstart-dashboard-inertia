@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Demo\BodyType;
 use App\Demo\FuelType;
 use App\Demo\Vehicle;
+use App\Demo\VehicleFixtures;
 use App\Demo\VehicleStatus;
 use Illuminate\Support\Carbon;
 
@@ -64,7 +65,7 @@ test('the route key is the stock number', function (): void {
 });
 
 test('the fixtures are deterministic', function (): void {
-    expect(App\Demo\VehicleFixtures::rows())->toBe(App\Demo\VehicleFixtures::rows());
+    expect(VehicleFixtures::rows())->toBe(VehicleFixtures::rows());
 });
 
 test('no fixture is dated in the future or serviced before it was bought', function (): void {

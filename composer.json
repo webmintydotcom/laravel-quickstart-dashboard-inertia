@@ -44,7 +44,7 @@
         "pestphp/pest-plugin-faker": "^5.0",
         "pestphp/pest-plugin-laravel": "^5.0",
         "pestphp/pest-plugin-type-coverage": "^5.0",
-        "webminty/boost-webminty-guidelines": "^3.0"
+        "webminty/boost-webminty-guidelines": "^4.0"
     },
     "autoload": {
         "psr-4": {
