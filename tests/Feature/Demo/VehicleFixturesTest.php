@@ -64,6 +64,10 @@ test('the route key is the stock number', function (): void {
     expect((new Vehicle)->getRouteKeyName())->toBe('stock_number');
 });
 
+test('the model reads from the demo_vehicles table', function (): void {
+    expect((new Vehicle)->getTable())->toBe('demo_vehicles');
+});
+
 test('the fixtures are deterministic', function (): void {
     expect(VehicleFixtures::rows())->toBe(VehicleFixtures::rows());
 });

@@ -62,6 +62,17 @@ test('a row carries what the table renders and nothing more', function (): void 
         );
 });
 
+test('a search term padded with unicode whitespace is trimmed', function (): void {
+    $padded = "\u{00A0}\u{3000}Tesla\u{00A0}";
+
+    $this->get(route('vehicles.index', ['q' => $padded]))
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('filters.q', 'Tesla')
+                ->where('vehicles.meta.total', 3)
+        );
+});
+
 test('search matches across the columns a person would type into it', function (
     string $term,
     int $expected,

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Demo\Vehicle;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
@@ -13,6 +14,11 @@ test('guests are sent to login', function (): void {
     auth()->logout();
 
     $this->get(route('vehicles.show', 'FL-1000'))->assertRedirect(route('login'));
+});
+
+test('a vehicle is not found by an unknown stock number or by its numeric id', function (): void {
+    $this->get(route('vehicles.show', 'FL-9999'))->assertNotFound();
+    $this->get(route('vehicles.show', Vehicle::query()->value('id')))->assertNotFound();
 });
 
 test('a vehicle is addressed by its stock number', function (): void {
