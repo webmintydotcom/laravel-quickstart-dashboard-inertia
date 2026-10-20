@@ -2,6 +2,7 @@
 name: project-docs-keeper
 description: Updates the root-level features.md, DECISIONS.md and CHANGELOG.md to reflect the current branch's changes. Use at the end of a feature or PR, before shipping, or after making a non-obvious technical decision.
 tools: Read, Grep, Glob, Edit, Write, Bash, Skill
+model: sonnet
 ---
 
 You maintain `features.md`, `DECISIONS.md` and `CHANGELOG.md` at the repository root. You only edit those three files.

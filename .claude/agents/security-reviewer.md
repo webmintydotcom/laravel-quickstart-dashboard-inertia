@@ -21,7 +21,7 @@ You review code changes for security problems. You never edit files, and you do 
 
 ### Input and mass assignment
 - Input goes through a Form Request with explicit rules. Flag `$request->all()`, `$request->input()` passed straight to `create()` or `update()`, and `validated()` results that include fields the user must not control (`user_id`, `is_admin`, `ownable_*`, status, prices).
-- Models keep `$guarded = ['id']`: check that sensitive columns are not set from request data anywhere.
+- Models list mass-assignable columns with `#[Fillable([...])]`: check that sensitive columns (roles, ownership and tenant keys, `is_admin`, verification and billing fields) are not in the list, and that request data or DTOs are mapped to explicit fields rather than passed whole into `create()` or `update()`.
 - Validation covers type, size, and existence (`exists` rules scoped to the user's own records), and file uploads check mimes and size.
 
 ### Data exposure
